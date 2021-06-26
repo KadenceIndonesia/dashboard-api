@@ -112,19 +112,35 @@ exports.getApiData = async function(req,res){
     var getattributebypid = await getAttributesByPid(pid, qidx)
     var rawdata = []
     if(getattributebypid[0].type == "SA"){
-
+        console.log("SA")
     }else if(getattributebypid[0].type == "MA"){
         var labelMA = [getattributebypid[0].attribute]
-        
         for (let i = 0; i < data.length; i++) {
             for (let y = 1; y <= getattributebypid[0].attribute.length; y++) {
-                if(data[i][qidx+"_O"+y]!=-1){
-                    
+                if(data[i][qidx+"_O"+y]!=-1 && data[i][qidx+"_O"+y] < getattributebypid[0].attribute.length){
+                    rawdata.push({
+                        sbjnum: data[i]["SbjNum"],
+                        label: getattributebypid[0].attribute[data[i][qidx+"_O"+y]].label,
+                        kota: data[i]["Kota"],
+                        y: 1
+                    })
                 }
             }
         }
     }else if(getattributebypid[0].type == "LOOPSA"){
-
+        var labelMA = [getattributebypid[0].attribute]
+        for (let i = 0; i < data.length; i++) {
+            for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
+                if(data[i][getattributebypid[0].loopLabel+"_"+qidx]!=-1)
+                rawdata.push({
+                    sbjnum: data[i]["SbjNum"],
+                    label: getattributebypid[0].attribute[data[i][getattributebypid[0].loopLabel[x]+"_"+qidx]-1],
+                    parentlabel: getattributebypid[0].loopLabel[x],
+                    kota: data[i]["Kota"],
+                    y: 1
+                })
+            }
+        }
     }else if(getattributebypid[0].type == "LOOPMA"){
         for (let i = 0; i < data.length; i++) {
             for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
@@ -132,7 +148,7 @@ exports.getApiData = async function(req,res){
                     if(data[i][getattributebypid[0].loopLabel[x]+"_"+qidx+"_O"+y]!=-1){
                         rawdata.push({
                             sbjnum: data[i]["SbjNum"],
-                            label: getattributebypid[0].attribute[data[i][getattributebypid[0].loopLabel[x]+"_"+qidx+"_O"+y]],
+                            label: getattributebypid[0].attribute[data[i][getattributebypid[0].loopLabel[x]+"_"+qidx+"_O"+y]-1],
                             parentlabel: getattributebypid[0].loopLabel[x],
                             kota: data[i]["Kota"],
                             y: 1
