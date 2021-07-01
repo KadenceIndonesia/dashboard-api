@@ -1,6 +1,7 @@
 const mongoose  = require("mongoose")
 const Project = require("../models/project")
 const Attribute = require("../models/attributes")
+const Report = require("../models/reports")
 const fs = require("fs")
 const path = require("path")
 const xslx = require("xlsx")
@@ -57,7 +58,15 @@ global.getAttributesByPid = function(pid,qidx){
             resolve(result)
         })
     })
-    
+}
+
+global.getReportsByID = function(pid,qidx){
+    return new Promise(resolve => {
+        Report.find({projectID: pid, questionID: qidx}).exec()
+        .then(result => {
+            resolve(result)
+        })
+    })
 }
 
 
@@ -111,8 +120,8 @@ exports.getApiData = async function(req,res){
     var data = await excelData(pid)
     var getattributebypid = await getAttributesByPid(pid, qidx)
     var rawdata = []
+    console.log(getattributebypid[0].slice)
     if(getattributebypid[0].type == "SA"){
-        console.log("SA")
     }else if(getattributebypid[0].type == "MA"){
         var labelMA = [getattributebypid[0].attribute]
         for (let i = 0; i < data.length; i++) {
@@ -131,7 +140,7 @@ exports.getApiData = async function(req,res){
         var labelMA = [getattributebypid[0].attribute]
         for (let i = 0; i < data.length; i++) {
             for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
-                if(data[i][getattributebypid[0].loopLabel+"_"+qidx]!=-1)
+                if(data[i][getattributebypid[0].loopLabel[x]+"_"+qidx]!=-1)
                 rawdata.push({
                     sbjnum: data[i]["SbjNum"],
                     label: getattributebypid[0].attribute[data[i][getattributebypid[0].loopLabel[x]+"_"+qidx]-1],
@@ -159,4 +168,12 @@ exports.getApiData = async function(req,res){
         }
     }
     res.send(rawdata)
+}
+
+exports.getSliceData = async function(req,res){
+    var qidx = req.params.qidx
+    var pid = req.params.pid
+    var getreportbyid = await getReportsByID(pid, qidx)
+    console.log(getreportbyid[0])
+    res.send(getreportbyid[0])
 }

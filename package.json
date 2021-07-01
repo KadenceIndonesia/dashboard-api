@@ -11,7 +11,9 @@
   "author": "rizkymalm <rizkymalm@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "body-parser": "^1.19.0",
+    "cryptr": "^6.0.2",
     "dotenv": "^10.0.0",
     "env": "^0.0.2",
     "express": "^4.17.1",

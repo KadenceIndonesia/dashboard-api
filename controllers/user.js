@@ -14,6 +14,7 @@ exports.postCreateUser = async function(req,res){
     const createUser = new User({
         _id: new mongoose.Types.ObjectId(),
         projectID: req.body.pid,
+        username: req.body.nama,
         email: req.body.email,
         password: req.body.password,
         status: req.body.status
