@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "pm2 start index.js",
+    "stop": "pm2 stop index.js",
+    "restart": "pm2 restart index.js"
   },
   "repository": "https://github.com/KadenceIndonesia/dashboard-api.git",
   "author": "rizkymalm <rizkymalm@gmail.com>",
@@ -21,6 +23,7 @@
     "moment": "^2.29.1",
     "mongoose": "^5.12.14",
     "nodemon": "^2.0.7",
+    "pm2": "^5.1.0",
     "xlsx": "^0.17.0"
   }
 }
