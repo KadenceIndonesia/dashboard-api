@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "pm2 start index.js",
+    "start": "pm2 start index.js --name 'Dashboard-api'",
     "stop": "pm2 stop index.js",
-    "restart": "pm2 restart index.js"
+    "restart": "pm2 start index.js"
   },
   "repository": "https://github.com/KadenceIndonesia/dashboard-api.git",
   "author": "rizkymalm <rizkymalm@gmail.com>",

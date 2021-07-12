@@ -6,6 +6,7 @@ const indexRoutes = require("./routes/index")
 const apiRoutes = require("./routes/api")
 const userRoutes = require("./routes/user")
 const authRoutes = require("./routes/auth")
+const projectRoutes = require("./routes/project")
 require('dotenv').config()
 // require('./helpers/init_mongodb')
 
@@ -21,6 +22,7 @@ app.use(bodyParser.json())
 app.use(express.static("public"));
 app.use("/", indexRoutes)
 app.use("/api", apiRoutes)
+app.use("/project", projectRoutes)
 app.use("/auth", authRoutes)
 
 

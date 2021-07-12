@@ -81,26 +81,6 @@ exports.getApi = async function(req,res){
     })
 }
 
-exports.postApi = async function(req,res){
-    const project = new Project({
-        _id: new mongoose.Types.ObjectId(),
-        projectID: req.body.pid,
-        projectName: req.body.prjname,
-        status: req.body.status,
-        startDate: req.body.startdate,
-        endDate: req.body.enddate,
-    })
-    project
-        .save()
-        .then(result => {
-            console.log(result)
-        })
-        .catch(err => console.log(err))
-    res.status(201).json({
-        message: "success",
-        createdProject: project
-    })
-}
 
 exports.getApiProject = async function(req,res){
     const pid = req.params.pid
@@ -120,48 +100,76 @@ exports.getApiData = async function(req,res){
     var data = await excelData(pid)
     var getattributebypid = await getAttributesByPid(pid, qidx)
     var rawdata = []
-    console.log(getattributebypid[0].slice)
+    var labelAttr;
     if(getattributebypid[0].type == "SA"){
+        labelAttr = getattributebypid[0].attribute
+        for (let i = 0; i < data.length; i++) {
+            if(data[i][qidx]!=-1){
+                for (let x = 0; x < labelAttr.length; x++) {
+                    if(labelAttr[x].code==data[i][qidx]){
+                        rawdata.push({
+                            sbjnum: data[i]["SbjNum"],
+                            label: labelAttr[x].label,
+                            kota: data[i]["Kota"],
+                            y: 1
+                        })
+                    }
+                }
+            }
+        }
     }else if(getattributebypid[0].type == "MA"){
-        var labelMA = [getattributebypid[0].attribute]
+        labelAttr = getattributebypid[0].attribute
         for (let i = 0; i < data.length; i++) {
             for (let y = 1; y <= getattributebypid[0].attribute.length; y++) {
                 if(data[i][qidx+"_O"+y]!=-1 && data[i][qidx+"_O"+y] < getattributebypid[0].attribute.length){
-                    rawdata.push({
-                        sbjnum: data[i]["SbjNum"],
-                        label: getattributebypid[0].attribute[data[i][qidx+"_O"+y]].label,
-                        kota: data[i]["Kota"],
-                        y: 1
-                    })
+                    for(let z = 0; z < labelAttr.length; z++){
+                        if(labelAttr[z].code==data[i][qidx+"_O"+y]){
+                            rawdata.push({
+                                sbjnum: data[i]["SbjNum"],
+                                label: labelAttr[z].label,
+                                kota: data[i]["Kota"],
+                                y: 1
+                            })
+                        }
+                    }
                 }
             }
         }
     }else if(getattributebypid[0].type == "LOOPSA"){
-        var labelMA = [getattributebypid[0].attribute]
+        labelAttr = getattributebypid[0].attribute
         for (let i = 0; i < data.length; i++) {
             for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
                 if(data[i][getattributebypid[0].loopLabel[x]+"_"+qidx]!=-1)
-                rawdata.push({
-                    sbjnum: data[i]["SbjNum"],
-                    label: getattributebypid[0].attribute[data[i][getattributebypid[0].loopLabel[x]+"_"+qidx]-1],
-                    parentlabel: getattributebypid[0].loopLabel[x],
-                    kota: data[i]["Kota"],
-                    y: 1
-                })
-            }
-        }
-    }else if(getattributebypid[0].type == "LOOPMA"){
-        for (let i = 0; i < data.length; i++) {
-            for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
-                for (let y = 1; y <= getattributebypid[0].attribute.length; y++) {
-                    if(data[i][getattributebypid[0].loopLabel[x]+"_"+qidx+"_O"+y]!=-1){
+                for(let z = 0; z < labelAttr.length; z++){
+                    if(labelAttr[z].code==data[i][getattributebypid[0].loopLabel[x]+"_"+qidx]){
                         rawdata.push({
                             sbjnum: data[i]["SbjNum"],
-                            label: getattributebypid[0].attribute[data[i][getattributebypid[0].loopLabel[x]+"_"+qidx+"_O"+y]-1],
+                            label: labelAttr[z].label,
                             parentlabel: getattributebypid[0].loopLabel[x],
                             kota: data[i]["Kota"],
                             y: 1
                         })
+                    }
+                }
+            }
+        }
+    }else if(getattributebypid[0].type == "LOOPMA"){
+        labelAttr = getattributebypid[0].attribute
+        for (let i = 0; i < data.length; i++) {
+            for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
+                for (let y = 1; y <= getattributebypid[0].attribute.length; y++) {
+                    if(data[i][getattributebypid[0].loopLabel[x]+"_"+qidx+"_O"+y]!=-1){
+                        for(let z = 0; z < labelAttr.length; z++){
+                            if(labelAttr[z].code==data[i][getattributebypid[0].loopLabel[x]+"_"+qidx+"_O"+y]){
+                                rawdata.push({
+                                    sbjnum: data[i]["SbjNum"],
+                                    label: labelAttr[z].label,
+                                    parentlabel: getattributebypid[0].loopLabel[x],
+                                    kota: data[i]["Kota"],
+                                    y: 1
+                                })
+                            }
+                        }
                     }   
                 }
             }
