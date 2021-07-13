@@ -7,6 +7,7 @@ const apiRoutes = require("./routes/api")
 const userRoutes = require("./routes/user")
 const authRoutes = require("./routes/auth")
 const projectRoutes = require("./routes/project")
+const formRoutes = require("./routes/form")
 require('dotenv').config()
 // require('./helpers/init_mongodb')
 
@@ -24,6 +25,7 @@ app.use("/", indexRoutes)
 app.use("/api", apiRoutes)
 app.use("/project", projectRoutes)
 app.use("/auth", authRoutes)
+app.use("/form", formRoutes)
 
 
 app.listen(process.env.PORT, (req,res) => {

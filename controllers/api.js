@@ -11,6 +11,8 @@ const attributes = require("../models/attributes")
 global.excelData = function(pid){
     return new Promise(resolve =>{
         var directoryPath = path.join(__dirname, '../public/rawdata/'+pid)
+        // var directoryPath = path.join(process.env.DIRNAME+pid)
+        console.log(__dirname)
         fs.readdir(directoryPath, function(err,files){
             var dataxls = []
             for(var f=0;f<files.length;f++){
