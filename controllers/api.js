@@ -13,13 +13,13 @@ global.excelData = function(pid){
         var directoryPath = path.join(process.env.DIRNAME+pid)
         fs.readdir(directoryPath, function(err,files){
             var dataxls = []
+            var data = [];
             for(var f=0;f<files.length;f++){
-                var workbook  = xslx.readFile("public/rawdata/"+pid+"/"+files[f]);
+                var workbook  = xslx.readFile(directoryPath+"/"+files[f]);
                 var sheetname_list = workbook.SheetNames;
                 sheetname_list.forEach(async function(y){
                     var worksheet = workbook.Sheets[y];
                     var headers = {};
-                    var data = [];
                     for(z in worksheet){
                         if(z[0] === '|')continue;
                         var tt = 0;
@@ -71,27 +71,14 @@ global.getReportsByID = function(pid,qidx){
 
 
 exports.getApi = async function(req,res){
-    Project.find().exec().then(docs => {
-        res.status(200).json(docs)
-    }).catch(err =>{
-        console.log("err")
-        res.status(500, {
-            error: err
-        })
-    })
+    var data = await excelData()
 }
 
 
 exports.getApiProject = async function(req,res){
     const pid = req.params.pid
-    Project.find({projectID: pid}).exec()
-    .then(docs => {
-        res.status(200).json(docs)
-    }).catch(err => {
-        res.status(500, {
-            error: err
-        })
-    })
+    var data = await excelData(pid)
+    res.json(data)
 }
 
 exports.getApiData = async function(req,res){
