@@ -6,6 +6,7 @@ const fs = require("fs")
 const path = require("path")
 const xslx = require("xlsx")
 const attributes = require("../models/attributes")
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 
 global.excelData = function(pid){

@@ -29,7 +29,7 @@ global.getProjectInUsers = function(email, pid){
     })
 }
 
-Router.post('/register', async function (req,res) {
+Router.post('/register', async function (req,res,next) {
     var emailBody = req.body.email;
     var pid = req.body.pid;
     const encryptPass = enc.encrypt(req.body.password);
@@ -50,7 +50,7 @@ Router.post('/register', async function (req,res) {
                 console.log(result)
             })
             .catch(err => console.log(err))
-        res.status(201).json({
+        res.status(201).send({
             message: "success",
             createdUser: createUser
         })
@@ -84,7 +84,7 @@ Router.post('/login', async function(req,res){
     var decrypt = enc.decrypt(getUser[0].password)
     if(pass==decrypt){
         if(getprojectinusers.length > 0){
-            res.json({
+            res.status(200).json({
                 message: "success",
                 login: [
                     {

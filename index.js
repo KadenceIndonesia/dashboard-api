@@ -1,6 +1,7 @@
 const express = require("express")
 const bodyParser = require("body-parser")
 const app = express()
+const cors = require("cors")
 const mongoose = require("mongoose")
 const indexRoutes = require("./routes/index")
 const apiRoutes = require("./routes/api")
@@ -18,8 +19,10 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 
 
+
 // app.use(bodyParser.urlencoded());
 app.use(bodyParser.json())
+app.use(cors())
 app.use(express.static("public"));
 app.use("/", indexRoutes)
 app.use("/api", apiRoutes)
