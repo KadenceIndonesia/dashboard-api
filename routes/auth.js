@@ -6,18 +6,13 @@ const mongoose  = require("mongoose")
 const Cryptr = require("cryptr")
 const enc = new Cryptr("kadence")
 
-// const schema = {
-//     projectID: Joi.string().required(),
-//     username: Joi.string().min(6).required(),
-//     email: Joi.string().min(6).required().email(),
-//     password: Joi.string().min(6).required(),
-//     status: Joi.number()
-// }
-
 global.getUserByEmail = function (email) {
     return new Promise(resolve => {
         User.find({email: email}).exec().then(result => {
             resolve(result)
+        })
+        .catch(error => {
+            resolve(error)
         })
     })
 }
@@ -47,27 +42,30 @@ Router.post('/register', async function (req,res,next) {
         createUser
             .save()
             .then(result => {
-                console.log(result)
+                res.status(201).send({
+                    message: "success",
+                    createdUser: result
+                })
             })
-            .catch(err => console.log(err))
-        res.status(201).send({
-            message: "success",
-            createdUser: createUser
-        })
+            .catch(err => {
+                // failed create email
+                res.status(404).json({
+                    message: "failed"
+                })
+            })
     }else{
         var assigned = getUser[0].projectID.indexOf(pid) 
         //check if email already assign to project
         if(assigned!=-1){
-            res.json({
+            res.status(409).json({
                 message: "Assigned"
             })
-            
         }else{
             // push new projectID
             var updateProjectID = getUser[0].projectID
             updateProjectID.push(pid)
             User.updateOne({email: emailBody}, {$set: {projectID: updateProjectID}}).exec().then(result => {
-                res.json({
+                res.status(200).json({
                     message: "update pid"
                 })
             })
@@ -80,28 +78,35 @@ Router.post('/login', async function(req,res){
     var pass = req.body.password
     var pid = req.body.pid
     var getUser = await getUserByEmail(email);
+    console.log(getUser)
     var getprojectinusers = await getProjectInUsers(email, pid);
-    var decrypt = enc.decrypt(getUser[0].password)
-    if(pass==decrypt){
-        if(getprojectinusers.length > 0){
-            res.status(200).json({
-                message: "success",
-                login: [
-                    {
-                        "pid": pid,
-                        "email": email,
-                        "username": getUser[0].username
-                    }
-                ]
-            })
+    if(getUser.length>0){
+        var decrypt = enc.decrypt(getUser[0].password)
+        if(pass==decrypt){
+            if(getprojectinusers.length > 0){
+                res.status(200).json({
+                    message: "success",
+                    login: [
+                        {
+                            "pid": pid,
+                            "email": email,
+                            "username": getUser[0].username
+                        }
+                    ]
+                })
+            }else{
+                res.status(401).json({
+                    message: "not assigned"
+                })
+            }
         }else{
-            res.json({
-                message: "not assigned"
+            res.status(401).json({
+                message: "invalid password"
             })
         }
     }else{
-        res.json({
-            message: "invalid password"
+        res.status(404).json({
+            message: "email not found"
         })
     }
 })
