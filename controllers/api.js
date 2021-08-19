@@ -148,11 +148,14 @@ exports.getApiData = async function(req,res){
                     if(data[i][getattributebypid[0].loopLabel[x]+"_"+qidx]!=-1)
                     for(let z = 0; z < labelAttr.length; z++){
                         if(labelAttr[z].code==data[i][getattributebypid[0].loopLabel[x]+"_"+qidx]){
+                            var splitCode = (getattributebypid[0].loopLabel[x]).split(".")
+                            var parentCode = parseInt(splitCode)
                             rawdata.push({
                                 sbjnum: data[i]["SbjNum"],
                                 code: parseInt(labelAttr[z].code),
                                 label: labelAttr[z].label,
                                 parentlabel: getattributebypid[0].loopLabel[x],
+                                parentcode: parentCode,
                                 kota: data[i]["Kota"],
                                 y: 1
                             })
@@ -168,11 +171,14 @@ exports.getApiData = async function(req,res){
                         if(data[i][getattributebypid[0].loopLabel[x]+"_"+qidx+"_O"+y]!=-1){
                             for(let z = 0; z < labelAttr.length; z++){
                                 if(labelAttr[z].code==data[i][getattributebypid[0].loopLabel[x]+"_"+qidx+"_O"+y]){
+                                    var splitCode = (getattributebypid[0].loopLabel[x]).split(".")
+                                    var parentCode = parseInt(splitCode)
                                     rawdata.push({
                                         sbjnum: data[i]["SbjNum"],
                                         code: parseInt(labelAttr[z].code),
                                         label: labelAttr[z].label,
                                         parentlabel: getattributebypid[0].loopLabel[x],
+                                        parentcode: parentCode,
                                         kota: data[i]["Kota"],
                                         y: 1
                                     })
