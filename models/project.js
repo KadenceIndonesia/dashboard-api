@@ -7,7 +7,13 @@ const projectSchema = mongoose.Schema({
     projectType: String,
     status: Number,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
+    topbreak: [
+        {
+            quest: String,
+            label: String
+        }
+    ]
 })
 
 module.exports = mongoose.model('Project', projectSchema);

@@ -10,4 +10,6 @@ Router.get("/:pid/data/:qidx/slice", apiControllers.getSliceData);
 Router.get("/:pid/data/:qidx/attribute", apiControllers.getAttributeData);
 Router.get("/:pid/data/:qidx/break/:break/:code", apiControllers.getDataByBreak);
 
+Router.get("/:pid/topbreak/:qidx", apiControllers.getTopBreak);
+
 module.exports = Router;
