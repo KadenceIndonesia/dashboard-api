@@ -92,13 +92,14 @@ global.getReportsByID = function (pid, qidx) {
 
 global.topbreakByQid = function (pid, qidx) {
   return new Promise((resolve) => {
-    Projects.findOne({ projectID: pid, 'topbreak.quest': qidx})
+    Projects.findOne({ projectID: pid, "topbreak.quest": qidx })
       .exec()
       .then((result) => {
         resolve(result.topbreak);
-      }).catch((error) => {
-          resolve(error)
       })
+      .catch((error) => {
+        resolve(error);
+      });
   });
 };
 
@@ -217,6 +218,14 @@ exports.getApiData = async function (req, res) {
             }
           }
         }
+      }
+    } else if (getattributebypid[0].type == "OE") {
+      for (let i = 0; i < data.length; i++) {
+        rawdata.push({
+          sbjnum: data[i]["SbjNum"],
+          label: data[i][qidx],
+          y: 1,
+        });
       }
     }
     res.send(rawdata);
@@ -343,7 +352,6 @@ exports.getDataByBreak = async function (req, res) {
   }
 };
 
-
 exports.dataByBreak = async function (req, res) {
   var qidx = req.params.qidx;
   var break1 = req.body.break1;
@@ -359,24 +367,24 @@ exports.dataByBreak = async function (req, res) {
   var labelAttr;
 
   const filterBreak1 = (i) => {
-    if(code1!="all"){
-        return data[i][break1] == code1
-    }else{
-      return " "
+    if (code1 != "all") {
+      return data[i][break1] == code1;
+    } else {
+      return " ";
     }
-  }
+  };
 
   const filterLogic = (i) => {
-    if(code2!="all" && code3=="all"){
-        return data[i][break2] == code2
-    }else if(code2=="all" && code3!="all"){
-        return data[i][break3] == code3
-    }else if(code2!="all" && code3!="all"){
-      return data[i][break2] == code2 && data[i][break3] == code3
-    }else{
-      return " "
+    if (code2 != "all" && code3 == "all") {
+      return data[i][break2] == code2;
+    } else if (code2 == "all" && code3 != "all") {
+      return data[i][break3] == code3;
+    } else if (code2 != "all" && code3 != "all") {
+      return data[i][break2] == code2 && data[i][break3] == code3;
+    } else {
+      return " ";
     }
-  }
+  };
 
   if (getattributebypid.length > 0) {
     if (getattributebypid[0].type == "SA") {
@@ -403,8 +411,8 @@ exports.dataByBreak = async function (req, res) {
           if (
             data[i][qidx + "_O" + y] != -1 &&
             data[i][qidx + "_O" + y] < getattributebypid[0].attribute.length &&
-            filterBreak1(i)
-            && filterLogic(i)
+            filterBreak1(i) &&
+            filterLogic(i)
           ) {
             for (let z = 0; z < labelAttr.length; z++) {
               if (labelAttr[z].code == data[i][qidx + "_O" + y]) {
@@ -425,7 +433,9 @@ exports.dataByBreak = async function (req, res) {
       for (let i = 0; i < data.length; i++) {
         for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
           if (
-            data[i][getattributebypid[0].loopLabel[x] + "_" + qidx] != -1 && filterBreak1(i)  && filterLogic(i)
+            data[i][getattributebypid[0].loopLabel[x] + "_" + qidx] != -1 &&
+            filterBreak1(i) &&
+            filterLogic(i)
           )
             for (let z = 0; z < labelAttr.length; z++) {
               if (
@@ -491,9 +501,6 @@ exports.dataByBreak = async function (req, res) {
     });
   }
 };
-
-
-
 
 exports.getSliceData = async function (req, res) {
   var qidx = req.params.qidx;
