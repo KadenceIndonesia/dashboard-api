@@ -143,8 +143,7 @@ exports.getApiData = async function (req, res) {
       for (let i = 0; i < data.length; i++) {
         for (let y = 1; y <= getattributebypid[0].attribute.length; y++) {
           if (
-            data[i][qidx + "_O" + y] != -1 &&
-            data[i][qidx + "_O" + y] < getattributebypid[0].attribute.length
+            data[i][qidx + "_O" + y] != -1
           ) {
             for (let z = 0; z < labelAttr.length; z++) {
               if (labelAttr[z].code == data[i][qidx + "_O" + y]) {
