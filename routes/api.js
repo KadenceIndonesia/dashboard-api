@@ -1,6 +1,8 @@
 const express = require("express");
 const apiControllers = require("../controllers/api")
 const textMiningControllers = require("../controllers/textMining")
+const topbreakControllers = require("../controllers/topbreak");
+const achievementControllers = require("../controllers/achievement");
 const Router = express()
 const Project = require("../models/project")
 
@@ -21,6 +23,16 @@ Router.get("/:pid/topbreak/break/:qidx/", apiControllers.topbreakByBreak);
 // text mining
 Router.get("/:pid/textmining/:qidx/save/", textMiningControllers.textMining);
 Router.get("/:pid/textmining/:qidx/read", textMiningControllers.textMiningRead);
+
+// topbreak
+Router.get("/topbreak/:pid/", topbreakControllers.getTopbreak);
+Router.get("/topbreak/:pid/:qidx", topbreakControllers.getTopbreakByQidx);
+Router.get("/topbreak/attribute/:pid/:qidx", topbreakControllers.getTopbreakAttributes);
+
+
+//achievement
+Router.get("/achievement/:pid/", achievementControllers.getAchievementData);
+Router.get("/achievement/:pid/:qidx", achievementControllers.achievementByQidx);
 
 
 

@@ -7,7 +7,6 @@ const fs = require("fs");
 const path = require("path");
 const xslx = require("xlsx");
 const attributes = require("../models/attributes");
-const { createProxyMiddleware } = require("http-proxy-middleware");
 require("../lib/index");
 
 global.excelData = function (pid) {
@@ -90,18 +89,7 @@ global.getReportsByID = function (pid, qidx) {
   });
 };
 
-global.topbreakByQid = function (pid, qidx) {
-  return new Promise((resolve) => {
-    Projects.findOne({ projectID: pid, "topbreak.quest": qidx })
-      .exec()
-      .then((result) => {
-        resolve(result.topbreak);
-      })
-      .catch((error) => {
-        resolve(error);
-      });
-  });
-};
+
 
 exports.getApi = async function (req, res) {
   var data = await excelData();
@@ -884,6 +872,7 @@ exports.getAttributeData = async function (req, res) {
 };
 
 exports.getTopBreak = async function (req, res) {
+  console.log("getoopbreak")
   var qidx = req.params.qidx;
   var pid = req.params.pid;
   var topbreak = await topbreakByQid(pid, qidx);
