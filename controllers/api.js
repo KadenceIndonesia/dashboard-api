@@ -216,6 +216,25 @@ exports.getApiData = async function (req, res) {
           }
         }
       }
+    } else if (getattributebypid[0].type == "GRIDSA") {
+      labelAttr = getattributebypid[0].attribute;
+      for (let i = 0; i < data.length; i++) {
+        for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
+          if (data[i][`T_${qidx}_${x + 1}`] != -1) {
+            var splitCode = getattributebypid[0].loopLabel[x].split(".");
+            var parentCode = parseInt(splitCode);
+            rawdata.push({
+              sbjnum: data[i]["SbjNum"],
+              code: parseInt(data[i][`T_${qidx}_${x + 1}`]),
+              label: labelAttr[data[i][`T_${qidx}_${x + 1}`] - 1].label,
+              parentlabel: getattributebypid[0].loopLabel[x],
+              parentcode: parentCode,
+              kota: data[i]["Kota"],
+              y: 1,
+            });
+          }
+        }
+      }
     } else if (getattributebypid[0].type == "OE") {
       for (let i = 0; i < data.length; i++) {
         rawdata.push({
@@ -337,6 +356,28 @@ exports.getDataByBreak = async function (req, res) {
                 }
               }
             }
+          }
+        }
+      }
+    } else if (getattributebypid[0].type == "GRIDSA") {
+      labelAttr = getattributebypid[0].attribute;
+      for (let i = 0; i < data.length; i++) {
+        for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
+          if (
+            data[i][`T_${qidx}_${x + 1}`] != -1 &&
+            data[i][topbreak] == breakCode
+          ) {
+            var splitCode = getattributebypid[0].loopLabel[x].split(".");
+            var parentCode = parseInt(splitCode);
+            rawdata.push({
+              sbjnum: data[i]["SbjNum"],
+              code: parseInt(data[i][`T_${qidx}_${x + 1}`]),
+              label: labelAttr[data[i][`T_${qidx}_${x + 1}`] - 1].label,
+              parentlabel: getattributebypid[0].loopLabel[x],
+              parentcode: parentCode,
+              kota: data[i]["Kota"],
+              y: 1,
+            });
           }
         }
       }
@@ -486,6 +527,29 @@ exports.dataByBreak = async function (req, res) {
                 }
               }
             }
+          }
+        }
+      }
+    } else if (getattributebypid[0].type == "GRIDSA") {
+      labelAttr = getattributebypid[0].attribute;
+      for (let i = 0; i < data.length; i++) {
+        for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
+          if (
+            data[i][`T_${qidx}_${x + 1}`] != -1 &&
+            filterBreak1(i) &&
+            filterLogic(i)
+          ) {
+            var splitCode = getattributebypid[0].loopLabel[x].split(".");
+            var parentCode = parseInt(splitCode);
+            rawdata.push({
+              sbjnum: data[i]["SbjNum"],
+              code: parseInt(data[i][`T_${qidx}_${x + 1}`]),
+              label: labelAttr[data[i][`T_${qidx}_${x + 1}`] - 1].label,
+              parentlabel: getattributebypid[0].loopLabel[x],
+              parentcode: parentCode,
+              kota: data[i]["Kota"],
+              y: 1,
+            });
           }
         }
       }
@@ -743,6 +807,52 @@ exports.topbreakByBreak = async function (req, res) {
                 }
               }
             }
+          }
+        }
+      }
+    } else if (getattributebypid[0].type == "GRIDSA") {
+      labelAttr = getattributebypid[0].attribute;
+      for (let i = 0; i < data.length; i++) {
+        for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
+          if (
+            data[i][`T_${qidx}_${x + 1}`] != -1 &&
+            filterBreak1(i) &&
+            filterLogic(i)
+          ) {
+            var splitCode = getattributebypid[0].loopLabel[x].split(".");
+            var parentCode = parseInt(splitCode);
+            rawdata.push({
+              sbjnum: data[i]["SbjNum"],
+              code: parseInt(data[i][`T_${qidx}_${x + 1}`]),
+              label: labelAttr[data[i][`T_${qidx}_${x + 1}`] - 1].label,
+              parentlabel: getattributebypid[0].loopLabel[x],
+              parentcode: parentCode,
+              y: 1,
+              [project[0].topbreak[0].label]:
+                labelAttrS0[
+                  await findObj(
+                    labelAttrS0,
+                    "code",
+                    data[i][project[0].topbreak[0].quest]
+                  )
+                ].label,
+              [project[0].topbreak[1].label]:
+                labelAttrPR7a[
+                  await findObj(
+                    labelAttrPR7a,
+                    "code",
+                    data[i][project[0].topbreak[1].quest]
+                  )
+                ].label,
+              [project[0].topbreak[2].label]:
+                labelAttrS7[
+                  await findObj(
+                    labelAttrS7,
+                    "code",
+                    data[i][project[0].topbreak[2].quest]
+                  )
+                ].label,
+            });
           }
         }
       }
