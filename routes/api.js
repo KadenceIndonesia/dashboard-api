@@ -12,7 +12,10 @@ Router.get("/:pid/data/:qidx/slice", apiControllers.getSliceData);
 Router.get("/:pid/data/:qidx/attribute", apiControllers.getAttributeData);
 Router.get("/:pid/data/:qidx/break/:break/:code", apiControllers.getDataByBreak);
 Router.post("/:pid/data/:qidx/break/", apiControllers.dataByBreak);
+
+
 Router.get("/:pid/topbreak/:qidx", apiControllers.getTopBreak);
+Router.get("/:pid/topbreak/break/:qidx/", apiControllers.topbreakByBreak);
 
 
 // text mining
