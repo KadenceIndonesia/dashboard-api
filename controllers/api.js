@@ -804,6 +804,7 @@ exports.topbreakByBreak = async function (req, res) {
         for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
           if (
             data[i][`T_${qidx}_${x + 1}`] != -1 &&
+            data[i][`T_${qidx}_${x + 1}`] != 98 &&
             filterBreak1(i) &&
             filterLogic(i)
           ) {
