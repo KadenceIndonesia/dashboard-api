@@ -580,7 +580,7 @@ exports.topbreakByBreak = async function (req, res) {
   )[0].attribute;
 
   const filterBreak1 = (i) => {
-    if (code1 != "") {
+    if (code1) {
       return data[i][break1] == code1;
     } else {
       return " ";
@@ -588,11 +588,11 @@ exports.topbreakByBreak = async function (req, res) {
   };
 
   const filterLogic = (i) => {
-    if (code2 != "" && code3 == "") {
+    if (code2 && !code3) {
       return data[i][break2] == code2;
-    } else if (code2 == "" && code3 != "") {
+    } else if (!code2 && code3) {
       return data[i][break3] == code3;
-    } else if (code2 != "" && code3 != "") {
+    } else if (code2 && code3) {
       return data[i][break2] == code2 && data[i][break3] == code3;
     } else {
       return " ";
