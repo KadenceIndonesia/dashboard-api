@@ -3,6 +3,7 @@ const apiControllers = require("../controllers/api")
 const textMiningControllers = require("../controllers/textMining")
 const topbreakControllers = require("../controllers/topbreak");
 const achievementControllers = require("../controllers/achievement");
+const customControllers = require("../controllers/custom");
 const Router = express()
 const Project = require("../models/project")
 
@@ -35,6 +36,9 @@ Router.get("/achievement/:pid/", achievementControllers.getAchievementData);
 Router.get("/achievement/break/:pid", achievementControllers.achievementByTopbreak);
 Router.get("/achievement/:pid/:qidx", achievementControllers.achievementByQidx);
 
+
+//custom
+Router.get("/custom/:pid/:qidx", customControllers.getCustomGroupData);
 
 
 module.exports = Router;
