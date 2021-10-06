@@ -872,7 +872,6 @@ exports.getAttributeData = async function (req, res) {
 };
 
 exports.getTopBreak = async function (req, res) {
-  console.log("getoopbreak")
   var qidx = req.params.qidx;
   var pid = req.params.pid;
   var topbreak = await topbreakByQid(pid, qidx);
