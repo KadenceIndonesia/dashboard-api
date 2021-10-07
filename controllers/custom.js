@@ -28,10 +28,18 @@ exports.getCustomGroupData = async function (req, res) {
         if (data[i][qidx] != -1) {
           for (let x = 0; x < labelAttr.length; x++) {
             if (labelAttr[x].code == data[i][qidx]) {
+              if (
+                parseInt(labelAttr[x].code) == 1 ||
+                parseInt(labelAttr[x].code) == 2
+              ) {
+                var Group = "Aware";
+              } else {
+                var Group = "Not Aware";
+              }
               rawdata.push({
                 sbjnum: data[i]["SbjNum"],
                 code: parseInt(labelAttr[x].code),
-                label: labelAttr[x].label,
+                label: Group,
                 y: 1,
                 [project[0].topbreak[0].label]:
                   labelAttrS0[
