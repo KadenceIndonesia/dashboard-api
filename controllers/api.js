@@ -89,8 +89,6 @@ global.getReportsByID = function (pid, qidx) {
   });
 };
 
-
-
 exports.getApi = async function (req, res) {
   var data = await excelData();
 };
@@ -870,6 +868,43 @@ exports.getAttributeData = async function (req, res) {
     attribute.push(getattributebypid[0].attribute[i]);
   }
   res.status(200).json(attribute);
+};
+
+exports.getAttributeDataByCode = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const qidx = req.params.qidx;
+    const code = req.params.code;
+    const project = await projectByPid(pid);
+    if (project.length > 0) {
+      var getattributebypid = await getAttributesByPid(pid, qidx);
+      if (getattributebypid.length > 0) {
+        var findCode = await findObj(getattributebypid[0].attribute, 'code', parseInt(code));
+        if(findCode != -1){
+          res.status(200).send({
+            projectID: pid,
+            questionID: qidx,
+            code: code,
+            label: getattributebypid[0].attribute[findCode].label
+          })
+        }else{
+          res.status(404).send({
+            messages: "Code not found",
+          });
+        }
+      } else {
+        res.status(404).send({
+          messages: "Question not found",
+        });
+      }
+    } else {
+      res.status(404).send({
+        messages: "Project not found",
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
 };
 
 exports.getTopBreak = async function (req, res) {

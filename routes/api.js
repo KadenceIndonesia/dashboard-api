@@ -13,6 +13,7 @@ Router.get("/:pid/data/:qidx", apiControllers.getApiData);
 Router.get("/:pid/data/:qidx/topbreak", apiControllers.getDataTopbreak);
 Router.get("/:pid/data/:qidx/slice", apiControllers.getSliceData);
 Router.get("/:pid/data/:qidx/attribute", apiControllers.getAttributeData);
+Router.get("/:pid/data/:qidx/attribute/:code", apiControllers.getAttributeDataByCode);
 Router.get("/:pid/data/:qidx/break/:break/:code", apiControllers.getDataByBreak);
 Router.post("/:pid/data/:qidx/break/", apiControllers.dataByBreak);
 
