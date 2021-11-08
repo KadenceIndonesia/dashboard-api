@@ -40,8 +40,10 @@ exports.achievementByQidx = async function (req, res) {
           });
         }
         for (let i = 0; i < data.length; i++) {
-          var findOnObject = await findObj(rawdata, "code", data[i][qidx]);
-          rawdata[findOnObject].y++;
+          if (data[i][qidx] != -1) {
+            var findOnObject = await findObj(rawdata, "code", data[i][qidx]);
+            rawdata[findOnObject].y++;
+          }
         }
         res.status(200).send(rawdata);
       } else {
