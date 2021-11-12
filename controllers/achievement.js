@@ -114,3 +114,45 @@ exports.achievementByTopbreak = async function (req, res) {
     res.status(400).send(error);
   }
 };
+
+
+exports.achievementByFilter = async function(req,res){
+  try {
+    const pid = req.params.pid;
+    const qidx = req.params.qidx;
+    const filter = req.params.filter;
+    const value = req.params.value;
+    const project = await projectByPid(pid);
+    var attribute = await attributeByQidx(pid, qidx);
+    if (project.length > 0) {
+      if (attribute) {
+        var data = await excelData(pid);
+        var rawdata = [];
+        for (let i = 0; i < attribute.attribute.length; i++) {
+          rawdata.push({
+            code: attribute.attribute[i].code,
+            label: attribute.attribute[i].label,
+            y: 0,
+          });
+        }
+        for (let i = 0; i < data.length; i++) {
+          if (data[i][qidx] != -1 && data[i][filter]==value) {
+            var findOnObject = await findObj(rawdata, "code", data[i][qidx]);
+            rawdata[findOnObject].y++;
+          }
+        }
+        res.status(200).send(rawdata);
+      } else {
+        res.status(404).send({
+          messages: "Question not found",
+        });
+      }
+    } else {
+      res.status(404).send({
+        messages: "Project not found",
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+}

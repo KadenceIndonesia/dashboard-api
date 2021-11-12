@@ -36,6 +36,7 @@ Router.get("/topbreak/attribute/:pid/:qidx", topbreakControllers.getTopbreakAttr
 Router.get("/achievement/:pid/", achievementControllers.getAchievementData);
 Router.get("/achievement/break/:pid", achievementControllers.achievementByTopbreak);
 Router.get("/achievement/:pid/:qidx", achievementControllers.achievementByQidx);
+Router.get("/achievement/:pid/:qidx/:filter/:value", achievementControllers.achievementByFilter);
 
 
 //custom
