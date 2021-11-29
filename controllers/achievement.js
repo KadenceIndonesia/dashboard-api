@@ -39,9 +39,9 @@ exports.achievementByQidx = async function (req, res) {
             y: 0,
           });
         }
-        for (let i = 0; i < data.length; i++) {
-          if (data[i][qidx] != -1) {
-            var findOnObject = await findObj(rawdata, "code", data[i][qidx]);
+        for (let x = 0; x < data.length; x++) {
+          if (data[x][qidx] != -1) {
+            var findOnObject = await findObj(rawdata, "code", parseInt(data[x][qidx]));;
             rawdata[findOnObject].y++;
           }
         }
@@ -73,6 +73,7 @@ exports.achievementByTopbreak = async function (req, res) {
     var code3 = req.query.code3;
     const project = await projectByPid(pid);
     var attribute = await attributeByQidx(pid, qidx);
+    console.log(code2);
     var countData = 0;
     if (project.length > 0) {
       var data = await excelData(pid);
