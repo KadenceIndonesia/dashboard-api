@@ -32,15 +32,14 @@ exports.achievementByQidx = async function (req, res) {
       if (attribute) {
         var data = await excelData(pid);
         var rawdata = [];
-        for (let i = 0; i < attribute.attribute.length; i++) {
-          rawdata.push({
-            code: attribute.attribute[i].code,
-            label: attribute.attribute[i].label,
-            y: 0,
-          });
-        }
-
         if (attribute.type === "SA") {
+          for (let i = 0; i < attribute.attribute.length; i++) {
+            rawdata.push({
+              code: attribute.attribute[i].code,
+              label: attribute.attribute[i].label,
+              y: 0,
+            });
+          }
           for (let x = 0; x < data.length; x++) {
             var findOnObject = await findObj(
               rawdata,
@@ -52,6 +51,13 @@ exports.achievementByQidx = async function (req, res) {
             }
           }
         } else if (attribute.type === "MA") {
+          for (let i = 0; i < attribute.attribute.length; i++) {
+            rawdata.push({
+              code: attribute.attribute[i].code,
+              label: attribute.attribute[i].label,
+              y: 0,
+            });
+          }
           for (let x = 0; x < data.length; x++) {
             for (let y = 1; y <= attribute.attribute.length; y++) {
               var findOnObject = await findObj(
@@ -65,28 +71,31 @@ exports.achievementByQidx = async function (req, res) {
             }
           }
         } else if (attribute.type === "GRIDSA") {
-          var rawdataTopics = [];
-          // for (let i = 0; i < attribute.loopLabel.length; i++) {
-          //   rawdata.push({
-          //     code: attribute.loopLabel[i].code,
-          //     label: attribute.loopLabel[i].label,
-          //     y: 0,
-          //   });
-          // }
-
-          
-          // for (let x = 0; x < data.length; x++) {
-          //   for (let y = 1; y <= attribute.attribute.length; y++) {
-          //     var findOnObject = await findObj(
-          //       rawdata,
-          //       "code",
-          //       parseInt(data[x][`T_${qidx}_${y}`])
-          //     );
-          //     if (findOnObject !== -1) {
-          //       rawdata[findOnObject].y++;
-          //     }
-          //   }
-          // }
+          for (let i = 0; i < attribute.loopLabel.length; i++) {
+            var rawdataAnswer = [];
+            for (let i = 0; i < attribute.attribute.length; i++) {
+              rawdataAnswer.push({
+                code: attribute.attribute[i].code,
+                label: attribute.attribute[i].label,
+                y: 0,
+              });
+            }
+            for (let x = 0; x < data.length; x++) {
+              var findOnObject = await findObj(
+                rawdataAnswer,
+                "code",
+                parseInt(data[x][`T_${qidx}_${attribute.loopLabel[i].code}`])
+              );
+              if (findOnObject !== -1) {
+                rawdataAnswer[findOnObject].y++;
+              }
+            }
+            rawdata.push({
+              code: attribute.loopLabel[i].code,
+              label: attribute.loopLabel[i].label,
+              y: rawdataAnswer,
+            });
+          }
         }
         res.status(200).send(rawdata);
       } else {
