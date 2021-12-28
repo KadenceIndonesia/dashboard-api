@@ -39,11 +39,54 @@ exports.achievementByQidx = async function (req, res) {
             y: 0,
           });
         }
-        for (let x = 0; x < data.length; x++) {
-          if (data[x][qidx] != -1) {
-            var findOnObject = await findObj(rawdata, "code", parseInt(data[x][qidx]));;
-            rawdata[findOnObject].y++;
+
+        if (attribute.type === "SA") {
+          for (let x = 0; x < data.length; x++) {
+            var findOnObject = await findObj(
+              rawdata,
+              "code",
+              parseInt(data[x][qidx])
+            );
+            if (findOnObject !== -1) {
+              rawdata[findOnObject].y++;
+            }
           }
+        } else if (attribute.type === "MA") {
+          for (let x = 0; x < data.length; x++) {
+            for (let y = 1; y <= attribute.attribute.length; y++) {
+              var findOnObject = await findObj(
+                rawdata,
+                "code",
+                parseInt(data[x][`${qidx}_O${y}`])
+              );
+              if (findOnObject !== -1) {
+                rawdata[findOnObject].y++;
+              }
+            }
+          }
+        } else if (attribute.type === "GRIDSA") {
+          var rawdataTopics = [];
+          // for (let i = 0; i < attribute.loopLabel.length; i++) {
+          //   rawdata.push({
+          //     code: attribute.loopLabel[i].code,
+          //     label: attribute.loopLabel[i].label,
+          //     y: 0,
+          //   });
+          // }
+
+          
+          // for (let x = 0; x < data.length; x++) {
+          //   for (let y = 1; y <= attribute.attribute.length; y++) {
+          //     var findOnObject = await findObj(
+          //       rawdata,
+          //       "code",
+          //       parseInt(data[x][`T_${qidx}_${y}`])
+          //     );
+          //     if (findOnObject !== -1) {
+          //       rawdata[findOnObject].y++;
+          //     }
+          //   }
+          // }
         }
         res.status(200).send(rawdata);
       } else {
@@ -116,8 +159,7 @@ exports.achievementByTopbreak = async function (req, res) {
   }
 };
 
-
-exports.achievementByFilter = async function(req,res){
+exports.achievementByFilter = async function (req, res) {
   try {
     const pid = req.params.pid;
     const qidx = req.params.qidx;
@@ -137,7 +179,7 @@ exports.achievementByFilter = async function(req,res){
           });
         }
         for (let i = 0; i < data.length; i++) {
-          if (data[i][qidx] != -1 && data[i][filter]==value) {
+          if (data[i][qidx] != -1 && data[i][filter] == value) {
             var findOnObject = await findObj(rawdata, "code", data[i][qidx]);
             rawdata[findOnObject].y++;
           }
@@ -156,4 +198,4 @@ exports.achievementByFilter = async function(req,res){
   } catch (error) {
     res.status(400).send(error);
   }
-}
+};
