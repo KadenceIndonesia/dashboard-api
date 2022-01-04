@@ -12,10 +12,11 @@ Router.get("/:pid", apiControllers.getApiProject);
 Router.get("/:pid/data/:qidx", apiControllers.getApiData);
 Router.get("/:pid/data/:qidx/topbreak", apiControllers.getDataTopbreak);
 Router.get("/:pid/data/:qidx/slice", apiControllers.getSliceData);
+Router.get("/:pid/data/:qidx/looplabel", apiControllers.getLooplabelData);
 Router.get("/:pid/data/:qidx/attribute", apiControllers.getAttributeData);
 Router.get("/:pid/data/:qidx/attribute/:code", apiControllers.getAttributeDataByCode);
 Router.get("/:pid/data/:qidx/break/:break/:code", apiControllers.getDataByBreak);
-Router.post("/:pid/data/:qidx/break/", apiControllers.dataByBreak);
+Router.get("/:pid/data/:qidx/break/", apiControllers.dataByBreak);
 
 
 Router.get("/:pid/topbreak/:qidx", apiControllers.getTopBreak);
@@ -41,6 +42,8 @@ Router.get("/achievement/:pid/:qidx/:filter/:value", achievementControllers.achi
 
 //custom
 Router.get("/custom/:pid/:qidx", customControllers.getCustomGroupData);
+Router.get("/custom/:pid/:qidx/nps/:break", customControllers.getNPSDataBreaks);
+Router.get("/custom/:pid/:qidx/nps", customControllers.getNPSData);
 
 
 module.exports = Router;

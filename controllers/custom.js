@@ -1,6 +1,19 @@
 require("../lib/dataExcel");
 require("../lib/index");
 
+global.getProjectByPid = function (pid) {
+  return new Promise((resolve) => {
+    Project.find({ projectID: pid })
+      .exec()
+      .then((result) => {
+        resolve(result);
+      })
+      .catch((err) => {
+        resolve(err);
+      });
+  });
+};
+
 exports.getCustomGroupData = async function (req, res) {
   var qidx = req.params.qidx;
   var pid = req.params.pid;
@@ -233,6 +246,86 @@ exports.getCustomGroupData = async function (req, res) {
   } else {
     res.status(404).json({
       message: "question not found",
+    });
+  }
+};
+
+exports.getNPSDataBreaks = async function (req, res) {
+  var pid = req.params.pid;
+  var qidx = req.params.qidx;
+  var breaks = req.params.break;
+  const project = await projectByPid(pid);
+  if (project.length > 0) {
+    var attribute = await attributeByQidx(pid, qidx);
+    var attributeBreaks = await attributeByQidx(pid, breaks);
+    if (attribute && attributeBreaks) {
+      var rawdata = [];
+      for (let i = 0; i < attributeBreaks.attribute.length; i++) {
+        rawdata.push({
+          code: attributeBreaks.attribute[i].code,
+          label: attributeBreaks.attribute[i].label,
+          count: 0,
+          y: 0,
+        });
+      }
+      var data = await excelData(pid);
+      for (let i = 0; i < data.length; i++) {
+        if (data[i][qidx] != -1 && data[i][breaks] != -1) {
+          var findOnObject = await findObj(rawdata, "code", data[i][breaks]);
+          rawdata[findOnObject].y =
+            rawdata[findOnObject].y + parseInt(data[i][qidx]);
+          rawdata[findOnObject].count++;
+        }
+      }
+      res.status(200).send(rawdata);
+    } else {
+      res.status(404).send({
+        messages: "Question not found",
+      });
+    }
+  } else {
+    res.status(404).send({
+      messages: "Project not found",
+    });
+  }
+};
+
+exports.getNPSData = async function (req, res) {
+  var pid = req.params.pid;
+  var qidx = req.params.qidx;
+  const project = await projectByPid(pid);
+  if (project.length > 0) {
+    var attribute = await attributeByQidx(pid, qidx);
+    if (attribute) {
+      var rawdata = [];
+      for (let i = 0; i < attribute.loopLabel.length; i++) {
+        rawdata.push({
+          code: attribute.loopLabel[i].code,
+          label: attribute.loopLabel[i].label,
+          count: 0,
+          y: 0,
+        });
+      }
+      var data = await excelData(pid);
+      for (let i = 0; i < data.length; i++) {
+        for (let x = 0; x < attribute.loopLabel.length; x++) {
+          if (data[i][`T_${qidx}_${attribute.loopLabel[x].code}`] != -1) {
+            rawdata[x].y =
+              rawdata[x].y +
+              parseInt(data[i][`T_${qidx}_${attribute.loopLabel[x].code}`]);
+            rawdata[x].count++;
+          }
+        }
+      }
+      res.status(200).send(rawdata);
+    } else {
+      res.status(404).send({
+        messages: "Question not found",
+      });
+    }
+  } else {
+    res.status(404).send({
+      messages: "Project not found",
     });
   }
 };

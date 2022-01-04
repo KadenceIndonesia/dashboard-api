@@ -125,7 +125,6 @@ exports.achievementByTopbreak = async function (req, res) {
     var code3 = req.query.code3;
     const project = await projectByPid(pid);
     var attribute = await attributeByQidx(pid, qidx);
-    console.log(code2);
     var countData = 0;
     if (project.length > 0) {
       var data = await excelData(pid);

@@ -389,6 +389,7 @@ exports.dataByBreak = async function (req, res) {
   var getattributebypid = await getAttributesByPid(pid, qidx);
   var rawdata = [];
   var labelAttr;
+  console.log("dataByBreak")
 
   const filterBreak1 = (i) => {
     if (code1 != "all") {
@@ -866,6 +867,17 @@ exports.getAttributeData = async function (req, res) {
   var attribute = [];
   for (let i = 0; i < getattributebypid[0].attribute.length; i++) {
     attribute.push(getattributebypid[0].attribute[i]);
+  }
+  res.status(200).json(attribute);
+};
+
+exports.getLooplabelData = async function (req, res) {
+  var qidx = req.params.qidx;
+  var pid = req.params.pid;
+  var getattributebypid = await getAttributesByPid(pid, qidx);
+  var attribute = [];
+  for (let i = 0; i < getattributebypid[0].loopLabel.length; i++) {
+    attribute.push(getattributebypid[0].loopLabel[i]);
   }
   res.status(200).json(attribute);
 };
