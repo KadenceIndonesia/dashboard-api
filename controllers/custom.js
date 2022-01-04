@@ -254,7 +254,34 @@ exports.getNPSDataBreaks = async function (req, res) {
   var pid = req.params.pid;
   var qidx = req.params.qidx;
   var breaks = req.params.break;
+  const break1 = req.query.break1;
+  const break2 = req.query.break2;
+  const break3 = req.query.break3;
+  var code1 = req.query.code1;
+  var code2 = req.query.code2;
+  var code3 = req.query.code3;
   const project = await projectByPid(pid);
+  const filterLogic = (x) => {
+    if (code1 && !code2 && !code3) {
+      return data[x][break1] == code1;
+    } else if (code1 && code2 && !code3) {
+      return data[x][break1] == code1 && data[x][break2] == code2;
+    } else if (code1 && code2 && code3) {
+      return (
+        data[x][break1] == code1 &&
+        data[x][break2] == code2 &&
+        data[x][break3] == code3
+      );
+    } else if (!code1 && code2 && !code3) {
+      return data[x][break2] == code2;
+    } else if (!code1 && code2 && code3) {
+      return data[x][break2] == code2 && data[x][break3] == code3;
+    } else if (!code1 && !code2 && code3) {
+      return data[x][break3] == code3;
+    } else {
+      return true;
+    }
+  };
   if (project.length > 0) {
     var attribute = await attributeByQidx(pid, qidx);
     var attributeBreaks = await attributeByQidx(pid, breaks);
@@ -269,12 +296,14 @@ exports.getNPSDataBreaks = async function (req, res) {
         });
       }
       var data = await excelData(pid);
-      for (let i = 0; i < data.length; i++) {
-        if (data[i][qidx] != -1 && data[i][breaks] != -1) {
-          var findOnObject = await findObj(rawdata, "code", data[i][breaks]);
-          rawdata[findOnObject].y =
-            rawdata[findOnObject].y + parseInt(data[i][qidx]);
-          rawdata[findOnObject].count++;
+      for (let x = 0; x < data.length; x++) {
+        if (filterLogic(x)) {
+          if (data[x][qidx] != -1 && data[x][breaks] != -1) {
+            var findOnObject = await findObj(rawdata, "code", data[x][breaks]);
+            rawdata[findOnObject].y =
+              rawdata[findOnObject].y + parseInt(data[x][qidx]);
+            rawdata[findOnObject].count++;
+          }
         }
       }
       res.status(200).send(rawdata);
@@ -293,6 +322,33 @@ exports.getNPSDataBreaks = async function (req, res) {
 exports.getNPSData = async function (req, res) {
   var pid = req.params.pid;
   var qidx = req.params.qidx;
+  const break1 = req.query.break1;
+  const break2 = req.query.break2;
+  const break3 = req.query.break3;
+  var code1 = req.query.code1;
+  var code2 = req.query.code2;
+  var code3 = req.query.code3;
+  const filterLogic = (i) => {
+    if (code1 && !code2 && !code3) {
+      return data[i][break1] == code1;
+    } else if (code1 && code2 && !code3) {
+      return data[i][break1] == code1 && data[i][break2] == code2;
+    } else if (code1 && code2 && code3) {
+      return (
+        data[i][break1] == code1 &&
+        data[i][break2] == code2 &&
+        data[i][break3] == code3
+      );
+    } else if (!code1 && code2 && !code3) {
+      return data[i][break2] == code2;
+    } else if (!code1 && code2 && code3) {
+      return data[i][break2] == code2 && data[i][break3] == code3;
+    } else if (!code1 && !code2 && code3) {
+      return data[i][break3] == code3;
+    } else {
+      return true;
+    }
+  };
   const project = await projectByPid(pid);
   if (project.length > 0) {
     var attribute = await attributeByQidx(pid, qidx);
@@ -308,12 +364,14 @@ exports.getNPSData = async function (req, res) {
       }
       var data = await excelData(pid);
       for (let i = 0; i < data.length; i++) {
-        for (let x = 0; x < attribute.loopLabel.length; x++) {
-          if (data[i][`T_${qidx}_${attribute.loopLabel[x].code}`] != -1) {
-            rawdata[x].y =
-              rawdata[x].y +
-              parseInt(data[i][`T_${qidx}_${attribute.loopLabel[x].code}`]);
-            rawdata[x].count++;
+        if (filterLogic(i)) {
+          for (let x = 0; x < attribute.loopLabel.length; x++) {
+            if (data[i][`T_${qidx}_${attribute.loopLabel[x].code}`] != -1) {
+              rawdata[x].y =
+                rawdata[x].y +
+                parseInt(data[i][`T_${qidx}_${attribute.loopLabel[x].code}`]);
+              rawdata[x].count++;
+            }
           }
         }
       }

@@ -26,6 +26,33 @@ exports.achievementByQidx = async function (req, res) {
   try {
     const pid = req.params.pid;
     const qidx = req.params.qidx;
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        return data[x][break1] == code1 && data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        return (
+          data[x][break1] == code1 &&
+          data[x][break2] == code2 &&
+          data[x][break3] == code3
+        );
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
     const project = await projectByPid(pid);
     var attribute = await attributeByQidx(pid, qidx);
     if (project.length > 0) {
@@ -41,13 +68,15 @@ exports.achievementByQidx = async function (req, res) {
             });
           }
           for (let x = 0; x < data.length; x++) {
-            var findOnObject = await findObj(
-              rawdata,
-              "code",
-              parseInt(data[x][qidx])
-            );
-            if (findOnObject !== -1) {
-              rawdata[findOnObject].y++;
+            if (filterLogic(x)) {
+              var findOnObject = await findObj(
+                rawdata,
+                "code",
+                parseInt(data[x][qidx])
+              );
+              if (findOnObject !== -1) {
+                rawdata[findOnObject].y++;
+              }
             }
           }
         } else if (attribute.type === "MA") {
@@ -59,14 +88,16 @@ exports.achievementByQidx = async function (req, res) {
             });
           }
           for (let x = 0; x < data.length; x++) {
-            for (let y = 1; y <= attribute.attribute.length; y++) {
-              var findOnObject = await findObj(
-                rawdata,
-                "code",
-                parseInt(data[x][`${qidx}_O${y}`])
-              );
-              if (findOnObject !== -1) {
-                rawdata[findOnObject].y++;
+            if (filterLogic(x)) {
+              for (let y = 1; y <= attribute.attribute.length; y++) {
+                var findOnObject = await findObj(
+                  rawdata,
+                  "code",
+                  parseInt(data[x][`${qidx}_O${y}`])
+                );
+                if (findOnObject !== -1) {
+                  rawdata[findOnObject].y++;
+                }
               }
             }
           }
@@ -81,13 +112,15 @@ exports.achievementByQidx = async function (req, res) {
               });
             }
             for (let x = 0; x < data.length; x++) {
-              var findOnObject = await findObj(
-                rawdataAnswer,
-                "code",
-                parseInt(data[x][`T_${qidx}_${attribute.loopLabel[i].code}`])
-              );
-              if (findOnObject !== -1) {
-                rawdataAnswer[findOnObject].y++;
+              if (filterLogic(x)) {
+                var findOnObject = await findObj(
+                  rawdataAnswer,
+                  "code",
+                  parseInt(data[x][`T_${qidx}_${attribute.loopLabel[i].code}`])
+                );
+                if (findOnObject !== -1) {
+                  rawdataAnswer[findOnObject].y++;
+                }
               }
             }
             rawdata.push({
