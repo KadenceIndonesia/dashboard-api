@@ -212,17 +212,39 @@ exports.achievementByFilter = async function (req, res) {
       if (attribute) {
         var data = await excelData(pid);
         var rawdata = [];
-        for (let i = 0; i < attribute.attribute.length; i++) {
-          rawdata.push({
-            code: attribute.attribute[i].code,
-            label: attribute.attribute[i].label,
-            y: 0,
-          });
-        }
-        for (let i = 0; i < data.length; i++) {
-          if (data[i][qidx] != -1 && data[i][filter] == value) {
-            var findOnObject = await findObj(rawdata, "code", data[i][qidx]);
-            rawdata[findOnObject].y++;
+        if (attribute.type === "SA") {
+          for (let i = 0; i < attribute.attribute.length; i++) {
+            rawdata.push({
+              code: attribute.attribute[i].code,
+              label: attribute.attribute[i].label,
+              y: 0,
+            });
+          }
+          for (let i = 0; i < data.length; i++) {
+            if (data[i][qidx] != -1 && data[i][filter] == parseInt(value)) {
+              var findOnObject = await findObj(rawdata, "code", data[i][qidx]);
+              rawdata[findOnObject].y++;
+            }
+          }
+        } else if (attribute.type === "MA") {
+          for (let i = 0; i < attribute.attribute.length; i++) {
+            rawdata.push({
+              code: attribute.attribute[i].code,
+              label: attribute.attribute[i].label,
+              y: 0,
+            });
+          }
+          for (let x = 0; x < data.length; x++) {
+            for (let y = 1; y <= attribute.attribute.length; y++) {
+              var findOnObject = await findObj(
+                rawdata,
+                "code",
+                parseInt(data[x][`${qidx}_O${y}`])
+              );
+              if (findOnObject !== -1 && data[x][filter] == parseInt(value)) {
+                rawdata[findOnObject].y++;
+              }
+            }
           }
         }
         res.status(200).send(rawdata);
