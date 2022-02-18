@@ -4,6 +4,7 @@ const textMiningControllers = require("../controllers/textMining")
 const topbreakControllers = require("../controllers/topbreak");
 const achievementControllers = require("../controllers/achievement");
 const customControllers = require("../controllers/custom");
+const splitControllers = require("../controllers/split");
 const Router = express()
 const Project = require("../models/project")
 
@@ -44,6 +45,10 @@ Router.get("/achievement/:pid/:qidx/:filter/:value", achievementControllers.achi
 Router.get("/custom/:pid/:qidx", customControllers.getCustomGroupData);
 Router.get("/custom/:pid/:qidx/nps/:break", customControllers.getNPSDataBreaks);
 Router.get("/custom/:pid/:qidx/nps", customControllers.getNPSData);
+
+
+//split
+Router.post("/split/:pid", splitControllers.getSplitData);
 
 
 module.exports = Router;

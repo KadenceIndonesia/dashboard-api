@@ -938,12 +938,12 @@ exports.getDataTopbreak = async function (req, res) {
   var labelAttrS0 = (
     await getattributebyqidx(pid, project[0].topbreak[0].quest)
   )[0].attribute;
-  var labelAttrPR7a = (
-    await getattributebyqidx(pid, project[0].topbreak[1].quest)
-  )[0].attribute;
-  var labelAttrS7 = (
-    await getattributebyqidx(pid, project[0].topbreak[2].quest)
-  )[0].attribute;
+  // var labelAttrPR7a = (
+  //   await getattributebyqidx(pid, project[0].topbreak[1].quest)
+  // )[0].attribute;
+  // var labelAttrS7 = (
+  //   await getattributebyqidx(pid, project[0].topbreak[2].quest)
+  // )[0].attribute;
   var rawdata = [];
   var labelAttr;
   if (getattributebypid.length > 0) {
@@ -952,7 +952,7 @@ exports.getDataTopbreak = async function (req, res) {
       for (let i = 0; i < data.length; i++) {
         if (data[i][qidx] != -1) {
           for (let x = 0; x < labelAttr.length; x++) {
-            if (labelAttr[x].code == data[i][qidx]) {
+            if (labelAttr[x].code == data[i][qidx] && data[i][project[0].topbreak[0].quest] !== -1) {
               rawdata.push({
                 sbjnum: data[i]["SbjNum"],
                 code: parseInt(labelAttr[x].code),
@@ -964,22 +964,6 @@ exports.getDataTopbreak = async function (req, res) {
                       labelAttrS0,
                       "code",
                       data[i][project[0].topbreak[0].quest]
-                    )
-                  ].label,
-                [project[0].topbreak[1].label]:
-                  labelAttrPR7a[
-                    await findObj(
-                      labelAttrPR7a,
-                      "code",
-                      data[i][project[0].topbreak[1].quest]
-                    )
-                  ].label,
-                [project[0].topbreak[2].label]:
-                  labelAttrS7[
-                    await findObj(
-                      labelAttrS7,
-                      "code",
-                      data[i][project[0].topbreak[2].quest]
                     )
                   ].label,
               });
@@ -1007,22 +991,22 @@ exports.getDataTopbreak = async function (req, res) {
                         data[i][project[0].topbreak[0].quest]
                       )
                     ].label,
-                  [project[0].topbreak[1].label]:
-                    labelAttrPR7a[
-                      await findObj(
-                        labelAttrPR7a,
-                        "code",
-                        data[i][project[0].topbreak[1].quest]
-                      )
-                    ].label,
-                  [project[0].topbreak[2].label]:
-                    labelAttrS7[
-                      await findObj(
-                        labelAttrS7,
-                        "code",
-                        data[i][project[0].topbreak[2].quest]
-                      )
-                    ].label,
+                  // [project[0].topbreak[1].label]:
+                  //   labelAttrPR7a[
+                  //     await findObj(
+                  //       labelAttrPR7a,
+                  //       "code",
+                  //       data[i][project[0].topbreak[1].quest]
+                  //     )
+                  //   ].label,
+                  // [project[0].topbreak[2].label]:
+                  //   labelAttrS7[
+                  //     await findObj(
+                  //       labelAttrS7,
+                  //       "code",
+                  //       data[i][project[0].topbreak[2].quest]
+                  //     )
+                  //   ].label,
                 });
               }
             }
@@ -1056,22 +1040,22 @@ exports.getDataTopbreak = async function (req, res) {
                         data[i][project[0].topbreak[0].quest]
                       )
                     ].label,
-                  [project[0].topbreak[1].label]:
-                    labelAttrPR7a[
-                      await findObj(
-                        labelAttrPR7a,
-                        "code",
-                        data[i][project[0].topbreak[1].quest]
-                      )
-                    ].label,
-                  [project[0].topbreak[2].label]:
-                    labelAttrS7[
-                      await findObj(
-                        labelAttrS7,
-                        "code",
-                        data[i][project[0].topbreak[2].quest]
-                      )
-                    ].label,
+                  // [project[0].topbreak[1].label]:
+                  //   labelAttrPR7a[
+                  //     await findObj(
+                  //       labelAttrPR7a,
+                  //       "code",
+                  //       data[i][project[0].topbreak[1].quest]
+                  //     )
+                  //   ].label,
+                  // [project[0].topbreak[2].label]:
+                  //   labelAttrS7[
+                  //     await findObj(
+                  //       labelAttrS7,
+                  //       "code",
+                  //       data[i][project[0].topbreak[2].quest]
+                  //     )
+                  //   ].label,
                 });
               }
             }
@@ -1112,22 +1096,22 @@ exports.getDataTopbreak = async function (req, res) {
                           data[i][project[0].topbreak[0].quest]
                         )
                       ].label,
-                    [project[0].topbreak[1].label]:
-                      labelAttrPR7a[
-                        await findObj(
-                          labelAttrPR7a,
-                          "code",
-                          data[i][project[0].topbreak[1].quest]
-                        )
-                      ].label,
-                    [project[0].topbreak[2].label]:
-                      labelAttrS7[
-                        await findObj(
-                          labelAttrS7,
-                          "code",
-                          data[i][project[0].topbreak[2].quest]
-                        )
-                      ].label,
+                    // [project[0].topbreak[1].label]:
+                    //   labelAttrPR7a[
+                    //     await findObj(
+                    //       labelAttrPR7a,
+                    //       "code",
+                    //       data[i][project[0].topbreak[1].quest]
+                    //     )
+                    //   ].label,
+                    // [project[0].topbreak[2].label]:
+                    //   labelAttrS7[
+                    //     await findObj(
+                    //       labelAttrS7,
+                    //       "code",
+                    //       data[i][project[0].topbreak[2].quest]
+                    //     )
+                    //   ].label,
                   });
                 }
               }
