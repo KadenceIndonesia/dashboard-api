@@ -389,7 +389,7 @@ exports.dataByBreak = async function (req, res) {
   var getattributebypid = await getAttributesByPid(pid, qidx);
   var rawdata = [];
   var labelAttr;
-  console.log("dataByBreak")
+  console.log("dataByBreak");
 
   const filterBreak1 = (i) => {
     if (code1 != "all") {
@@ -891,15 +891,19 @@ exports.getAttributeDataByCode = async function (req, res) {
     if (project.length > 0) {
       var getattributebypid = await getAttributesByPid(pid, qidx);
       if (getattributebypid.length > 0) {
-        var findCode = await findObj(getattributebypid[0].attribute, 'code', parseInt(code));
-        if(findCode != -1){
+        var findCode = await findObj(
+          getattributebypid[0].attribute,
+          "code",
+          parseInt(code)
+        );
+        if (findCode != -1) {
           res.status(200).send({
             projectID: pid,
             questionID: qidx,
             code: code,
-            label: getattributebypid[0].attribute[findCode].label
-          })
-        }else{
+            label: getattributebypid[0].attribute[findCode].label,
+          });
+        } else {
           res.status(404).send({
             messages: "Code not found",
           });
@@ -929,6 +933,31 @@ exports.getTopBreak = async function (req, res) {
 exports.getDataTopbreak = async function (req, res) {
   var qidx = req.params.qidx;
   var pid = req.params.pid;
+  var break1 = req.query.break1;
+  var code1 = req.query.code1;
+  var break2 = req.query.break2;
+  var code2 = req.query.code2;
+  var break3 = req.query.break3;
+  var code3 = req.query.code3;
+  const filterBreak1 = (i) => {
+    if (code1) {
+      return data[i][break1] == code1;
+    } else {
+      return " ";
+    }
+  };
+
+  const filterLogic = (i) => {
+    if (code2 && !code3) {
+      return data[i][break2] == code2;
+    } else if (!code2 && code3) {
+      return data[i][break3] == code3;
+    } else if (code2 && code3) {
+      return data[i][break2] == code2 && data[i][break3] == code3;
+    } else {
+      return " ";
+    }
+  };
   var data = await excelData(pid);
   var project = await projectByPid(pid);
   var getattributebypid = await getAttributesByPid(pid, qidx);
@@ -950,9 +979,12 @@ exports.getDataTopbreak = async function (req, res) {
     if (getattributebypid[0].type == "SA") {
       labelAttr = getattributebypid[0].attribute;
       for (let i = 0; i < data.length; i++) {
-        if (data[i][qidx] != -1) {
+        if (data[i][qidx] != -1 && filterBreak1(i) && filterLogic(i)) {
           for (let x = 0; x < labelAttr.length; x++) {
-            if (labelAttr[x].code == data[i][qidx] && data[i][project[0].topbreak[0].quest] !== -1) {
+            if (
+              labelAttr[x].code == data[i][qidx] &&
+              data[i][project[0].topbreak[0].quest] !== -1
+            ) {
               rawdata.push({
                 sbjnum: data[i]["SbjNum"],
                 code: parseInt(labelAttr[x].code),
@@ -975,7 +1007,11 @@ exports.getDataTopbreak = async function (req, res) {
       labelAttr = getattributebypid[0].attribute;
       for (let i = 0; i < data.length; i++) {
         for (let y = 1; y <= getattributebypid[0].attribute.length; y++) {
-          if (data[i][qidx + "_O" + y] != -1) {
+          if (
+            data[i][qidx + "_O" + y] != -1 &&
+            filterBreak1(i) &&
+            filterLogic(i)
+          ) {
             for (let z = 0; z < labelAttr.length; z++) {
               if (labelAttr[z].code == data[i][qidx + "_O" + y]) {
                 rawdata.push({
@@ -1017,7 +1053,11 @@ exports.getDataTopbreak = async function (req, res) {
       labelAttr = getattributebypid[0].attribute;
       for (let i = 0; i < data.length; i++) {
         for (let x = 0; x < getattributebypid[0].loopLabel.length; x++) {
-          if (data[i][getattributebypid[0].loopLabel[x] + "_" + qidx] != -1)
+          if (
+            data[i][getattributebypid[0].loopLabel[x] + "_" + qidx] != -1 &&
+            filterBreak1(i) &&
+            filterLogic(i)
+          )
             for (let z = 0; z < labelAttr.length; z++) {
               if (
                 labelAttr[z].code ==
@@ -1069,7 +1109,9 @@ exports.getDataTopbreak = async function (req, res) {
             if (
               data[i][
                 getattributebypid[0].loopLabel[x] + "_" + qidx + "_O" + y
-              ] != -1
+              ] != -1 &&
+              filterBreak1(i) &&
+              filterLogic(i)
             ) {
               for (let z = 0; z < labelAttr.length; z++) {
                 if (
