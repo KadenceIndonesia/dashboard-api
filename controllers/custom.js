@@ -387,3 +387,89 @@ exports.getNPSData = async function (req, res) {
     });
   }
 };
+
+exports.getDataPropanaFlexmonster = async function (req, res) {
+  try {
+    const pid = "IDD3999";
+    const qidx = "Kelurahan";
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        return data[x][break1] == code1 && data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        return (
+          data[x][break1] == code1 &&
+          data[x][break2] == code2 &&
+          data[x][break3] == code3
+        );
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
+    const project = await projectByPid(pid);
+    var attribute = await attributeByQidx(pid, qidx);
+    if (project.length > 0) {
+      if (attribute) {
+        var data = await excelData(pid);
+        var rawdata = [];
+        if (attribute.type === "SA") {
+          for (let i = 0; i < attribute.attribute.length; i++) {
+            rawdata.push({
+              code: attribute.attribute[i].code,
+              label: attribute.attribute[i].label,
+              y: 0,
+              pangkalan: 0,
+              targetPangkalan: 0,
+              rekrutmen: 0,
+              sosialisasi: 0,
+              pembelian1: 0,
+              pembelian2: 0
+            });
+          }
+          for (let x = 0; x < data.length; x++) {
+            if (filterLogic(x)) {
+              var findOnObject = await findObj(
+                rawdata,
+                "code",
+                parseInt(data[x][qidx])
+              );
+              if (findOnObject !== -1) {
+                rawdata[findOnObject].y++;
+              }
+              if(data[x]["Q7"] == 1 || data[x]["Q7"] == 2 || data[x]["Q7"] == 1 || data[x]["Q7b"] == 2){
+                rawdata[findOnObject].pembelian1++;
+              }
+              if(data[x]["Q9"] == 1 || data[x]["Q9"] == 2 || data[x]["Q9"] == 1 || data[x]["Q9b"] == 2){
+                rawdata[findOnObject].pembelian2++;
+              }
+            }
+          }
+        } 
+        res.status(200).send(rawdata);
+      } else {
+        res.status(404).send({
+          messages: "Question not found",
+        });
+      }
+    } else {
+      res.status(404).send({
+        messages: "Project not found",
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
