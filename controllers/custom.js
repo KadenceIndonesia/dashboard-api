@@ -1,5 +1,6 @@
 require("../lib/dataExcel");
 require("../lib/index");
+require("../lib/dataPropana");
 
 global.getProjectByPid = function (pid) {
   return new Promise((resolve) => {
@@ -427,12 +428,13 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
         var rawdata = [];
         if (attribute.type === "SA") {
           for (let i = 0; i < attribute.attribute.length; i++) {
+            var pangkalan = getDataKelurahan(attribute.attribute[i].code)
             rawdata.push({
               code: attribute.attribute[i].code,
               label: attribute.attribute[i].label,
               y: 0,
-              pangkalan: 0,
-              targetPangkalan: 0,
+              pangkalan: pangkalan.pangkalan,
+              targetPangkalan: pangkalan.target,
               rekrutmen: 0,
               sosialisasi: 0,
               pembelian1: 0,
@@ -440,7 +442,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
             });
           }
           for (let x = 0; x < data.length; x++) {
-            if (filterLogic(x)) {
+            if (filterLogic(x) && data[x]["Kelurahan"]!=-1) {
               var findOnObject = await findObj(
                 rawdata,
                 "code",
@@ -454,6 +456,12 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
               }
               if(data[x]["Q9"] == 1 || data[x]["Q9"] == 2 || data[x]["Q9"] == 1 || data[x]["Q9b"] == 2){
                 rawdata[findOnObject].pembelian2++;
+              }
+              if(data[x]["S20"] == 3){
+                rawdata[findOnObject].rekrutmen++;
+              }
+              if(data[x]["Q1"] == 1){
+                rawdata[findOnObject].sosialisasi++;
               }
             }
           }
