@@ -57,10 +57,12 @@ Router.get("/custom/:pid/:qidx", customControllers.getCustomGroupData);
 Router.get("/custom/:pid/:qidx/nps/:break", customControllers.getNPSDataBreaks);
 Router.get("/custom/:pid/:qidx/nps", customControllers.getNPSData);
 
+//PROPANA
 Router.get(
   "/propana/flexmonster/",
   customControllers.getDataPropanaFlexmonster
 );
+Router.get("/propana/flexmonster/detail", customControllers.getDetailPropana);
 
 //split
 Router.post("/split/:pid", splitControllers.getSplitData);

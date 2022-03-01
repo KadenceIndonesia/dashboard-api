@@ -428,7 +428,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
         var rawdata = [];
         if (attribute.type === "SA") {
           for (let i = 0; i < attribute.attribute.length; i++) {
-            var pangkalan = getDataKelurahan(attribute.attribute[i].code)
+            var pangkalan = getDataKelurahan(attribute.attribute[i].code);
             rawdata.push({
               code: attribute.attribute[i].code,
               label: attribute.attribute[i].label,
@@ -438,11 +438,11 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
               rekrutmen: 0,
               sosialisasi: 0,
               pembelian1: 0,
-              pembelian2: 0
+              pembelian2: 0,
             });
           }
           for (let x = 0; x < data.length; x++) {
-            if (filterLogic(x) && data[x]["Kelurahan"]!=-1) {
+            if (filterLogic(x) && data[x]["Kelurahan"] != -1) {
               var findOnObject = await findObj(
                 rawdata,
                 "code",
@@ -451,21 +451,143 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
               if (findOnObject !== -1) {
                 rawdata[findOnObject].y++;
               }
-              if(data[x]["Q7"] == 1 || data[x]["Q7"] == 2 || data[x]["Q7"] == 1 || data[x]["Q7b"] == 2){
+              if (
+                data[x]["Q7"] == 1 ||
+                data[x]["Q7"] == 2 ||
+                data[x]["Q7"] == 1 ||
+                data[x]["Q7b"] == 2
+              ) {
                 rawdata[findOnObject].pembelian1++;
               }
-              if(data[x]["Q9"] == 1 || data[x]["Q9"] == 2 || data[x]["Q9"] == 1 || data[x]["Q9b"] == 2){
+              if (
+                data[x]["Q9"] == 1 ||
+                data[x]["Q9"] == 2 ||
+                data[x]["Q9"] == 1 ||
+                data[x]["Q9b"] == 2
+              ) {
                 rawdata[findOnObject].pembelian2++;
               }
-              if(data[x]["S20"] == 3){
+              if (data[x]["S20"] == 3) {
                 rawdata[findOnObject].rekrutmen++;
               }
-              if(data[x]["Q1"] == 1){
+              if (data[x]["Q1"] == 1) {
                 rawdata[findOnObject].sosialisasi++;
               }
             }
           }
-        } 
+        }
+        res.status(200).send(rawdata);
+      } else {
+        res.status(404).send({
+          messages: "Question not found",
+        });
+      }
+    } else {
+      res.status(404).send({
+        messages: "Project not found",
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getDetailPropana = async function (req, res) {
+  try {
+    const pid = "IDD3999";
+    const qidx = "Kelurahan";
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        return data[x][break1] == code1 && data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        return (
+          data[x][break1] == code1 &&
+          data[x][break2] == code2 &&
+          data[x][break3] == code3
+        );
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
+    const project = await projectByPid(pid);
+    var attribute = await attributeByQidx(pid, qidx);
+    if (project.length > 0) {
+      if (attribute) {
+        var data = await excelData(pid);
+        var rawdata = [];
+        if (attribute.type === "SA") {
+          for (let i = 0; i < attribute.attribute.length; i++) {
+            var pangkalan = getDataKelurahan(attribute.attribute[i].code);
+            // rawdata.push({
+            //   code: attribute.attribute[i].code,
+            //   label: attribute.attribute[i].label,
+            //   y: 0,
+            //   pangkalan: pangkalan.pangkalan,
+            //   targetPangkalan: pangkalan.target,
+            //   rekrutmen: 0,
+            //   sosialisasi: 0,
+            //   pembelian1: 0,
+            //   pembelian2: 0,
+            // });
+          }
+          for (let x = 0; x < data.length; x++) {
+            if (filterLogic(x) && data[x]["Kelurahan"] != -1) {
+              rawdata.push({
+                sbjnum: data[x]["SbjNum"],
+                nama: data[x]["U5A_NAMA"],
+                no_hp: data[x]["U5A_Tlp"],
+                my_pertamina: data[x]["Q2"] === 1 || data[x]["UA6A"] === 1 || data[x]["UA6B"] === 1 || data[x]["Q2g_2"] === 1 ? "Sudah" : "Belum",
+                smartphone: data[x]["UA1"] === 1 ? "ya" : data[x]["UA2"] === 1 ? "tidak" : "tidak",
+                pembelian1: data[x]["Q7"] === 1 || data[x]["Q7"] === 2 || data[x]["Q7d"] === 1 || data[x]["Q7d"] === 2 ? "Sudah" : "Belum",
+                pembelian2: "",
+              });
+              // var findOnObject = await findObj(
+              //   rawdata,
+              //   "code",
+              //   parseInt(data[x][qidx])
+              // );
+              // if (findOnObject !== -1) {
+              //   rawdata[findOnObject].y++;
+              // }
+              // if (
+              //   data[x]["Q7"] == 1 ||
+              //   data[x]["Q7"] == 2 ||
+              //   data[x]["Q7"] == 1 ||
+              //   data[x]["Q7b"] == 2
+              // ) {
+              //   rawdata[findOnObject].pembelian1++;
+              // }
+              // if (
+              //   data[x]["Q9"] == 1 ||
+              //   data[x]["Q9"] == 2 ||
+              //   data[x]["Q9"] == 1 ||
+              //   data[x]["Q9b"] == 2
+              // ) {
+              //   rawdata[findOnObject].pembelian2++;
+              // }
+              // if (data[x]["S20"] == 3) {
+              //   rawdata[findOnObject].rekrutmen++;
+              // }
+              // if (data[x]["Q1"] == 1) {
+              //   rawdata[findOnObject].sosialisasi++;
+              // }
+            }
+          }
+        }
         res.status(200).send(rawdata);
       } else {
         res.status(404).send({

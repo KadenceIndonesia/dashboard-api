@@ -204,10 +204,37 @@ exports.achievementByFilter = async function (req, res) {
   try {
     const pid = req.params.pid;
     const qidx = req.params.qidx;
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
     const filter = req.params.filter;
     const value = req.params.value;
     const project = await projectByPid(pid);
     var attribute = await attributeByQidx(pid, qidx);
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        return data[x][break1] == code1 && data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        return (
+          data[x][break1] == code1 &&
+          data[x][break2] == code2 &&
+          data[x][break3] == code3
+        );
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
     if (project.length > 0) {
       if (attribute) {
         var data = await excelData(pid);
@@ -221,7 +248,8 @@ exports.achievementByFilter = async function (req, res) {
             });
           }
           for (let i = 0; i < data.length; i++) {
-            if (data[i][qidx] != -1 && data[i][filter] == parseInt(value)) {
+            if (data[i][qidx] != -1 && data[i][filter] == parseInt(value) && filterLogic(i)) {
+              // taro di sini
               var findOnObject = await findObj(rawdata, "code", data[i][qidx]);
               rawdata[findOnObject].y++;
             }
