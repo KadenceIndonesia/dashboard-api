@@ -425,6 +425,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
     if (project.length > 0) {
       if (attribute) {
         var data = await excelData(pid);
+        var data_screening = await excelData("IDD3999_screening");
         var rawdata = [];
         if (attribute.type === "SA") {
           for (let i = 0; i < attribute.attribute.length; i++) {
@@ -440,6 +441,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
               targetPangkalan: pangkalan.target,
               target_pangkalan: targetPangkalan,
               target_pangkalan_percent: Math.ceil((targetPangkalan * 90) / 100),
+              rekrut_pangkalan: 0,
               rekrutmen: 0,
               sosialisasi: 0,
               pembelian1: 0,
@@ -482,6 +484,18 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
               if (data[x]["Q1"] == 1) {
                 rawdata[findOnObject].sosialisasi++;
               }
+            }
+          }
+        }
+        for (let x = 0; x < data_screening.length; x++) {
+          if (data_screening[x]["UB11"] === 4) {
+            var findOnObject = await findObj(
+              rawdata,
+              "code",
+              parseInt(data_screening[x]["Kelurahan"])
+            );
+            if(findOnObject !== -1){
+              rawdata[findOnObject].rekrut_pangkalan++;
             }
           }
         }
