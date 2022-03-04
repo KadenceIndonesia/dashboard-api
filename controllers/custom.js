@@ -429,7 +429,9 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
         if (attribute.type === "SA") {
           for (let i = 0; i < attribute.attribute.length; i++) {
             var pangkalan = getDataKelurahan(attribute.attribute[i].code);
-            var targetPangkalan = Math.ceil(pangkalan.target / pangkalan.pangkalan)
+            var targetPangkalan = Math.ceil(
+              pangkalan.target / pangkalan.pangkalan
+            );
             rawdata.push({
               code: attribute.attribute[i].code,
               label: attribute.attribute[i].label,
@@ -677,7 +679,7 @@ exports.getOverviewPropana = async function (req, res) {
       {
         label: "Contact Pangkalan",
         y: countScreeningPangkalan,
-        percent: ((countScreeningPangkalan * 638) / 114930).toFixed(2),
+        percent: ((countScreeningPangkalan * 100) / 638).toFixed(2),
       },
       {
         label: "Total Contact KPM",
@@ -759,6 +761,201 @@ exports.getOverviewAchievementPropana = async function (req, res) {
           messages: "Question not found",
         });
       }
+    } else {
+      res.status(404).send({
+        messages: "Project not found",
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getAchievementPropana = async function (req, res) {
+  try {
+    const pid = "IDD3999";
+    const project = await projectByPid(pid);
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        return data[x][break1] == code1 && data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        return (
+          data[x][break1] == code1 &&
+          data[x][break2] == code2 &&
+          data[x][break3] == code3
+        );
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
+    if (project.length > 0) {
+      var data = await excelData(pid);
+      var target = 0;
+      if (break1 === "UA1") {
+        target = 70000;
+      } else if (break1 === "UA2") {
+        target = 30000;
+      } else {
+        if (code1 && !code2) {
+          var pangkalan = getDataKelurahan(code1);
+          target = pangkalan.target;
+        } else if (code1 && code2) {
+          var pangkalan = getDataKelurahan(code1);
+          var targetPangkalan = Math.ceil(
+            pangkalan.target / pangkalan.pangkalan
+          );
+          target = Math.ceil((targetPangkalan * 90) / 100);
+        } else {
+          target = 100000;
+        }
+      }
+      var rawdata = [
+        {
+          label: "Recruitment",
+          y: 0,
+          count: 0,
+          target: target,
+        },
+        {
+          label: "Sosialisasi",
+          y: 0,
+          count: 0,
+          target: target,
+        },
+        {
+          label: "Download & Install My Pertamina",
+          y: 0,
+          count: 0,
+          target: target,
+        },
+        {
+          label: "Download & Install Link aja",
+          y: 0,
+          count: 0,
+          target: target,
+        },
+        {
+          label: "Pembelian 1",
+          y: 0,
+          count: 0,
+          target: target,
+        },
+        {
+          label: "Pembelian 2",
+          y: 0,
+          count: 0,
+          target: target,
+        },
+        {
+          label: "Pembelian 1", // my pertamina
+          y: 0,
+          count: 0,
+          target: target,
+        },
+        {
+          label: "Pembelian 2", // my pertamina
+          y: 0,
+          count: 0,
+          target: target,
+        },
+      ];
+      for (let x = 0; x < data.length; x++) {
+        if (filterLogic(x)) {
+          if (data[x]["S20"] === 3) {
+            rawdata[0].count++;
+            rawdata[0].y = parseFloat(
+              ((rawdata[0].count * 100) / target).toFixed(2)
+            );
+          }
+          if (data[x]["Q1"] === 1) {
+            rawdata[1].count++;
+            rawdata[1].y = parseFloat(
+              ((rawdata[1].count * 100) / target).toFixed(2)
+            );
+          }
+          if (
+            data[x]["UA6A"] === 1 ||
+            data[x]["UA6B"] === 1 ||
+            data[x]["Q2"] === 1 ||
+            data[x]["Q2g_2"] === 1
+          ) {
+            rawdata[2].count++;
+            rawdata[2].y = parseFloat(
+              ((rawdata[2].count * 100) / target).toFixed(2)
+            );
+          }
+          if (
+            data[x]["UA8A"] === 1 ||
+            data[x]["UA8B"] === 1 ||
+            data[x]["Q3"] === 1 ||
+            data[x]["Q2i_2"] === 1
+          ) {
+            rawdata[3].count++;
+            rawdata[3].y = parseFloat(
+              ((rawdata[3].count * 100) / target).toFixed(2)
+            );
+          }
+          if (
+            data[x]["Q7"] === 1 ||
+            data[x]["Q7"] === 2 ||
+            data[x]["Q7b"] === 1 ||
+            data[x]["Q7b"] === 2 ||
+            data[x]["Q7d"] === 1 ||
+            data[x]["Q7d"] === 2
+          ) {
+            rawdata[4].count++;
+            rawdata[4].y = parseFloat(
+              ((rawdata[4].count * 100) / target).toFixed(2)
+            );
+          }
+          if (
+            data[x]["Q9"] === 1 ||
+            data[x]["Q9"] === 2 ||
+            data[x]["Q9b"] === 1 ||
+            data[x]["Q9b"] === 2 ||
+            data[x]["Q9d"] === 1 ||
+            data[x]["Q9d"] === 2
+          ) {
+            rawdata[5].count++;
+            rawdata[5].y = parseFloat(
+              ((rawdata[5].count * 100) / target).toFixed(2)
+            );
+          }
+          if (
+            data[x]["Q7"] === 1 ||
+            (data[x]["Q7"] === 2 && data[x]["Q4"] === 2)
+          ) {
+            rawdata[6].count++;
+            rawdata[6].y = parseFloat(
+              ((rawdata[6].count * 100) / target).toFixed(4)
+            );
+          }
+          if (
+            data[x]["Q9"] === 1 ||
+            (data[x]["Q9"] === 2 && data[x]["Q4c"] === 2)
+          ) {
+            rawdata[7].count++;
+            rawdata[7].y = parseFloat(
+              ((rawdata[7].count * 100) / target).toFixed(4)
+            );
+          }
+        }
+      }
+      res.status(200).send(rawdata);
     } else {
       res.status(404).send({
         messages: "Project not found",
