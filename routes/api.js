@@ -63,6 +63,8 @@ Router.get(
   customControllers.getDataPropanaFlexmonster
 );
 Router.get("/propana/flexmonster/detail", customControllers.getDetailPropana);
+Router.get("/propana/overview", customControllers.getOverviewPropana);
+Router.get("/propana/overview/achievement/:qidx", customControllers.getOverviewAchievementPropana);
 
 //split
 Router.post("/split/:pid", splitControllers.getSplitData);

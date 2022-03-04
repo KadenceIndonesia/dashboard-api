@@ -392,7 +392,7 @@ exports.getNPSData = async function (req, res) {
 exports.getDataPropanaFlexmonster = async function (req, res) {
   try {
     const pid = "IDD3999";
-    const qidx = "Kelurahan";
+    const qidx = "Kelurahan_pangkalan";
     const break1 = req.query.break1;
     const break2 = req.query.break2;
     const break3 = req.query.break3;
@@ -442,7 +442,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
             });
           }
           for (let x = 0; x < data.length; x++) {
-            if (filterLogic(x) && data[x]["Kelurahan"] != -1) {
+            if (filterLogic(x) && data[x]["Kelurahan_pangkalan"] != -1) {
               var findOnObject = await findObj(
                 rawdata,
                 "code",
@@ -454,7 +454,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
               if (
                 data[x]["Q7"] == 1 ||
                 data[x]["Q7"] == 2 ||
-                data[x]["Q7"] == 1 ||
+                data[x]["Q7b"] == 1 ||
                 data[x]["Q7b"] == 2
               ) {
                 rawdata[findOnObject].pembelian1++;
@@ -462,7 +462,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
               if (
                 data[x]["Q9"] == 1 ||
                 data[x]["Q9"] == 2 ||
-                data[x]["Q9"] == 1 ||
+                data[x]["Q9b"] == 1 ||
                 data[x]["Q9b"] == 2
               ) {
                 rawdata[findOnObject].pembelian2++;
@@ -550,9 +550,26 @@ exports.getDetailPropana = async function (req, res) {
                 sbjnum: data[x]["SbjNum"],
                 nama: data[x]["U5A_NAMA"],
                 no_hp: data[x]["U5A_Tlp"],
-                my_pertamina: data[x]["Q2"] === 1 || data[x]["UA6A"] === 1 || data[x]["UA6B"] === 1 || data[x]["Q2g_2"] === 1 ? "Sudah" : "Belum",
-                smartphone: data[x]["UA1"] === 1 ? "ya" : data[x]["UA2"] === 1 ? "tidak" : "tidak",
-                pembelian1: data[x]["Q7"] === 1 || data[x]["Q7"] === 2 || data[x]["Q7d"] === 1 || data[x]["Q7d"] === 2 ? "Sudah" : "Belum",
+                my_pertamina:
+                  data[x]["Q2"] === 1 ||
+                  data[x]["UA6A"] === 1 ||
+                  data[x]["UA6B"] === 1 ||
+                  data[x]["Q2g_2"] === 1
+                    ? "Sudah"
+                    : "Belum",
+                smartphone:
+                  data[x]["UA1"] === 1
+                    ? "ya"
+                    : data[x]["UA2"] === 1
+                    ? "tidak"
+                    : "tidak",
+                pembelian1:
+                  data[x]["Q7"] === 1 ||
+                  data[x]["Q7"] === 2 ||
+                  data[x]["Q7d"] === 1 ||
+                  data[x]["Q7d"] === 2
+                    ? "Sudah"
+                    : "Belum",
                 pembelian2: "",
               });
               // var findOnObject = await findObj(
@@ -587,6 +604,143 @@ exports.getDetailPropana = async function (req, res) {
               // }
             }
           }
+        }
+        res.status(200).send(rawdata);
+      } else {
+        res.status(404).send({
+          messages: "Question not found",
+        });
+      }
+    } else {
+      res.status(404).send({
+        messages: "Project not found",
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getOverviewPropana = async function (req, res) {
+  try {
+    const pid = "IDD3999";
+    const S20 = "S20";
+    const screeningpangkalan = await excelData("IDD3999_screening");
+    var data = await excelData(pid);
+    var countS20 = 0;
+    var countRecruit = 0;
+    var countPembelian1 = 0;
+    var countPembelian2 = 0;
+    for (let x = 0; x < data.length; x++) {
+      if (
+        data[x][S20] === 1 ||
+        data[x][S20] === 3 ||
+        data[x][S20] === 4 ||
+        data[x][S20] === 5 ||
+        data[x][S20] === 6
+      ) {
+        countS20++;
+      }
+      if (data[x][S20] === 3) {
+        countRecruit++;
+      }
+      if (
+        data[x]["Q7"] === 1 ||
+        data[x]["Q7"] === 2 ||
+        data[x]["Q7b"] === 1 ||
+        data[x]["Q7b"] === 2
+      ) {
+        countPembelian1++;
+      }
+      if (
+        data[x]["Q9"] === 1 ||
+        data[x]["Q9"] === 2 ||
+        data[x]["Q9b"] === 1 ||
+        data[x]["Q9b"] === 2
+      ) {
+        countPembelian2++;
+      }
+    }
+    var countScreeningPangkalan = screeningpangkalan.length;
+    var rawdata = [
+      {
+        label: "Contact Pangkalan",
+        y: countScreeningPangkalan,
+        percent: ((countScreeningPangkalan * 638) / 114930).toFixed(2),
+      },
+      {
+        label: "Total Contact KPM",
+        y: countS20,
+        percent: ((countS20 * 100) / 114930).toFixed(4),
+      },
+      {
+        label: "Total Recruit KPM",
+        y: countRecruit,
+        percent: ((countRecruit * 100) / 100000).toFixed(4),
+      },
+      {
+        label: "Total Pembelian1",
+        y: countPembelian1,
+        percent: ((countPembelian1 * 100) / 100000).toFixed(4),
+      },
+      {
+        label: "Total Pembelian2",
+        y: countPembelian2,
+        percent: ((countPembelian2 * 100) / 100000).toFixed(4),
+      },
+    ];
+    res.status(200).send(rawdata);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getOverviewAchievementPropana = async function (req, res) {
+  try {
+    const pid = "IDD3999";
+    const qidx = req.params.qidx;
+    const project = await projectByPid(pid);
+    var attribute = await attributeByQidx(pid, qidx);
+    if (project.length > 0) {
+      if (attribute) {
+        var data = await excelData(pid);
+        var rawdata = [];
+        var base = 0;
+        if (attribute.type === "SA") {
+          for (let i = 0; i < attribute.attribute.length; i++) {
+            rawdata.push({
+              code: attribute.attribute[i].code,
+              label: attribute.attribute[i].label,
+              y: 0,
+              count: 0,
+              target: 0,
+            });
+          }
+          for (let x = 0; x < data.length; x++) {
+            if (
+              data[x]["S20"] === 1 ||
+              data[x]["S20"] === 3 ||
+              data[x]["S20"] === 4 ||
+              data[x]["S20"] === 5 ||
+              data[x]["S20"] === 6
+            ) {
+              var findOnObject = await findObj(
+                rawdata,
+                "code",
+                parseInt(data[x][qidx])
+              );
+              base++;
+              if (findOnObject !== -1) {
+                rawdata[findOnObject].count++;
+                rawdata[findOnObject].y = parseFloat(
+                  ((rawdata[findOnObject].count * 100) / base).toFixed(2)
+                );
+              }
+            }
+          }
+        }
+        for (let i = 0; i < rawdata.length; i++) {
+          rawdata[i].target = base;
         }
         res.status(200).send(rawdata);
       } else {
