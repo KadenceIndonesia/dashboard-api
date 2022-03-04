@@ -429,12 +429,15 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
         if (attribute.type === "SA") {
           for (let i = 0; i < attribute.attribute.length; i++) {
             var pangkalan = getDataKelurahan(attribute.attribute[i].code);
+            var targetPangkalan = Math.ceil(pangkalan.target / pangkalan.pangkalan)
             rawdata.push({
               code: attribute.attribute[i].code,
               label: attribute.attribute[i].label,
               y: 0,
               pangkalan: pangkalan.pangkalan,
               targetPangkalan: pangkalan.target,
+              target_pangkalan: targetPangkalan,
+              target_pangkalan_percent: Math.ceil((targetPangkalan * 90) / 100),
               rekrutmen: 0,
               sosialisasi: 0,
               pembelian1: 0,
@@ -455,7 +458,9 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
                 data[x]["Q7"] == 1 ||
                 data[x]["Q7"] == 2 ||
                 data[x]["Q7b"] == 1 ||
-                data[x]["Q7b"] == 2
+                data[x]["Q7b"] == 2 ||
+                data[x]["Q7d"] == 1 ||
+                data[x]["Q7d"] == 2
               ) {
                 rawdata[findOnObject].pembelian1++;
               }
@@ -463,7 +468,9 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
                 data[x]["Q9"] == 1 ||
                 data[x]["Q9"] == 2 ||
                 data[x]["Q9b"] == 1 ||
-                data[x]["Q9b"] == 2
+                data[x]["Q9b"] == 2 ||
+                data[x]["Q9d"] == 1 ||
+                data[x]["Q9d"] == 2
               ) {
                 rawdata[findOnObject].pembelian2++;
               }
