@@ -502,7 +502,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
 exports.getDetailPropana = async function (req, res) {
   try {
     const pid = "IDD3999";
-    const qidx = "Kelurahan";
+    const qidx = "Kelurahan_pangkalan";
     const break1 = req.query.break1;
     const break2 = req.query.break2;
     const break3 = req.query.break3;
@@ -552,7 +552,7 @@ exports.getDetailPropana = async function (req, res) {
             // });
           }
           for (let x = 0; x < data.length; x++) {
-            if (filterLogic(x) && data[x]["Kelurahan"] != -1) {
+            if (filterLogic(x) && data[x]["Kelurahan_pangkalan"] != -1) {
               rawdata.push({
                 sbjnum: data[x]["SbjNum"],
                 nama: data[x]["U5A_NAMA"],
@@ -655,7 +655,9 @@ exports.getOverviewPropana = async function (req, res) {
         data[x]["Q7"] === 1 ||
         data[x]["Q7"] === 2 ||
         data[x]["Q7b"] === 1 ||
-        data[x]["Q7b"] === 2
+        data[x]["Q7b"] === 2 ||
+        data[x]["Q7d"] === 1 ||
+        data[x]["Q7d"] === 2
       ) {
         countPembelian1++;
       }
@@ -663,7 +665,9 @@ exports.getOverviewPropana = async function (req, res) {
         data[x]["Q9"] === 1 ||
         data[x]["Q9"] === 2 ||
         data[x]["Q9b"] === 1 ||
-        data[x]["Q9b"] === 2
+        data[x]["Q9b"] === 2 ||
+        data[x]["Q9d"] === 1 ||
+        data[x]["Q9d"] === 2
       ) {
         countPembelian2++;
       }
