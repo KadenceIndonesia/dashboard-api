@@ -581,10 +581,8 @@ exports.getDetailPropana = async function (req, res) {
                     ? "Sudah"
                     : "Belum",
                 smartphone:
-                  data[x]["UA1"] === 1
+                  data[x]["UA1"] === 1 || data[x]["UA2"] === 1
                     ? "ya"
-                    : data[x]["UA2"] === 1
-                    ? "tidak"
                     : "tidak",
                 pembelian1:
                   data[x]["Q7"] === 1 ||
