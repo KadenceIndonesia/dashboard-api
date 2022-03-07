@@ -660,7 +660,8 @@ exports.getOverviewPropana = async function (req, res) {
         data[x][S20] === 3 ||
         data[x][S20] === 4 ||
         data[x][S20] === 5 ||
-        data[x][S20] === 6
+        data[x][S20] === 6 ||
+        data[x][S20] === 7
       ) {
         countS20++;
       }
@@ -749,6 +750,7 @@ exports.getOverviewAchievementPropana = async function (req, res) {
               data[x]["S20"] === 3 ||
               data[x]["S20"] === 4 ||
               data[x]["S20"] === 5 ||
+              data[x]["S20"] === 6 ||
               data[x]["S20"] === 6
             ) {
               var findOnObject = await findObj(
