@@ -1175,3 +1175,49 @@ exports.getOverviewAchievementKKSPropana = async function (req, res) {
     res.status(400).send(error);
   }
 };
+
+exports.getOverviewAchievementSmartphonePropana = async function (req, res) {
+  try {
+    const pid = "IDD3999";
+    var data = await excelData(pid);
+    var base = 0;
+    rawdata = [
+      {
+        code: 1,
+        label: "Pengguna Smartphone",
+        y: 0,
+        count: 0,
+        target: 0,
+      },
+      {
+        code: 2,
+        label: "Pengguna Non-Smartphone",
+        y: 0,
+        count: 0,
+        target: 0,
+      },
+    ];
+    for (let x = 0; x < data.length; x++) {
+      if (data[x]["S20"] === 3) {
+        base++;
+        if (data[x]["UA1"] === 1 || data[x]["UA2"] === 1) {
+          rawdata[0].count++;
+          rawdata[0].y = parseFloat(
+            ((rawdata[0].count * 100) / base).toFixed(2)
+          );
+        }else{
+          rawdata[1].count++;
+          rawdata[1].y = parseFloat(
+            ((rawdata[1].count * 100) / base).toFixed(2)
+          );
+        }
+      }
+    }
+    for (let i = 0; i < rawdata.length; i++) {
+      rawdata[i].target = base;
+    }
+    res.status(200).send(rawdata);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};

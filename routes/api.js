@@ -69,6 +69,7 @@ Router.get("/propana/achievement", customControllers.getAchievementPropana);
 Router.get("/propana/achievementquestion/age", customControllers.getOverviewAchievementAgePropana);
 Router.get("/propana/achievementquestion/ses", customControllers.getOverviewAchievementSESPropana);
 Router.get("/propana/achievementquestion/kks", customControllers.getOverviewAchievementKKSPropana);
+Router.get("/propana/achievementquestion/smartphone", customControllers.getOverviewAchievementSmartphonePropana);
 
 //split
 Router.post("/split/:pid", splitControllers.getSplitData);
