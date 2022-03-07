@@ -571,8 +571,8 @@ exports.getDetailPropana = async function (req, res) {
             if (filterLogic(x) && data[x]["Kelurahan_pangkalan"] != -1) {
               rawdata.push({
                 sbjnum: data[x]["SbjNum"],
-                nama: data[x]["U5A_NAMA"],
-                no_hp: data[x]["U5A_Tlp"],
+                nama: data[x]["NAMA_PENERIMA"],
+                no_hp: data[x]["U5A_Tlp"] !== -1 ? data[x]["U5A_Tlp"] : "N/A",
                 my_pertamina:
                   data[x]["Q2"] === 1 ||
                   data[x]["UA6A"] === 1 ||
