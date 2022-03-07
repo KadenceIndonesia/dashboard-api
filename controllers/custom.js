@@ -494,7 +494,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
               "code",
               parseInt(data_screening[x]["Kelurahan"])
             );
-            if(findOnObject !== -1){
+            if (findOnObject !== -1) {
               rawdata[findOnObject].rekrut_pangkalan++;
             }
           }
@@ -581,9 +581,7 @@ exports.getDetailPropana = async function (req, res) {
                     ? "Sudah"
                     : "Belum",
                 smartphone:
-                  data[x]["UA1"] === 1 || data[x]["UA2"] === 1
-                    ? "ya"
-                    : "tidak",
+                  data[x]["UA1"] === 1 || data[x]["UA2"] === 1 ? "ya" : "tidak",
                 pembelian1:
                   data[x]["Q7"] === 1 ||
                   data[x]["Q7"] === 2 ||
@@ -743,14 +741,7 @@ exports.getOverviewAchievementPropana = async function (req, res) {
             });
           }
           for (let x = 0; x < data.length; x++) {
-            if (
-              data[x]["S20"] === 1 ||
-              data[x]["S20"] === 3 ||
-              data[x]["S20"] === 4 ||
-              data[x]["S20"] === 5 ||
-              data[x]["S20"] === 6 ||
-              data[x]["S20"] === 6
-            ) {
+            if (data[x]["S20"] === 3) {
               var findOnObject = await findObj(
                 rawdata,
                 "code",
@@ -975,6 +966,211 @@ exports.getAchievementPropana = async function (req, res) {
         messages: "Project not found",
       });
     }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getOverviewAchievementAgePropana = async function (req, res) {
+  try {
+    const pid = "IDD3999";
+    const qidx = "S4";
+    const project = await projectByPid(pid);
+    var attribute = await attributeByQidx(pid, qidx);
+    if (project.length > 0) {
+      if (attribute) {
+        var data = await excelData(pid);
+        var rawdata = [];
+        var base = 0;
+        if (attribute.type === "SA") {
+          for (let i = 0; i < attribute.attribute.length; i++) {
+            rawdata.push({
+              code: attribute.attribute[i].code,
+              label: attribute.attribute[i].label,
+              y: 0,
+              count: 0,
+              target: 0,
+            });
+          }
+          for (let x = 0; x < data.length; x++) {
+            if (data[x]["S20"] === 3) {
+              base++;
+              if (data[x][qidx] === 1) {
+                rawdata[0].count++;
+                rawdata[0].y = parseFloat(
+                  ((rawdata[0].count * 100) / base).toFixed(2)
+                );
+              }
+              if (data[x][qidx] === 2) {
+                rawdata[1].count++;
+                rawdata[1].y = parseFloat(
+                  ((rawdata[1].count * 100) / base).toFixed(2)
+                );
+              }
+              if (data[x][qidx] === 3) {
+                rawdata[2].count++;
+                rawdata[2].y = parseFloat(
+                  ((rawdata[2].count * 100) / base).toFixed(2)
+                );
+              }
+              if (data[x][qidx] === 4) {
+                rawdata[3].count++;
+                rawdata[3].y = parseFloat(
+                  ((rawdata[3].count * 100) / base).toFixed(2)
+                );
+              }
+              if (data[x][qidx] === 5) {
+                rawdata[4].count++;
+                rawdata[4].y = parseFloat(
+                  ((rawdata[4].count * 100) / base).toFixed(2)
+                );
+              }
+              if (data[x][qidx] === 6) {
+                rawdata[5].count++;
+                rawdata[5].y = parseFloat(
+                  ((rawdata[5].count * 100) / base).toFixed(2)
+                );
+              }
+              if (data[x][qidx] === 7) {
+                rawdata[6].count++;
+                rawdata[6].y = parseFloat(
+                  ((rawdata[6].count * 100) / base).toFixed(2)
+                );
+              }
+            }
+          }
+        }
+        for (let i = 0; i < rawdata.length; i++) {
+          rawdata[i].target = base;
+        }
+        res.status(200).send(rawdata);
+      } else {
+        res.status(404).send({
+          messages: "Question not found",
+        });
+      }
+    } else {
+      res.status(404).send({
+        messages: "Project not found",
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getOverviewAchievementSESPropana = async function (req, res) {
+  try {
+    const pid = "IDD3999";
+    const qidx = "S11";
+    var attribute = await attributeByQidx(pid, qidx);
+    if (attribute) {
+      var data = await excelData(pid);
+      var rawdata = [];
+      var base = 0;
+      if (attribute.type === "SA") {
+        for (let i = 0; i < attribute.attribute.length; i++) {
+          rawdata.push({
+            code: attribute.attribute[i].code,
+            label: attribute.attribute[i].label,
+            y: 0,
+            count: 0,
+            target: 0,
+          });
+        }
+        for (let x = 0; x < data.length; x++) {
+          if (data[x]["S20"] === 3) {
+            base++;
+            if (data[x][qidx] === 1) {
+              rawdata[0].count++;
+              rawdata[0].y = parseFloat(
+                ((rawdata[0].count * 100) / base).toFixed(2)
+              );
+            }
+            if (data[x][qidx] === 2) {
+              rawdata[1].count++;
+              rawdata[1].y = parseFloat(
+                ((rawdata[1].count * 100) / base).toFixed(2)
+              );
+            }
+            if (data[x][qidx] === 3) {
+              rawdata[2].count++;
+              rawdata[2].y = parseFloat(
+                ((rawdata[2].count * 100) / base).toFixed(2)
+              );
+            }
+            if (data[x][qidx] === 4) {
+              rawdata[3].count++;
+              rawdata[3].y = parseFloat(
+                ((rawdata[3].count * 100) / base).toFixed(2)
+              );
+            }
+            if (data[x][qidx] === 5) {
+              rawdata[4].count++;
+              rawdata[4].y = parseFloat(
+                ((rawdata[4].count * 100) / base).toFixed(2)
+              );
+            }
+          }
+        }
+      }
+      for (let i = 0; i < rawdata.length; i++) {
+        rawdata[i].target = base;
+      }
+      res.status(200).send(rawdata);
+    } else {
+      res.status(404).send({
+        messages: "Question not found",
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getOverviewAchievementKKSPropana = async function (req, res) {
+  try {
+    const pid = "IDD3999";
+    const qidx = "S1a";
+    var data = await excelData(pid);
+    var base = 0;
+    rawdata = [
+      {
+        code: 1,
+        label: "Pemilik KKS",
+        y: 0,
+        count: 0,
+        target: 0,
+      },
+      {
+        code: 2,
+        label: "Non Pemilik KKS",
+        y: 0,
+        count: 0,
+        target: 0,
+      },
+    ];
+    for (let x = 0; x < data.length; x++) {
+      if (data[x]["S20"] === 3) {
+        base++;
+        if (data[x][qidx] === 1) {
+          rawdata[0].count++;
+          rawdata[0].y = parseFloat(
+            ((rawdata[0].count * 100) / base).toFixed(2)
+          );
+        }
+        if (data[x][qidx] === 2) {
+          rawdata[1].count++;
+          rawdata[1].y = parseFloat(
+            ((rawdata[1].count * 100) / base).toFixed(2)
+          );
+        }
+      }
+    }
+    for (let i = 0; i < rawdata.length; i++) {
+      rawdata[i].target = base;
+    }
+    res.status(200).send(rawdata);
   } catch (error) {
     res.status(400).send(error);
   }

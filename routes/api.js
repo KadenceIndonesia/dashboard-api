@@ -66,6 +66,9 @@ Router.get("/propana/flexmonster/detail", customControllers.getDetailPropana);
 Router.get("/propana/overview", customControllers.getOverviewPropana);
 Router.get("/propana/overview/achievement/:qidx", customControllers.getOverviewAchievementPropana);
 Router.get("/propana/achievement", customControllers.getAchievementPropana);
+Router.get("/propana/achievementquestion/age", customControllers.getOverviewAchievementAgePropana);
+Router.get("/propana/achievementquestion/ses", customControllers.getOverviewAchievementSESPropana);
+Router.get("/propana/achievementquestion/kks", customControllers.getOverviewAchievementKKSPropana);
 
 //split
 Router.post("/split/:pid", splitControllers.getSplitData);
