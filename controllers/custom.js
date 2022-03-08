@@ -657,7 +657,8 @@ exports.getOverviewPropana = async function (req, res) {
         data[x][S20] === 4 ||
         data[x][S20] === 5 ||
         data[x][S20] === 6 ||
-        data[x][S20] === 7
+        data[x][S20] === 7 ||
+        data[x][S20] === 8
       ) {
         countS20++;
       }
