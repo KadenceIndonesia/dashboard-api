@@ -437,6 +437,8 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
               code: attribute.attribute[i].code,
               label: attribute.attribute[i].label,
               y: 0,
+              mor: pangkalan.region,
+              kabupaten: pangkalan.kabupaten,
               pangkalan: pangkalan.pangkalan,
               targetPangkalan: pangkalan.target,
               target_pangkalan: targetPangkalan,
@@ -445,7 +447,11 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
               rekrutmen: 0,
               sosialisasi: 0,
               pembelian1: 0,
+              pembelian1_MyPertamina: 0,
+              pembelian1_tunai: 0,
               pembelian2: 0,
+              pembelian2_MyPertamina: 0,
+              pembelian2_tunai: 0,
             });
           }
           for (let x = 0; x < data.length; x++) {
@@ -467,6 +473,12 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
                 data[x]["Q7d"] == 2
               ) {
                 rawdata[findOnObject].pembelian1++;
+                if (data[x]["Q4"] === 2) {
+                  rawdata[findOnObject].pembelian1_MyPertamina++;
+                }
+                if (data[x]["Q4"] === 1 || data[x]["Q4"] === -1) {
+                  rawdata[findOnObject].pembelian1_tunai++;
+                }
               }
               if (
                 data[x]["Q9"] == 1 ||
@@ -477,6 +489,12 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
                 data[x]["Q9d"] == 2
               ) {
                 rawdata[findOnObject].pembelian2++;
+                if (data[x]["Q4c"] === 2) {
+                  rawdata[findOnObject].pembelian2_MyPertamina++;
+                }
+                if (data[x]["Q4c"] === 1 || data[x]["Q4c"] === -1) {
+                  rawdata[findOnObject].pembelian2_tunai++;
+                }
               }
               if (data[x]["S20"] == 3) {
                 rawdata[findOnObject].rekrutmen++;
@@ -1206,7 +1224,7 @@ exports.getOverviewAchievementSmartphonePropana = async function (req, res) {
           rawdata[0].y = parseFloat(
             ((rawdata[0].count * 100) / base).toFixed(2)
           );
-        }else{
+        } else {
           rawdata[1].count++;
           rawdata[1].y = parseFloat(
             ((rawdata[1].count * 100) / base).toFixed(2)
