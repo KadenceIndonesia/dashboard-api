@@ -587,9 +587,13 @@ exports.getDetailPropana = async function (req, res) {
           }
           for (let x = 0; x < data.length; x++) {
             if (filterLogic(x) && data[x]["Kelurahan_pangkalan"] != -1) {
+              var kelurahan = getDataKelurahan(data[x]["Kelurahan_pangkalan"]);
               rawdata.push({
                 sbjnum: data[x]["SbjNum"],
                 nama: data[x]["NAMA_PENERIMA"],
+                mor: kelurahan.region,
+                kabupaten: kelurahan.kabupaten,
+                kelurahan: kelurahan.kelurahan,
                 no_hp: data[x]["U5A_Tlp"] !== -1 ? data[x]["U5A_Tlp"] : "N/A",
                 my_pertamina:
                   data[x]["Q2"] === 1 ||
@@ -607,7 +611,15 @@ exports.getDetailPropana = async function (req, res) {
                   data[x]["Q7d"] === 2
                     ? "Sudah"
                     : "Belum",
-                pembelian2: "",
+                pembelian1_mypertamina: data[x]["Q4"] === 1 ? "Ya" : "Tidak",
+                pembelian2:
+                  data[x]["Q9"] === 1 ||
+                  data[x]["Q9"] === 2 ||
+                  data[x]["Q9d"] === 1 ||
+                  data[x]["Q9d"] === 2
+                    ? "Sudah"
+                    : "Belum",
+                pembelian2_mypertamina: data[x]["Q4c"] === 1 ? "Ya" : "Tidak",
               });
               // var findOnObject = await findObj(
               //   rawdata,
