@@ -846,11 +846,16 @@ exports.getAchievementPropana = async function (req, res) {
       } else if (break1 === "UA2") {
         target = 30000;
       } else {
-        if (code1 && !code2) {
-          var pangkalan = getDataKelurahan(code1);
+        if (code1 && !code2 && !code3) {
+          var morByKelurahan = await getDataKelurahanByMor(code1)
+          for (let i = 0; i < morByKelurahan.length; i++) {
+            target = target + morByKelurahan[i].target
+          }
+        } else if (code2 && !code3) {
+          var pangkalan = getDataKelurahan(code2);
           target = pangkalan.target;
-        } else if (code1 && code2) {
-          var pangkalan = getDataKelurahan(code1);
+        } else if (code3 && code3) {
+          var pangkalan = getDataKelurahan(code2);
           var targetPangkalan = Math.ceil(
             pangkalan.target / pangkalan.pangkalan
           );
@@ -1251,4 +1256,118 @@ exports.getOverviewAchievementSmartphonePropana = async function (req, res) {
   } catch (error) {
     res.status(400).send(error);
   }
+};
+
+exports.getStatusRekrutPropana = async function (req, res) {
+  try {
+    const pid = "IDD3999";
+    const qidx = "S20";
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        return data[x][break1] == code1 && data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        return (
+          data[x][break1] == code1 &&
+          data[x][break2] == code2 &&
+          data[x][break3] == code3
+        );
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
+    const project = await projectByPid(pid);
+    var attribute = await attributeByQidx(pid, qidx);
+    if (project.length > 0) {
+      if (attribute) {
+        var data = await excelData(pid);
+        var rawdata = [];
+        if (attribute.type === "SA") {
+          for (let x = 0; x < data.length; x++) {
+            if (filterLogic(x) && data[x][qidx] != -1) {
+              var findOnObject = await findObj(
+                attribute.attribute,
+                "code",
+                parseInt(data[x][qidx])
+              );
+              var label;
+              if (data[x][qidx] === 3) {
+                label = "Berhasil";
+              } else if (data[x][qidx] !== 1) {
+                label = "Tidak Berhasil";
+              }
+              var reason = "";
+              if (data[x][qidx] === 1) {
+                reason = "SES Upper 1, Upper 2";
+              } else if (data[x][qidx] === 4) {
+                reason =
+                  "Tidak Menggunakan gas LPG 3 kg (pakai LPG Non PSO atau Gas Alam)";
+              } else if (data[x][qidx] === 5) {
+                reason = "Meninggal Dunia";
+              } else if (data[x][qidx] === 6) {
+                reason =
+                  "Berencana bepergian/ tidak menetap selama 1 bulan di rumah";
+              } else if (data[x][qidx] === 7) {
+                reason = "Pindah Rumah beda kelurahan";
+              } else if (data[x][qidx] === 8) {
+                reason = "Menolak";
+              } else {
+                reason = "Berhasil";
+              }
+              rawdata.push({
+                code: data[x][qidx],
+                label: label,
+                reason: reason,
+                y: 1,
+              });
+            }
+          }
+        }
+        res.status(200).send(rawdata);
+      } else {
+        res.status(404).send({
+          messages: "Question not found",
+        });
+      }
+    } else {
+      res.status(404).send({
+        messages: "Project not found",
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getFilterPangkalanPropana = async function (req, res) {
+  var id = req.params.id;
+  var arrPangkalan = filterPangkalan(id);
+  var attribute = await attributeByQidx("IDD3999", "Nama_Agen");
+  var result = attribute.attribute.filter(
+    (data) => arrPangkalan.indexOf(data.code) !== -1
+  );
+  res.json(result);
+};
+
+exports.getFilterKelurahanPropana = async function (req, res) {
+  var id = req.params.id;
+  var arrKelurahan = filterKelurahanByMor(id);
+  var attribute = await attributeByQidx("IDD3999", "Kelurahan_pangkalan");
+  var result = attribute.attribute.filter(
+    (data) => arrKelurahan.indexOf(data.code) !== -1
+  );
+  res.json(result);
 };

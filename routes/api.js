@@ -63,6 +63,8 @@ Router.get(
   customControllers.getDataPropanaFlexmonster
 );
 Router.get("/propana/flexmonster/detail", customControllers.getDetailPropana);
+Router.get("/propana/filter-pangkalan/:id", customControllers.getFilterPangkalanPropana);
+Router.get("/propana/filter-kelurahan/:id", customControllers.getFilterKelurahanPropana);
 Router.get("/propana/overview", customControllers.getOverviewPropana);
 Router.get("/propana/overview/achievement/:qidx", customControllers.getOverviewAchievementPropana);
 Router.get("/propana/achievement", customControllers.getAchievementPropana);
@@ -70,6 +72,7 @@ Router.get("/propana/achievementquestion/age", customControllers.getOverviewAchi
 Router.get("/propana/achievementquestion/ses", customControllers.getOverviewAchievementSESPropana);
 Router.get("/propana/achievementquestion/kks", customControllers.getOverviewAchievementKKSPropana);
 Router.get("/propana/achievementquestion/smartphone", customControllers.getOverviewAchievementSmartphonePropana);
+Router.get("/propana/status-rekrut", customControllers.getStatusRekrutPropana);
 
 //split
 Router.post("/split/:pid", splitControllers.getSplitData);
