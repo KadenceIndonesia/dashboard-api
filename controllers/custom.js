@@ -847,9 +847,9 @@ exports.getAchievementPropana = async function (req, res) {
         target = 30000;
       } else {
         if (code1 && !code2 && !code3) {
-          var morByKelurahan = await getDataKelurahanByMor(code1)
+          var morByKelurahan = await getDataKelurahanByMor(code1);
           for (let i = 0; i < morByKelurahan.length; i++) {
-            target = target + morByKelurahan[i].target
+            target = target + morByKelurahan[i].target;
           }
         } else if (code2 && !code3) {
           var pangkalan = getDataKelurahan(code2);
@@ -905,13 +905,13 @@ exports.getAchievementPropana = async function (req, res) {
           label: "Pembelian 1", // my pertamina
           y: 0,
           count: 0,
-          target: target,
+          target: 0,
         },
         {
           label: "Pembelian 2", // my pertamina
           y: 0,
           count: 0,
-          target: target,
+          target: 0,
         },
       ];
       for (let x = 0; x < data.length; x++) {
@@ -981,21 +981,25 @@ exports.getAchievementPropana = async function (req, res) {
             (data[x]["Q7"] === 2 && data[x]["Q4"] === 2)
           ) {
             rawdata[6].count++;
-            rawdata[6].y = parseFloat(
-              ((rawdata[6].count * 100) / target).toFixed(4)
-            );
+            // rawdata[6].y = parseFloat(
+            //   ((rawdata[6].count * 100) / target).toFixed(4)
+            // );
           }
           if (
             data[x]["Q9"] === 1 ||
             (data[x]["Q9"] === 2 && data[x]["Q4c"] === 2)
           ) {
             rawdata[7].count++;
-            rawdata[7].y = parseFloat(
-              ((rawdata[7].count * 100) / target).toFixed(4)
-            );
+            // rawdata[7].y = parseFloat(
+            //   ((rawdata[7].count * 100) / target).toFixed(4)
+            // );
           }
         }
       }
+      rawdata[6].target = rawdata[4].count
+      rawdata[7].target = rawdata[5].count
+      rawdata[6].y = parseFloat(((rawdata[6].count * 100) / rawdata[6].target).toFixed(2));
+      rawdata[7].y = parseFloat(((rawdata[7].count * 100) / rawdata[7].target).toFixed(2));
       res.status(200).send(rawdata);
     } else {
       res.status(404).send({
