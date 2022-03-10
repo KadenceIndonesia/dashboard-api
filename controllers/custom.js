@@ -996,10 +996,14 @@ exports.getAchievementPropana = async function (req, res) {
           }
         }
       }
-      rawdata[6].target = rawdata[4].count
-      rawdata[7].target = rawdata[5].count
-      rawdata[6].y = parseFloat(((rawdata[6].count * 100) / rawdata[6].target).toFixed(2));
-      rawdata[7].y = parseFloat(((rawdata[7].count * 100) / rawdata[7].target).toFixed(2));
+      rawdata[6].target = rawdata[4].count;
+      rawdata[7].target = rawdata[5].count;
+      rawdata[6].y = parseFloat(
+        ((rawdata[6].count * 100) / rawdata[6].target).toFixed(2)
+      );
+      rawdata[7].y = parseFloat(
+        ((rawdata[7].count * 100) / rawdata[7].target).toFixed(2)
+      );
       res.status(200).send(rawdata);
     } else {
       res.status(404).send({
@@ -1339,6 +1343,13 @@ exports.getStatusRekrutPropana = async function (req, res) {
               });
             }
           }
+        }
+        if (rawdata.length === 0) {
+          rawdata.push({
+            label: "",
+            reason: "",
+            y: 0,
+          });
         }
         res.status(200).send(rawdata);
       } else {
