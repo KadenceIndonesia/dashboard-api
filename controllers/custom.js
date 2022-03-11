@@ -1172,6 +1172,77 @@ exports.getOverviewAchievementSESPropana = async function (req, res) {
   }
 };
 
+exports.getOverviewAchievementOccupationPropana = async function (req, res) {
+  try {
+    const pid = "IDD3999";
+    const qidx = "S5";
+    var attribute = await attributeByQidx(pid, qidx);
+    if (attribute) {
+      var data = await excelData(pid);
+      var rawdata = [];
+      var base = 0;
+      if (attribute.type === "SA") {
+        for (let i = 0; i < attribute.attribute.length; i++) {
+          rawdata.push({
+            code: attribute.attribute[i].code,
+            label: attribute.attribute[i].label,
+            y: 0,
+            count: 0,
+            target: 0,
+          });
+        }
+        for (let x = 0; x < data.length; x++) {
+          if (data[x]["S20"] === 3) {
+            base++;
+            if (data[x][qidx] === 1) {
+              rawdata[0].count++;
+              rawdata[0].y = parseFloat(
+                ((rawdata[0].count * 100) / base).toFixed(2)
+              );
+            }
+            if (data[x][qidx] === 2) {
+              rawdata[1].count++;
+              rawdata[1].y = parseFloat(
+                ((rawdata[1].count * 100) / base).toFixed(2)
+              );
+            }
+            if (data[x][qidx] === 3) {
+              rawdata[2].count++;
+              rawdata[2].y = parseFloat(
+                ((rawdata[2].count * 100) / base).toFixed(2)
+              );
+            }
+            if (data[x][qidx] === 4) {
+              rawdata[3].count++;
+              rawdata[3].y = parseFloat(
+                ((rawdata[3].count * 100) / base).toFixed(2)
+              );
+            }
+            if (data[x][qidx] === 5) {
+              rawdata[4].count++;
+              rawdata[4].y = parseFloat(
+                ((rawdata[4].count * 100) / base).toFixed(2)
+              );
+            }
+          }
+        }
+      }
+      for (let i = 0; i < rawdata.length; i++) {
+        rawdata[i].target = base;
+      }
+      // rawdata.sort(sortObject)
+      // rawdata.slice(1,5)
+      res.status(200).send(rawdata);
+    } else {
+      res.status(404).send({
+        messages: "Question not found",
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getOverviewAchievementKKSPropana = async function (req, res) {
   try {
     const pid = "IDD3999";

@@ -70,6 +70,7 @@ Router.get("/propana/overview/achievement/:qidx", customControllers.getOverviewA
 Router.get("/propana/achievement", customControllers.getAchievementPropana);
 Router.get("/propana/achievementquestion/age", customControllers.getOverviewAchievementAgePropana);
 Router.get("/propana/achievementquestion/ses", customControllers.getOverviewAchievementSESPropana);
+Router.get("/propana/achievementquestion/occupation", customControllers.getOverviewAchievementOccupationPropana);
 Router.get("/propana/achievementquestion/kks", customControllers.getOverviewAchievementKKSPropana);
 Router.get("/propana/achievementquestion/smartphone", customControllers.getOverviewAchievementSmartphonePropana);
 Router.get("/propana/status-rekrut", customControllers.getStatusRekrutPropana);
