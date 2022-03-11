@@ -1,3 +1,5 @@
+const e = require("express");
+
 require("../lib/dataExcel");
 require("../lib/index");
 require("../lib/dataPropana");
@@ -588,9 +590,15 @@ exports.getDetailPropana = async function (req, res) {
           for (let x = 0; x < data.length; x++) {
             if (filterLogic(x) && data[x]["Kelurahan_pangkalan"] != -1) {
               var kelurahan = getDataKelurahan(data[x]["Kelurahan_pangkalan"]);
+              var attributeAge = await getAge(data[x]["S4"]);
+              var attributeSes = await getSES(data[x]["S11"]);
+              var attributeOccupation = await getOccupation(data[x]["S5"]);
               rawdata.push({
                 sbjnum: data[x]["SbjNum"],
                 nama: data[x]["NAMA_PENERIMA"],
+                age: attributeAge ? attributeAge.label : "N/A",
+                ses: attributeSes ? attributeSes.label : "N/A",
+                pekerjaan: attributeOccupation ? attributeOccupation.label : "N/A",
                 mor: kelurahan.region,
                 kabupaten: kelurahan.kabupaten,
                 kelurahan: kelurahan.kelurahan,
@@ -675,48 +683,104 @@ exports.getOverviewPropana = async function (req, res) {
     const pid = "IDD3999";
     const S20 = "S20";
     const screeningpangkalan = await excelData("IDD3999_screening");
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        return data[x][break1] == code1 && data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        return (
+          data[x][break1] == code1 &&
+          data[x][break2] == code2 &&
+          data[x][break3] == code3
+        );
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
     var data = await excelData(pid);
     var countS20 = 0;
     var countRecruit = 0;
-    var countPembelian1 = 0;
-    var countPembelian2 = 0;
+    // var countPembelian1 = 0;
+    // var countPembelian2 = 0;
     for (let x = 0; x < data.length; x++) {
-      if (
-        data[x][S20] === 1 ||
-        data[x][S20] === 3 ||
-        data[x][S20] === 4 ||
-        data[x][S20] === 5 ||
-        data[x][S20] === 6 ||
-        data[x][S20] === 7 ||
-        data[x][S20] === 8
-      ) {
-        countS20++;
-      }
-      if (data[x][S20] === 3) {
-        countRecruit++;
-      }
-      if (
-        data[x]["Q7"] === 1 ||
-        data[x]["Q7"] === 2 ||
-        data[x]["Q7b"] === 1 ||
-        data[x]["Q7b"] === 2 ||
-        data[x]["Q7d"] === 1 ||
-        data[x]["Q7d"] === 2
-      ) {
-        countPembelian1++;
-      }
-      if (
-        data[x]["Q9"] === 1 ||
-        data[x]["Q9"] === 2 ||
-        data[x]["Q9b"] === 1 ||
-        data[x]["Q9b"] === 2 ||
-        data[x]["Q9d"] === 1 ||
-        data[x]["Q9d"] === 2
-      ) {
-        countPembelian2++;
+      if (filterLogic(x)) {
+        if (
+          data[x][S20] === 1 ||
+          data[x][S20] === 3 ||
+          data[x][S20] === 4 ||
+          data[x][S20] === 5 ||
+          data[x][S20] === 6 ||
+          data[x][S20] === 7 ||
+          data[x][S20] === 8
+        ) {
+          countS20++;
+        }
+        if (data[x][S20] === 3) {
+          countRecruit++;
+        }
+        // if (
+        //   data[x]["Q7"] === 1 ||
+        //   data[x]["Q7"] === 2 ||
+        //   data[x]["Q7b"] === 1 ||
+        //   data[x]["Q7b"] === 2 ||
+        //   data[x]["Q7d"] === 1 ||
+        //   data[x]["Q7d"] === 2
+        // ) {
+        //   countPembelian1++;
+        // }
+        // if (
+        //   data[x]["Q9"] === 1 ||
+        //   data[x]["Q9"] === 2 ||
+        //   data[x]["Q9b"] === 1 ||
+        //   data[x]["Q9b"] === 2 ||
+        //   data[x]["Q9d"] === 1 ||
+        //   data[x]["Q9d"] === 2
+        // ) {
+        //   countPembelian2++;
+        // }
       }
     }
-    var countScreeningPangkalan = screeningpangkalan.length;
+    var countScreeningPangkalan = 0;
+    for (let x = 0; x < screeningpangkalan.length; x++) {
+      if (code1 && !code2) {
+        if (
+          screeningpangkalan[x]["UB11"] === 4 &&
+          screeningpangkalan[x]["REGION"] == code1
+        ) {
+          countScreeningPangkalan++;
+        }
+      } else if (code1 && code2) {
+        if (break2 === "KabCode") {
+          var findKelurahanByCity = filterKelurahanByCity(code2);
+          var codeKelurahan = findKelurahanByCity.code;
+        } else {
+          var codeKelurahan = code2;
+        }
+        if (
+          screeningpangkalan[x]["UB11"] === 4 &&
+          screeningpangkalan[x]["Kelurahan"] == codeKelurahan
+        ) {
+          countScreeningPangkalan++;
+        }
+      } else {
+        if (screeningpangkalan[x]["UB11"] === 4) {
+          countScreeningPangkalan++;
+        }
+      }
+    }
     var rawdata = [
       {
         label: "Contact Pangkalan",
@@ -733,16 +797,16 @@ exports.getOverviewPropana = async function (req, res) {
         y: countRecruit,
         percent: ((countRecruit * 100) / 100000).toFixed(4),
       },
-      {
-        label: "Total Pembelian1",
-        y: countPembelian1,
-        percent: ((countPembelian1 * 100) / 100000).toFixed(4),
-      },
-      {
-        label: "Total Pembelian2",
-        y: countPembelian2,
-        percent: ((countPembelian2 * 100) / 100000).toFixed(4),
-      },
+      // {
+      //   label: "Total Pembelian1",
+      //   y: countPembelian1,
+      //   percent: ((countPembelian1 * 100) / 100000).toFixed(4),
+      // },
+      // {
+      //   label: "Total Pembelian2",
+      //   y: countPembelian2,
+      //   percent: ((countPembelian2 * 100) / 100000).toFixed(4),
+      // },
     ];
     res.status(200).send(rawdata);
   } catch (error) {
@@ -755,6 +819,33 @@ exports.getOverviewAchievementPropana = async function (req, res) {
     const pid = "IDD3999";
     const qidx = req.params.qidx;
     const project = await projectByPid(pid);
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        return data[x][break1] == code1 && data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        return (
+          data[x][break1] == code1 &&
+          data[x][break2] == code2 &&
+          data[x][break3] == code3
+        );
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
     var attribute = await attributeByQidx(pid, qidx);
     if (project.length > 0) {
       if (attribute) {
@@ -772,7 +863,7 @@ exports.getOverviewAchievementPropana = async function (req, res) {
             });
           }
           for (let x = 0; x < data.length; x++) {
-            if (data[x]["S20"] === 3) {
+            if (data[x]["S20"] === 3 && filterLogic(x)) {
               var findOnObject = await findObj(
                 rawdata,
                 "code",
@@ -1020,6 +1111,47 @@ exports.getOverviewAchievementAgePropana = async function (req, res) {
     const pid = "IDD3999";
     const qidx = "S4";
     const project = await projectByPid(pid);
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        if (break2 === "KabCode") {
+          return data[x][break1] == code1 && data[x]["KabCode"] == code2;
+        } else {
+          return (
+            data[x][break1] == code1 && data[x]["Kelurahan_pangkalan"] == code2
+          );
+        }
+      } else if (code1 && code2 && code3) {
+        if (break2 === "KabCode") {
+          return (
+            data[x][break1] == code1 &&
+            data[x]["KabCode"] == code2 &&
+            data[x][break3] == code3
+          );
+        } else {
+          return (
+            data[x][break1] == code1 &&
+            data[x]["Kelurahan_pangkalan"] == code2 &&
+            data[x][break3] == code3
+          );
+        }
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
     var attribute = await attributeByQidx(pid, qidx);
     if (project.length > 0) {
       if (attribute) {
@@ -1037,7 +1169,7 @@ exports.getOverviewAchievementAgePropana = async function (req, res) {
             });
           }
           for (let x = 0; x < data.length; x++) {
-            if (data[x]["S20"] === 3) {
+            if (data[x]["S20"] === 3 && filterLogic(x)) {
               base++;
               if (data[x][qidx] === 1) {
                 rawdata[0].count++;
@@ -1107,6 +1239,47 @@ exports.getOverviewAchievementSESPropana = async function (req, res) {
   try {
     const pid = "IDD3999";
     const qidx = "S11";
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        if (break2 === "KabCode") {
+          return data[x][break1] == code1 && data[x]["KabCode"] == code2;
+        } else {
+          return (
+            data[x][break1] == code1 && data[x]["Kelurahan_pangkalan"] == code2
+          );
+        }
+      } else if (code1 && code2 && code3) {
+        if (break2 === "KabCode") {
+          return (
+            data[x][break1] == code1 &&
+            data[x]["KabCode"] == code2 &&
+            data[x][break3] == code3
+          );
+        } else {
+          return (
+            data[x][break1] == code1 &&
+            data[x]["Kelurahan_pangkalan"] == code2 &&
+            data[x][break3] == code3
+          );
+        }
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
     var attribute = await attributeByQidx(pid, qidx);
     if (attribute) {
       var data = await excelData(pid);
@@ -1123,7 +1296,7 @@ exports.getOverviewAchievementSESPropana = async function (req, res) {
           });
         }
         for (let x = 0; x < data.length; x++) {
-          if (data[x]["S20"] === 3) {
+          if (data[x]["S20"] === 3 && filterLogic(x)) {
             base++;
             if (data[x][qidx] === 1) {
               rawdata[0].count++;
@@ -1176,6 +1349,47 @@ exports.getOverviewAchievementOccupationPropana = async function (req, res) {
   try {
     const pid = "IDD3999";
     const qidx = "S5";
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        if (break2 === "KabCode") {
+          return data[x][break1] == code1 && data[x]["KabCode"] == code2;
+        } else {
+          return (
+            data[x][break1] == code1 && data[x]["Kelurahan_pangkalan"] == code2
+          );
+        }
+      } else if (code1 && code2 && code3) {
+        if (break2 === "KabCode") {
+          return (
+            data[x][break1] == code1 &&
+            data[x]["KabCode"] == code2 &&
+            data[x][break3] == code3
+          );
+        } else {
+          return (
+            data[x][break1] == code1 &&
+            data[x]["Kelurahan_pangkalan"] == code2 &&
+            data[x][break3] == code3
+          );
+        }
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
     var attribute = await attributeByQidx(pid, qidx);
     if (attribute) {
       var data = await excelData(pid);
@@ -1192,36 +1406,17 @@ exports.getOverviewAchievementOccupationPropana = async function (req, res) {
           });
         }
         for (let x = 0; x < data.length; x++) {
-          if (data[x]["S20"] === 3) {
+          if (data[x]["S20"] === 3 && filterLogic(x)) {
             base++;
-            if (data[x][qidx] === 1) {
-              rawdata[0].count++;
-              rawdata[0].y = parseFloat(
-                ((rawdata[0].count * 100) / base).toFixed(2)
+            if (data[x][qidx] !== 1) {
+              var findOnObject = await findObj(
+                attribute.attribute,
+                "code",
+                parseInt(data[x][qidx])
               );
-            }
-            if (data[x][qidx] === 2) {
-              rawdata[1].count++;
-              rawdata[1].y = parseFloat(
-                ((rawdata[1].count * 100) / base).toFixed(2)
-              );
-            }
-            if (data[x][qidx] === 3) {
-              rawdata[2].count++;
-              rawdata[2].y = parseFloat(
-                ((rawdata[2].count * 100) / base).toFixed(2)
-              );
-            }
-            if (data[x][qidx] === 4) {
-              rawdata[3].count++;
-              rawdata[3].y = parseFloat(
-                ((rawdata[3].count * 100) / base).toFixed(2)
-              );
-            }
-            if (data[x][qidx] === 5) {
-              rawdata[4].count++;
-              rawdata[4].y = parseFloat(
-                ((rawdata[4].count * 100) / base).toFixed(2)
+              rawdata[findOnObject].count++;
+              rawdata[findOnObject].y = parseFloat(
+                ((rawdata[findOnObject].count * 100) / base).toFixed(2)
               );
             }
           }
@@ -1230,9 +1425,8 @@ exports.getOverviewAchievementOccupationPropana = async function (req, res) {
       for (let i = 0; i < rawdata.length; i++) {
         rawdata[i].target = base;
       }
-      // rawdata.sort(sortObject)
-      // rawdata.slice(1,5)
-      res.status(200).send(rawdata);
+      rawdata.sort(sortObject);
+      res.status(200).send(rawdata.slice(0, 5));
     } else {
       res.status(404).send({
         messages: "Question not found",
@@ -1291,10 +1485,143 @@ exports.getOverviewAchievementKKSPropana = async function (req, res) {
   }
 };
 
+exports.getOverviewAchievementMyPertaminaPropana = async function (req, res) {
+  try {
+    const pid = "IDD3999";
+    const qidx = "S11";
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        if (break2 === "KabCode") {
+          return data[x][break1] == code1 && data[x]["KabCode"] == code2;
+        } else {
+          return (
+            data[x][break1] == code1 && data[x]["Kelurahan_pangkalan"] == code2
+          );
+        }
+      } else if (code1 && code2 && code3) {
+        if (break2 === "KabCode") {
+          return (
+            data[x][break1] == code1 &&
+            data[x]["KabCode"] == code2 &&
+            data[x][break3] == code3
+          );
+        } else {
+          return (
+            data[x][break1] == code1 &&
+            data[x]["Kelurahan_pangkalan"] == code2 &&
+            data[x][break3] == code3
+          );
+        }
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
+    var attribute = await attributeByQidx(pid, qidx);
+    if (attribute) {
+      var data = await excelData(pid);
+      rawdata = [
+        {
+          code: 1,
+          label: "Install MyPertamina",
+          y: 0,
+          count: 0,
+          target: 0,
+        },
+        {
+          code: 2,
+          label: "Install LinkAja",
+          y: 0,
+          count: 0,
+          target: 0,
+        },
+      ];
+      var base = 0;
+      for (let x = 0; x < data.length; x++) {
+        if (data[x]["S20"] === 3 && filterLogic(x)) {
+          base++;
+          if (
+            data[x]["UA6A"] === 1 ||
+            data[x]["UA6B"] === 1 ||
+            data[x]["Q2"] === 1 ||
+            data[x]["Q2g_2"] === 1
+          ) {
+            rawdata[0].count++;
+            rawdata[0].y = parseFloat(
+              ((rawdata[0].count * 100) / base).toFixed(2)
+            );
+          }
+          if (
+            data[x]["UA8A"] === 1 ||
+            data[x]["UA8B"] === 1 ||
+            data[x]["Q3"] === 1 ||
+            data[x]["Q2i_2"] === 1
+          ) {
+            rawdata[1].count++;
+            rawdata[1].y = parseFloat(
+              ((rawdata[1].count * 100) / base).toFixed(2)
+            );
+          }
+        }
+      }
+      for (let i = 0; i < rawdata.length; i++) {
+        rawdata[i].target = base;
+      }
+      res.status(200).send(rawdata);
+    } else {
+      res.status(404).send({
+        messages: "Question not found",
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getOverviewAchievementSmartphonePropana = async function (req, res) {
   try {
     const pid = "IDD3999";
     var data = await excelData(pid);
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        return data[x][break1] == code1 && data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        return (
+          data[x][break1] == code1 &&
+          data[x][break2] == code2 &&
+          data[x][break3] == code3
+        );
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
     var base = 0;
     rawdata = [
       {
@@ -1313,7 +1640,7 @@ exports.getOverviewAchievementSmartphonePropana = async function (req, res) {
       },
     ];
     for (let x = 0; x < data.length; x++) {
-      if (data[x]["S20"] === 3) {
+      if (data[x]["S20"] === 3 && filterLogic(x)) {
         base++;
         if (data[x]["UA1"] === 1 || data[x]["UA2"] === 1) {
           rawdata[0].count++;
@@ -1450,10 +1777,19 @@ exports.getFilterPangkalanPropana = async function (req, res) {
 
 exports.getFilterKelurahanPropana = async function (req, res) {
   var id = req.params.id;
-  var arrKelurahan = filterKelurahanByMor(id);
-  var attribute = await attributeByQidx("IDD3999", "Kelurahan_pangkalan");
-  var result = attribute.attribute.filter(
-    (data) => arrKelurahan.indexOf(data.code) !== -1
-  );
+  var arrKelurahan = filterKelurahanByCity(id);
+  var result = [];
+  if (arrKelurahan) {
+    result.push({
+      code: arrKelurahan.code,
+      label: arrKelurahan.kelurahan,
+    });
+  }
+  res.json(result);
+};
+
+exports.getFilterCityPropana = async function (req, res) {
+  var id = req.params.id;
+  var result = await filterCityByMor(id);
   res.json(result);
 };
