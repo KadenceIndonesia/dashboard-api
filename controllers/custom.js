@@ -1605,7 +1605,13 @@ exports.getOverviewAchievementSmartphonePropana = async function (req, res) {
       if (code1 && !code2 && !code3) {
         return data[x][break1] == code1;
       } else if (code1 && code2 && !code3) {
-        return data[x][break1] == code1 && data[x][break2] == code2;
+        if (break2 === "KabCode") {
+          return data[x][break1] == code1 && data[x]["KabCode"] == code2;
+        } else {
+          return (
+            data[x][break1] == code1 && data[x]["Kelurahan_pangkalan"] == code2
+          );
+        }
       } else if (code1 && code2 && code3) {
         return (
           data[x][break1] == code1 &&
@@ -1680,11 +1686,19 @@ exports.getStatusRekrutPropana = async function (req, res) {
       } else if (code1 && code2 && !code3) {
         return data[x][break1] == code1 && data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
-        return (
-          data[x][break1] == code1 &&
-          data[x][break2] == code2 &&
-          data[x][break3] == code3
-        );
+        if (break2 === "KabCode") {
+          return (
+            data[x][break1] == code1 &&
+            data[x]["KabCode"] == code2 &&
+            data[x][break3] == code3
+          );
+        } else {
+          return (
+            data[x][break1] == code1 &&
+            data[x]["Kelurahan_pangkalan"] == code2 &&
+            data[x][break3] == code3
+          );
+        }
       } else if (!code1 && code2 && !code3) {
         return data[x][break2] == code2;
       } else if (!code1 && code2 && code3) {
