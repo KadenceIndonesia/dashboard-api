@@ -598,7 +598,9 @@ exports.getDetailPropana = async function (req, res) {
                 nama: data[x]["NAMA_PENERIMA"],
                 age: attributeAge ? attributeAge.label : "N/A",
                 ses: attributeSes ? attributeSes.label : "N/A",
-                pekerjaan: attributeOccupation ? attributeOccupation.label : "N/A",
+                pekerjaan: attributeOccupation
+                  ? attributeOccupation.label
+                  : "N/A",
                 mor: kelurahan.region,
                 kabupaten: kelurahan.kabupaten,
                 kelurahan: kelurahan.kelurahan,
@@ -612,22 +614,13 @@ exports.getDetailPropana = async function (req, res) {
                     : "Belum",
                 smartphone:
                   data[x]["UA1"] === 1 || data[x]["UA2"] === 1 ? "ya" : "tidak",
-                pembelian1:
-                  data[x]["Q7"] === 1 ||
-                  data[x]["Q7"] === 2 ||
-                  data[x]["Q7d"] === 1 ||
-                  data[x]["Q7d"] === 2
+                linkaja:
+                  data[x]["Q3"] === 1 ||
+                  data[x]["UA8A"] === 1 ||
+                  data[x]["UA8B"] === 1 ||
+                  data[x]["Q2i_2"] === 1
                     ? "Sudah"
                     : "Belum",
-                pembelian1_mypertamina: data[x]["Q4"] === 1 ? "Ya" : "Tidak",
-                pembelian2:
-                  data[x]["Q9"] === 1 ||
-                  data[x]["Q9"] === 2 ||
-                  data[x]["Q9d"] === 1 ||
-                  data[x]["Q9d"] === 2
-                    ? "Sudah"
-                    : "Belum",
-                pembelian2_mypertamina: data[x]["Q4c"] === 1 ? "Ya" : "Tidak",
               });
               // var findOnObject = await findObj(
               //   rawdata,
@@ -1806,4 +1799,35 @@ exports.getFilterCityPropana = async function (req, res) {
   var id = req.params.id;
   var result = await filterCityByMor(id);
   res.json(result);
+};
+
+exports.getTestPropana = async function (req, res) {
+  const data = [
+    {
+      _id: "60e412d27a3c982c579e275a",
+      projectID: "IDD3658",
+      projectName: "festive",
+      status: 1,
+      topbreak: [
+        {
+          quest: "kota",
+          label: "Kota",
+          attribute: [
+            "Jabodetabek",
+            "Bandung",
+            "Semarang",
+            "Surabaya",
+            "Malang",
+          ],
+        },
+      ],
+    },
+  ];
+  data[0].topbreak.push({
+    quest: "1",
+    label: "kelurahan",
+    attribute: ["Jabodetabek", "Bandung", "Semarang", "Surabaya", "Malang"],
+  });
+  data[0].topbreak[1].attribute.push("medan");
+  res.send(data);
 };

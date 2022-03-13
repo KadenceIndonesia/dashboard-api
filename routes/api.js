@@ -80,4 +80,6 @@ Router.get("/propana/status-rekrut", customControllers.getStatusRekrutPropana);
 //split
 Router.post("/split/:pid", splitControllers.getSplitData);
 
+Router.get("/propana/test", customControllers.getTestPropana);
+
 module.exports = Router;
