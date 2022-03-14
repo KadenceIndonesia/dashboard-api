@@ -440,6 +440,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
             mor: pangkalan.region,
             kabupaten: pangkalan.kabupaten,
             pangkalan: pangkalan.pangkalan,
+            pengecer: 0,
             targetPangkalan: pangkalan.target,
             target_pangkalan: targetPangkalan,
             target_pangkalan_percent: Math.ceil((targetPangkalan * 90) / 100),
@@ -517,6 +518,9 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
           );
           if (findOnObject !== -1) {
             rawdata[findOnObject].rekrut_pangkalan++;
+            if (data_screening[x]["jk"] === 3) {
+              rawdata[findOnObject].pengecer++;
+            }
           }
         }
       }
@@ -646,9 +650,16 @@ exports.getOverviewPropana = async function (req, res) {
         // return data[x][break1] == code1;
         return true;
       } else if (code1 && code2 && !code3) {
+        // return data[x][break1] == code1 && data[x][break2] == code2;
         return data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
-        return data[x][break2] == code2 && data[x][break3] == code3;
+        if (break3 === "KabCode") {
+          return data[x][break2] == code2 && data[x]["KabCode"] == code3;
+        } else {
+          return (
+            data[x][break2] == code2 && data[x]["Kelurahan_pangkalan"] == code3
+          );
+        }
       } else if (!code1 && code2 && !code3) {
         return data[x][break2] == code2;
       } else if (!code1 && code2 && code3) {
@@ -662,14 +673,26 @@ exports.getOverviewPropana = async function (req, res) {
     var countS20 = 0;
     var countRecruit = 0;
     var baseRecruitment;
-    var basePangkalan;
-    if (code1) {
+    var basePangkalan = 0;
+    if (code1 && !code2 && !code3) {
       baseRecruitment = getbaseTahap(code1);
       basePangkalan = getBasePangkalanTahap(code1);
+    } else if (code1 && code2 && !code3) {
+      basePangkalan = getbasePangkalanMor(code2);
+      baseRecruitment = getbaseMor(code2);
+    } else if (code3) {
+      if(break3 === "KabCode"){
+        baseRecruitment = getbaseKabupaten(code3);
+        basePangkalan = getbasePangkalanKelurahan(code3);
+      }else{
+        baseRecruitment = getbaseKelurahan(code3);
+        basePangkalan = getbasePangkalanKelurahan(code3);
+      }
     } else {
       baseRecruitment = 100000;
       basePangkalan = 638;
     }
+    console.log(`rekrut = ${baseRecruitment} dan pangkalan = ${basePangkalan}`)
     for (let i = 0; i < pid.length; i++) {
       var data = await excelData(pid[i]);
       for (let x = 0; x < data.length; x++) {
@@ -1676,7 +1699,7 @@ exports.getStatusRekrutPropana = async function (req, res) {
             label: label,
             reason: reason,
             y: 1,
-            tahap: `Tahap ${i+1}`
+            tahap: `Tahap ${i + 1}`,
           });
         }
       }
