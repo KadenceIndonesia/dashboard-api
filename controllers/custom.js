@@ -436,7 +436,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
             code: attribute.attribute[i].code,
             label: attribute.attribute[i].label,
             y: 0,
-            tahap: pangkalan.tahap,
+            tahap: `Tahap ${pangkalan.tahap}`,
             mor: pangkalan.region,
             kabupaten: pangkalan.kabupaten,
             pangkalan: pangkalan.pangkalan,
@@ -588,7 +588,7 @@ exports.getDetailPropana = async function (req, res) {
                 pekerjaan: attributeOccupation
                   ? attributeOccupation.label
                   : "N/A",
-                tahap: kelurahan ? kelurahan.tahap : "N/A",
+                tahap: kelurahan ? `Tahap ${kelurahan.tahap}` : "N/A",
                 mor: kelurahan ? kelurahan.region : "N/A",
                 kabupaten: kelurahan ? kelurahan.kabupaten : "N/A",
                 kelurahan: kelurahan ? kelurahan.kelurahan : "N/A",
