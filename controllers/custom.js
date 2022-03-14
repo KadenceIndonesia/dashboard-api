@@ -717,14 +717,14 @@ exports.getOverviewPropana = async function (req, res) {
 
     var countScreeningPangkalan = 0;
     for (let x = 0; x < screeningpangkalan.length; x++) {
-      if (code1 && !code2) {
+      if (code1 && !code2 && !code3) {
         if (
           screeningpangkalan[x]["UB11"] === 4 &&
           screeningpangkalan[x]["BATCH"] == code1
         ) {
           countScreeningPangkalan++;
         }
-      } else if (code1 && code2) {
+      } else if (code1 && code2 && !code3) {
         if (
           screeningpangkalan[x]["UB11"] === 4 &&
           screeningpangkalan[x]["BATCH"] == code1 &&
@@ -734,13 +734,15 @@ exports.getOverviewPropana = async function (req, res) {
         }
       } else if (code1 && code2 && code3) {
         if (break3 === "KabCode") {
-          var findKelurahanByCity = filterKelurahanByCity(code2);
+          var findKelurahanByCity = filterKelurahanByCity(code3);
           var codeKelurahan = findKelurahanByCity.code;
         } else {
-          var codeKelurahan = code2;
+          var codeKelurahan = code3;
         }
+        console.log(codeKelurahan)
         if (
           screeningpangkalan[x]["UB11"] === 4 &&
+          screeningpangkalan[x]["BATCH"] == code1 &&
           screeningpangkalan[x]["Kelurahan"] == codeKelurahan
         ) {
           countScreeningPangkalan++;
