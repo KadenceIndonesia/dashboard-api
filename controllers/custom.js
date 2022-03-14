@@ -393,7 +393,7 @@ exports.getNPSData = async function (req, res) {
 
 exports.getDataPropanaFlexmonster = async function (req, res) {
   try {
-    const pid = "IDD3999";
+    const pid = ["IDD3999", "IDD3999_2"];
     const qidx = "Kelurahan_pangkalan";
     const break1 = req.query.break1;
     const break2 = req.query.break2;
@@ -422,40 +422,40 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
         return true;
       }
     };
-    const project = await projectByPid(pid);
-    var attribute = await attributeByQidx(pid, qidx);
-    if (project.length > 0) {
-      if (attribute) {
-        var data = await excelData(pid);
-        var data_screening = await excelData("IDD3999_screening");
-        var rawdata = [];
-        if (attribute.type === "SA") {
-          for (let i = 0; i < attribute.attribute.length; i++) {
-            var pangkalan = getDataKelurahan(attribute.attribute[i].code);
-            var targetPangkalan = Math.ceil(
-              pangkalan.target / pangkalan.pangkalan
-            );
-            rawdata.push({
-              code: attribute.attribute[i].code,
-              label: attribute.attribute[i].label,
-              y: 0,
-              mor: pangkalan.region,
-              kabupaten: pangkalan.kabupaten,
-              pangkalan: pangkalan.pangkalan,
-              targetPangkalan: pangkalan.target,
-              target_pangkalan: targetPangkalan,
-              target_pangkalan_percent: Math.ceil((targetPangkalan * 90) / 100),
-              rekrut_pangkalan: 0,
-              rekrutmen: 0,
-              sosialisasi: 0,
-              pembelian1: 0,
-              pembelian1_MyPertamina: 0,
-              pembelian1_tunai: 0,
-              pembelian2: 0,
-              pembelian2_MyPertamina: 0,
-              pembelian2_tunai: 0,
-            });
-          }
+    var attribute = await attributeByQidx("IDD3999", qidx);
+    if (attribute) {
+      var data_screening = await excelData("IDD3999_screening");
+      var rawdata = [];
+      if (attribute.type === "SA") {
+        for (let i = 0; i < attribute.attribute.length; i++) {
+          var pangkalan = getDataKelurahan(attribute.attribute[i].code);
+          var targetPangkalan = Math.ceil(
+            pangkalan.target / pangkalan.pangkalan
+          );
+          rawdata.push({
+            code: attribute.attribute[i].code,
+            label: attribute.attribute[i].label,
+            y: 0,
+            tahap: pangkalan.tahap,
+            mor: pangkalan.region,
+            kabupaten: pangkalan.kabupaten,
+            pangkalan: pangkalan.pangkalan,
+            targetPangkalan: pangkalan.target,
+            target_pangkalan: targetPangkalan,
+            target_pangkalan_percent: Math.ceil((targetPangkalan * 90) / 100),
+            rekrut_pangkalan: 0,
+            rekrutmen: 0,
+            sosialisasi: 0,
+            pembelian1: 0,
+            pembelian1_MyPertamina: 0,
+            pembelian1_tunai: 0,
+            pembelian2: 0,
+            pembelian2_MyPertamina: 0,
+            pembelian2_tunai: 0,
+          });
+        }
+        for (let i = 0; i < pid.length; i++) {
+          var data = await excelData(pid[i]);
           for (let x = 0; x < data.length; x++) {
             if (filterLogic(x) && data[x]["Kelurahan_pangkalan"] != -1) {
               var findOnObject = await findObj(
@@ -465,69 +465,65 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
               );
               if (findOnObject !== -1) {
                 rawdata[findOnObject].y++;
-              }
-              if (
-                data[x]["Q7"] == 1 ||
-                data[x]["Q7"] == 2 ||
-                data[x]["Q7b"] == 1 ||
-                data[x]["Q7b"] == 2 ||
-                data[x]["Q7d"] == 1 ||
-                data[x]["Q7d"] == 2
-              ) {
-                rawdata[findOnObject].pembelian1++;
-                if (data[x]["Q4"] === 2) {
-                  rawdata[findOnObject].pembelian1_MyPertamina++;
+                if (
+                  data[x]["Q7"] == 1 ||
+                  data[x]["Q7"] == 2 ||
+                  data[x]["Q7b"] == 1 ||
+                  data[x]["Q7b"] == 2 ||
+                  data[x]["Q7d"] == 1 ||
+                  data[x]["Q7d"] == 2
+                ) {
+                  rawdata[findOnObject].pembelian1++;
+                  if (data[x]["Q4"] === 2) {
+                    rawdata[findOnObject].pembelian1_MyPertamina++;
+                  }
+                  if (data[x]["Q4"] === 1 || data[x]["Q4"] === -1) {
+                    rawdata[findOnObject].pembelian1_tunai++;
+                  }
                 }
-                if (data[x]["Q4"] === 1 || data[x]["Q4"] === -1) {
-                  rawdata[findOnObject].pembelian1_tunai++;
+                if (
+                  data[x]["Q9"] == 1 ||
+                  data[x]["Q9"] == 2 ||
+                  data[x]["Q9b"] == 1 ||
+                  data[x]["Q9b"] == 2 ||
+                  data[x]["Q9d"] == 1 ||
+                  data[x]["Q9d"] == 2
+                ) {
+                  rawdata[findOnObject].pembelian2++;
+                  if (data[x]["Q4c"] === 2) {
+                    rawdata[findOnObject].pembelian2_MyPertamina++;
+                  }
+                  if (data[x]["Q4c"] === 1 || data[x]["Q4c"] === -1) {
+                    rawdata[findOnObject].pembelian2_tunai++;
+                  }
                 }
-              }
-              if (
-                data[x]["Q9"] == 1 ||
-                data[x]["Q9"] == 2 ||
-                data[x]["Q9b"] == 1 ||
-                data[x]["Q9b"] == 2 ||
-                data[x]["Q9d"] == 1 ||
-                data[x]["Q9d"] == 2
-              ) {
-                rawdata[findOnObject].pembelian2++;
-                if (data[x]["Q4c"] === 2) {
-                  rawdata[findOnObject].pembelian2_MyPertamina++;
+                if (data[x]["S20"] == 3) {
+                  rawdata[findOnObject].rekrutmen++;
                 }
-                if (data[x]["Q4c"] === 1 || data[x]["Q4c"] === -1) {
-                  rawdata[findOnObject].pembelian2_tunai++;
+                if (data[x]["Q1"] == 1) {
+                  rawdata[findOnObject].sosialisasi++;
                 }
-              }
-              if (data[x]["S20"] == 3) {
-                rawdata[findOnObject].rekrutmen++;
-              }
-              if (data[x]["Q1"] == 1) {
-                rawdata[findOnObject].sosialisasi++;
               }
             }
           }
         }
-        for (let x = 0; x < data_screening.length; x++) {
-          if (data_screening[x]["UB11"] === 4) {
-            var findOnObject = await findObj(
-              rawdata,
-              "code",
-              parseInt(data_screening[x]["Kelurahan"])
-            );
-            if (findOnObject !== -1) {
-              rawdata[findOnObject].rekrut_pangkalan++;
-            }
-          }
-        }
-        res.status(200).send(rawdata);
-      } else {
-        res.status(404).send({
-          messages: "Question not found",
-        });
       }
+      for (let x = 0; x < data_screening.length; x++) {
+        if (data_screening[x]["UB11"] === 4) {
+          var findOnObject = await findObj(
+            rawdata,
+            "code",
+            parseInt(data_screening[x]["Kelurahan"])
+          );
+          if (findOnObject !== -1) {
+            rawdata[findOnObject].rekrut_pangkalan++;
+          }
+        }
+      }
+      res.status(200).send(rawdata);
     } else {
       res.status(404).send({
-        messages: "Project not found",
+        messages: "Question not found",
       });
     }
   } catch (error) {
@@ -537,7 +533,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
 
 exports.getDetailPropana = async function (req, res) {
   try {
-    const pid = "IDD3999";
+    const pid = ["IDD3999", "IDD3999_2"];
     const qidx = "Kelurahan_pangkalan";
     const break1 = req.query.break1;
     const break2 = req.query.break2;
@@ -566,44 +562,36 @@ exports.getDetailPropana = async function (req, res) {
         return true;
       }
     };
-    const project = await projectByPid(pid);
-    var attribute = await attributeByQidx(pid, qidx);
-    if (project.length > 0) {
-      if (attribute) {
-        var data = await excelData(pid);
-        var rawdata = [];
-        if (attribute.type === "SA") {
-          for (let i = 0; i < attribute.attribute.length; i++) {
-            var pangkalan = getDataKelurahan(attribute.attribute[i].code);
-            // rawdata.push({
-            //   code: attribute.attribute[i].code,
-            //   label: attribute.attribute[i].label,
-            //   y: 0,
-            //   pangkalan: pangkalan.pangkalan,
-            //   targetPangkalan: pangkalan.target,
-            //   rekrutmen: 0,
-            //   sosialisasi: 0,
-            //   pembelian1: 0,
-            //   pembelian2: 0,
-            // });
-          }
+    var attribute = await attributeByQidx("IDD3999", qidx);
+    if (attribute) {
+      var rawdata = [];
+      if (attribute.type === "SA") {
+        for (let i = 0; i < pid.length; i++) {
+          var data = await excelData(pid[i]);
           for (let x = 0; x < data.length; x++) {
             if (filterLogic(x) && data[x]["Kelurahan_pangkalan"] != -1) {
               var kelurahan = getDataKelurahan(data[x]["Kelurahan_pangkalan"]);
-              var attributeAge = await getAge(data[x]["S4"]);
-              var attributeSes = await getSES(data[x]["S11"]);
-              var attributeOccupation = await getOccupation(data[x]["S5"]);
+              var attributeAge =
+                data[x]["S4"] !== -1 ? await getAge(data[x]["S4"]) : -1;
+              var attributeSes =
+                data[x]["S11"] !== -1 ? await getSES(data[x]["S11"]) : -1;
+              var attributeOccupation =
+                data[x]["S5"] !== -1 ? await getOccupation(data[x]["S5"]) : -1;
               rawdata.push({
                 sbjnum: data[x]["SbjNum"],
-                nama: data[x]["NAMA_PENERIMA"],
+                nama:
+                  data[x]["NAMA_PENERIMA"] !== -1
+                    ? data[x]["NAMA_PENERIMA"]
+                    : "N/A",
                 age: attributeAge ? attributeAge.label : "N/A",
                 ses: attributeSes ? attributeSes.label : "N/A",
                 pekerjaan: attributeOccupation
                   ? attributeOccupation.label
                   : "N/A",
-                mor: kelurahan.region,
-                kabupaten: kelurahan.kabupaten,
-                kelurahan: kelurahan.kelurahan,
+                tahap: kelurahan ? kelurahan.tahap : "N/A",
+                mor: kelurahan ? kelurahan.region : "N/A",
+                kabupaten: kelurahan ? kelurahan.kabupaten : "N/A",
+                kelurahan: kelurahan ? kelurahan.kelurahan : "N/A",
                 no_hp: data[x]["U5A_Tlp"] !== -1 ? data[x]["U5A_Tlp"] : "N/A",
                 my_pertamina:
                   data[x]["Q2"] === 1 ||
@@ -622,48 +610,14 @@ exports.getDetailPropana = async function (req, res) {
                     ? "Sudah"
                     : "Belum",
               });
-              // var findOnObject = await findObj(
-              //   rawdata,
-              //   "code",
-              //   parseInt(data[x][qidx])
-              // );
-              // if (findOnObject !== -1) {
-              //   rawdata[findOnObject].y++;
-              // }
-              // if (
-              //   data[x]["Q7"] == 1 ||
-              //   data[x]["Q7"] == 2 ||
-              //   data[x]["Q7"] == 1 ||
-              //   data[x]["Q7b"] == 2
-              // ) {
-              //   rawdata[findOnObject].pembelian1++;
-              // }
-              // if (
-              //   data[x]["Q9"] == 1 ||
-              //   data[x]["Q9"] == 2 ||
-              //   data[x]["Q9"] == 1 ||
-              //   data[x]["Q9b"] == 2
-              // ) {
-              //   rawdata[findOnObject].pembelian2++;
-              // }
-              // if (data[x]["S20"] == 3) {
-              //   rawdata[findOnObject].rekrutmen++;
-              // }
-              // if (data[x]["Q1"] == 1) {
-              //   rawdata[findOnObject].sosialisasi++;
-              // }
             }
           }
         }
-        res.status(200).send(rawdata);
-      } else {
-        res.status(404).send({
-          messages: "Question not found",
-        });
       }
+      res.status(200).send(rawdata);
     } else {
       res.status(404).send({
-        messages: "Project not found",
+        messages: "Question not found",
       });
     }
   } catch (error) {
@@ -673,7 +627,7 @@ exports.getDetailPropana = async function (req, res) {
 
 exports.getOverviewPropana = async function (req, res) {
   try {
-    const pid = "IDD3999";
+    var pid;
     const S20 = "S20";
     const screeningpangkalan = await excelData("IDD3999_screening");
     const break1 = req.query.break1;
@@ -682,17 +636,19 @@ exports.getOverviewPropana = async function (req, res) {
     var code1 = req.query.code1;
     var code2 = req.query.code2;
     var code3 = req.query.code3;
+    if (!code1) {
+      pid = ["IDD3999", "IDD3999_2"];
+    } else {
+      code1 > 1 ? (pid = [`IDD3999_${code1}`]) : (pid = [`IDD3999`]);
+    }
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
-        return data[x][break1] == code1;
+        // return data[x][break1] == code1;
+        return true;
       } else if (code1 && code2 && !code3) {
-        return data[x][break1] == code1 && data[x][break2] == code2;
+        return data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
-        return (
-          data[x][break1] == code1 &&
-          data[x][break2] == code2 &&
-          data[x][break3] == code3
-        );
+        return data[x][break2] == code2 && data[x][break3] == code3;
       } else if (!code1 && code2 && !code3) {
         return data[x][break2] == code2;
       } else if (!code1 && code2 && code3) {
@@ -703,60 +659,58 @@ exports.getOverviewPropana = async function (req, res) {
         return true;
       }
     };
-    var data = await excelData(pid);
     var countS20 = 0;
     var countRecruit = 0;
-    // var countPembelian1 = 0;
-    // var countPembelian2 = 0;
-    for (let x = 0; x < data.length; x++) {
-      if (filterLogic(x)) {
-        if (
-          data[x][S20] === 1 ||
-          data[x][S20] === 3 ||
-          data[x][S20] === 4 ||
-          data[x][S20] === 5 ||
-          data[x][S20] === 6 ||
-          data[x][S20] === 7 ||
-          data[x][S20] === 8
-        ) {
-          countS20++;
+    var baseRecruitment;
+    var basePangkalan;
+    if (code1) {
+      baseRecruitment = getbaseTahap(code1);
+      basePangkalan = getBasePangkalanTahap(code1);
+    } else {
+      baseRecruitment = 100000;
+      basePangkalan = 638;
+    }
+    for (let i = 0; i < pid.length; i++) {
+      var data = await excelData(pid[i]);
+      for (let x = 0; x < data.length; x++) {
+        if (filterLogic(x)) {
+          if (
+            data[x][S20] === 1 ||
+            data[x][S20] === 3 ||
+            data[x][S20] === 4 ||
+            data[x][S20] === 5 ||
+            data[x][S20] === 6 ||
+            data[x][S20] === 7 ||
+            data[x][S20] === 8
+          ) {
+            countS20++;
+          }
+          if (data[x][S20] === 3) {
+            countRecruit++;
+          }
         }
-        if (data[x][S20] === 3) {
-          countRecruit++;
-        }
-        // if (
-        //   data[x]["Q7"] === 1 ||
-        //   data[x]["Q7"] === 2 ||
-        //   data[x]["Q7b"] === 1 ||
-        //   data[x]["Q7b"] === 2 ||
-        //   data[x]["Q7d"] === 1 ||
-        //   data[x]["Q7d"] === 2
-        // ) {
-        //   countPembelian1++;
-        // }
-        // if (
-        //   data[x]["Q9"] === 1 ||
-        //   data[x]["Q9"] === 2 ||
-        //   data[x]["Q9b"] === 1 ||
-        //   data[x]["Q9b"] === 2 ||
-        //   data[x]["Q9d"] === 1 ||
-        //   data[x]["Q9d"] === 2
-        // ) {
-        //   countPembelian2++;
-        // }
       }
     }
+
     var countScreeningPangkalan = 0;
     for (let x = 0; x < screeningpangkalan.length; x++) {
       if (code1 && !code2) {
         if (
           screeningpangkalan[x]["UB11"] === 4 &&
-          screeningpangkalan[x]["REGION"] == code1
+          screeningpangkalan[x]["BATCH"] == code1
         ) {
           countScreeningPangkalan++;
         }
       } else if (code1 && code2) {
-        if (break2 === "KabCode") {
+        if (
+          screeningpangkalan[x]["UB11"] === 4 &&
+          screeningpangkalan[x]["BATCH"] == code1 &&
+          screeningpangkalan[x]["REGION"] == code2
+        ) {
+          countScreeningPangkalan++;
+        }
+      } else if (code1 && code2 && code3) {
+        if (break3 === "KabCode") {
           var findKelurahanByCity = filterKelurahanByCity(code2);
           var codeKelurahan = findKelurahanByCity.code;
         } else {
@@ -774,33 +728,25 @@ exports.getOverviewPropana = async function (req, res) {
         }
       }
     }
+
     var rawdata = [
       {
         label: "Contact Pangkalan",
         y: countScreeningPangkalan,
-        percent: ((countScreeningPangkalan * 100) / 638).toFixed(2),
+        percent: ((countScreeningPangkalan * 100) / basePangkalan).toFixed(2),
       },
       {
         label: "Total Contact KPM",
         y: countS20,
-        percent: ((countS20 * 100) / 114930).toFixed(4),
+        percent: ((countS20 * 100) / baseRecruitment).toFixed(2),
       },
       {
         label: "Total Recruit KPM",
         y: countRecruit,
-        percent: ((countRecruit * 100) / 100000).toFixed(4),
+        percent: ((countRecruit * 100) / baseRecruitment).toFixed(2),
       },
-      // {
-      //   label: "Total Pembelian1",
-      //   y: countPembelian1,
-      //   percent: ((countPembelian1 * 100) / 100000).toFixed(4),
-      // },
-      // {
-      //   label: "Total Pembelian2",
-      //   y: countPembelian2,
-      //   percent: ((countPembelian2 * 100) / 100000).toFixed(4),
-      // },
     ];
+    // base total contact = 114930
     res.status(200).send(rawdata);
   } catch (error) {
     res.status(400).send(error);
@@ -820,6 +766,7 @@ exports.getOverviewAchievementPropana = async function (req, res) {
     var code3 = req.query.code3;
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
+        pid;
         return data[x][break1] == code1;
       } else if (code1 && code2 && !code3) {
         return data[x][break1] == code1 && data[x][break2] == code2;
@@ -1101,7 +1048,7 @@ exports.getAchievementPropana = async function (req, res) {
 
 exports.getOverviewAchievementAgePropana = async function (req, res) {
   try {
-    const pid = "IDD3999";
+    var pid;
     const qidx = "S4";
     const project = await projectByPid(pid);
     const break1 = req.query.break1;
@@ -1110,157 +1057,24 @@ exports.getOverviewAchievementAgePropana = async function (req, res) {
     var code1 = req.query.code1;
     var code2 = req.query.code2;
     var code3 = req.query.code3;
-    const filterLogic = (x) => {
-      if (code1 && !code2 && !code3) {
-        return data[x][break1] == code1;
-      } else if (code1 && code2 && !code3) {
-        if (break2 === "KabCode") {
-          return data[x][break1] == code1 && data[x]["KabCode"] == code2;
-        } else {
-          return (
-            data[x][break1] == code1 && data[x]["Kelurahan_pangkalan"] == code2
-          );
-        }
-      } else if (code1 && code2 && code3) {
-        if (break2 === "KabCode") {
-          return (
-            data[x][break1] == code1 &&
-            data[x]["KabCode"] == code2 &&
-            data[x][break3] == code3
-          );
-        } else {
-          return (
-            data[x][break1] == code1 &&
-            data[x]["Kelurahan_pangkalan"] == code2 &&
-            data[x][break3] == code3
-          );
-        }
-      } else if (!code1 && code2 && !code3) {
-        return data[x][break2] == code2;
-      } else if (!code1 && code2 && code3) {
-        return data[x][break2] == code2 && data[x][break3] == code3;
-      } else if (!code1 && !code2 && code3) {
-        return data[x][break3] == code3;
-      } else {
-        return true;
-      }
-    };
-    var attribute = await attributeByQidx(pid, qidx);
-    if (project.length > 0) {
-      if (attribute) {
-        var data = await excelData(pid);
-        var rawdata = [];
-        var base = 0;
-        if (attribute.type === "SA") {
-          for (let i = 0; i < attribute.attribute.length; i++) {
-            rawdata.push({
-              code: attribute.attribute[i].code,
-              label: attribute.attribute[i].label,
-              y: 0,
-              count: 0,
-              target: 0,
-            });
-          }
-          for (let x = 0; x < data.length; x++) {
-            if (data[x]["S20"] === 3 && filterLogic(x)) {
-              base++;
-              if (data[x][qidx] === 1) {
-                rawdata[0].count++;
-                rawdata[0].y = parseFloat(
-                  ((rawdata[0].count * 100) / base).toFixed(2)
-                );
-              }
-              if (data[x][qidx] === 2) {
-                rawdata[1].count++;
-                rawdata[1].y = parseFloat(
-                  ((rawdata[1].count * 100) / base).toFixed(2)
-                );
-              }
-              if (data[x][qidx] === 3) {
-                rawdata[2].count++;
-                rawdata[2].y = parseFloat(
-                  ((rawdata[2].count * 100) / base).toFixed(2)
-                );
-              }
-              if (data[x][qidx] === 4) {
-                rawdata[3].count++;
-                rawdata[3].y = parseFloat(
-                  ((rawdata[3].count * 100) / base).toFixed(2)
-                );
-              }
-              if (data[x][qidx] === 5) {
-                rawdata[4].count++;
-                rawdata[4].y = parseFloat(
-                  ((rawdata[4].count * 100) / base).toFixed(2)
-                );
-              }
-              if (data[x][qidx] === 6) {
-                rawdata[5].count++;
-                rawdata[5].y = parseFloat(
-                  ((rawdata[5].count * 100) / base).toFixed(2)
-                );
-              }
-              if (data[x][qidx] === 7) {
-                rawdata[6].count++;
-                rawdata[6].y = parseFloat(
-                  ((rawdata[6].count * 100) / base).toFixed(2)
-                );
-              }
-            }
-          }
-        }
-        for (let i = 0; i < rawdata.length; i++) {
-          rawdata[i].target = base;
-        }
-        res.status(200).send(rawdata);
-      } else {
-        res.status(404).send({
-          messages: "Question not found",
-        });
-      }
+    if (!code1) {
+      pid = ["IDD3999", "IDD3999_2"];
     } else {
-      res.status(404).send({
-        messages: "Project not found",
-      });
+      code1 > 1 ? (pid = [`IDD3999_${code1}`]) : (pid = [`IDD3999`]);
     }
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
-
-exports.getOverviewAchievementSESPropana = async function (req, res) {
-  try {
-    const pid = "IDD3999";
-    const qidx = "S11";
-    const break1 = req.query.break1;
-    const break2 = req.query.break2;
-    const break3 = req.query.break3;
-    var code1 = req.query.code1;
-    var code2 = req.query.code2;
-    var code3 = req.query.code3;
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
-        return data[x][break1] == code1;
+        // return data[x][break1] == code1;
+        return true;
       } else if (code1 && code2 && !code3) {
-        if (break2 === "KabCode") {
-          return data[x][break1] == code1 && data[x]["KabCode"] == code2;
-        } else {
-          return (
-            data[x][break1] == code1 && data[x]["Kelurahan_pangkalan"] == code2
-          );
-        }
+        // return data[x][break1] == code1 && data[x][break2] == code2;
+        return data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
-        if (break2 === "KabCode") {
-          return (
-            data[x][break1] == code1 &&
-            data[x]["KabCode"] == code2 &&
-            data[x][break3] == code3
-          );
+        if (break3 === "KabCode") {
+          return data[x][break2] == code2 && data[x]["KabCode"] == code3;
         } else {
           return (
-            data[x][break1] == code1 &&
-            data[x]["Kelurahan_pangkalan"] == code2 &&
-            data[x][break3] == code3
+            data[x][break2] == code2 && data[x]["Kelurahan_pangkalan"] == code3
           );
         }
       } else if (!code1 && code2 && !code3) {
@@ -1273,24 +1087,28 @@ exports.getOverviewAchievementSESPropana = async function (req, res) {
         return true;
       }
     };
-    var attribute = await attributeByQidx(pid, qidx);
+    var attribute = getAllAge();
     if (attribute) {
-      var data = await excelData(pid);
       var rawdata = [];
       var base = 0;
-      if (attribute.type === "SA") {
-        for (let i = 0; i < attribute.attribute.length; i++) {
-          rawdata.push({
-            code: attribute.attribute[i].code,
-            label: attribute.attribute[i].label,
-            y: 0,
-            count: 0,
-            target: 0,
-          });
-        }
+      for (let i = 0; i < attribute.length; i++) {
+        rawdata.push({
+          code: attribute[i].code,
+          label: attribute[i].label,
+          y: 0,
+          count: 0,
+          target: 0,
+        });
+      }
+      for (let i = 0; i < pid.length; i++) {
+        var data = await excelData(pid[i]);
         for (let x = 0; x < data.length; x++) {
           if (data[x]["S20"] === 3 && filterLogic(x)) {
             base++;
+          }
+        }
+        for (let x = 0; x < data.length; x++) {
+          if (data[x]["S20"] === 3 && filterLogic(x)) {
             if (data[x][qidx] === 1) {
               rawdata[0].count++;
               rawdata[0].y = parseFloat(
@@ -1321,6 +1139,18 @@ exports.getOverviewAchievementSESPropana = async function (req, res) {
                 ((rawdata[4].count * 100) / base).toFixed(2)
               );
             }
+            if (data[x][qidx] === 6) {
+              rawdata[5].count++;
+              rawdata[5].y = parseFloat(
+                ((rawdata[5].count * 100) / base).toFixed(2)
+              );
+            }
+            if (data[x][qidx] === 7) {
+              rawdata[6].count++;
+              rawdata[6].y = parseFloat(
+                ((rawdata[6].count * 100) / base).toFixed(2)
+              );
+            }
           }
         }
       }
@@ -1338,39 +1168,33 @@ exports.getOverviewAchievementSESPropana = async function (req, res) {
   }
 };
 
-exports.getOverviewAchievementOccupationPropana = async function (req, res) {
+exports.getOverviewAchievementSESPropana = async function (req, res) {
   try {
-    const pid = "IDD3999";
-    const qidx = "S5";
+    const qidx = "S11";
     const break1 = req.query.break1;
     const break2 = req.query.break2;
     const break3 = req.query.break3;
     var code1 = req.query.code1;
     var code2 = req.query.code2;
     var code3 = req.query.code3;
+    if (!code1) {
+      pid = ["IDD3999", "IDD3999_2"];
+    } else {
+      code1 > 1 ? (pid = [`IDD3999_${code1}`]) : (pid = [`IDD3999`]);
+    }
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
-        return data[x][break1] == code1;
+        // return data[x][break1] == code1;
+        return true;
       } else if (code1 && code2 && !code3) {
-        if (break2 === "KabCode") {
-          return data[x][break1] == code1 && data[x]["KabCode"] == code2;
-        } else {
-          return (
-            data[x][break1] == code1 && data[x]["Kelurahan_pangkalan"] == code2
-          );
-        }
+        // return data[x][break1] == code1 && data[x][break2] == code2;
+        return data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
-        if (break2 === "KabCode") {
-          return (
-            data[x][break1] == code1 &&
-            data[x]["KabCode"] == code2 &&
-            data[x][break3] == code3
-          );
+        if (break3 === "KabCode") {
+          return data[x][break2] == code2 && data[x]["KabCode"] == code3;
         } else {
           return (
-            data[x][break1] == code1 &&
-            data[x]["Kelurahan_pangkalan"] == code2 &&
-            data[x][break3] == code3
+            data[x][break2] == code2 && data[x]["Kelurahan_pangkalan"] == code3
           );
         }
       } else if (!code1 && code2 && !code3) {
@@ -1383,27 +1207,135 @@ exports.getOverviewAchievementOccupationPropana = async function (req, res) {
         return true;
       }
     };
-    var attribute = await attributeByQidx(pid, qidx);
+    var attribute = getAllSES();
+
+    var rawdata = [];
+    var base = 0;
+    for (let i = 0; i < attribute.length; i++) {
+      rawdata.push({
+        code: attribute[i].code,
+        label: attribute[i].label,
+        y: 0,
+        count: 0,
+        target: 0,
+      });
+    }
+    for (let i = 0; i < pid.length; i++) {
+      var data = await excelData(pid[i]);
+      for (let x = 0; x < data.length; x++) {
+        if (data[x]["S20"] === 3 && filterLogic(x)) {
+          base++;
+        }
+      }
+      for (let x = 0; x < data.length; x++) {
+        if (data[x]["S20"] === 3 && filterLogic(x)) {
+          if (data[x][qidx] === 1) {
+            rawdata[0].count++;
+            rawdata[0].y = parseFloat(
+              ((rawdata[0].count * 100) / base).toFixed(2)
+            );
+          }
+          if (data[x][qidx] === 2) {
+            rawdata[1].count++;
+            rawdata[1].y = parseFloat(
+              ((rawdata[1].count * 100) / base).toFixed(2)
+            );
+          }
+          if (data[x][qidx] === 3) {
+            rawdata[2].count++;
+            rawdata[2].y = parseFloat(
+              ((rawdata[2].count * 100) / base).toFixed(2)
+            );
+          }
+          if (data[x][qidx] === 4) {
+            rawdata[3].count++;
+            rawdata[3].y = parseFloat(
+              ((rawdata[3].count * 100) / base).toFixed(2)
+            );
+          }
+          if (data[x][qidx] === 5) {
+            rawdata[4].count++;
+            rawdata[4].y = parseFloat(
+              ((rawdata[4].count * 100) / base).toFixed(2)
+            );
+          }
+        }
+      }
+    }
+    for (let i = 0; i < rawdata.length; i++) {
+      rawdata[i].target = base;
+    }
+    res.status(200).send(rawdata);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getOverviewAchievementOccupationPropana = async function (req, res) {
+  try {
+    var pid;
+    const qidx = "S5";
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    if (!code1) {
+      pid = ["IDD3999", "IDD3999_2"];
+    } else {
+      code1 > 1 ? (pid = [`IDD3999_${code1}`]) : (pid = [`IDD3999`]);
+    }
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        // return data[x][break1] == code1;
+        return true;
+      } else if (code1 && code2 && !code3) {
+        // return data[x][break1] == code1 && data[x][break2] == code2;
+        return data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        if (break3 === "KabCode") {
+          return data[x][break2] == code2 && data[x]["KabCode"] == code3;
+        } else {
+          return (
+            data[x][break2] == code2 && data[x]["Kelurahan_pangkalan"] == code3
+          );
+        }
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
+    var attribute = getAllOccupation();
     if (attribute) {
-      var data = await excelData(pid);
       var rawdata = [];
       var base = 0;
-      if (attribute.type === "SA") {
-        for (let i = 0; i < attribute.attribute.length; i++) {
-          rawdata.push({
-            code: attribute.attribute[i].code,
-            label: attribute.attribute[i].label,
-            y: 0,
-            count: 0,
-            target: 0,
-          });
-        }
+      for (let i = 0; i < attribute.length; i++) {
+        rawdata.push({
+          code: attribute[i].code,
+          label: attribute[i].label,
+          y: 0,
+          count: 0,
+          target: 0,
+        });
+      }
+      for (let i = 0; i < pid.length; i++) {
+        var data = await excelData(pid[i]);
         for (let x = 0; x < data.length; x++) {
           if (data[x]["S20"] === 3 && filterLogic(x)) {
             base++;
+          }
+        }
+        for (let x = 0; x < data.length; x++) {
+          if (data[x]["S20"] === 3 && filterLogic(x)) {
             if (data[x][qidx] !== 1) {
               var findOnObject = await findObj(
-                attribute.attribute,
+                attribute,
                 "code",
                 parseInt(data[x][qidx])
               );
@@ -1480,7 +1412,6 @@ exports.getOverviewAchievementKKSPropana = async function (req, res) {
 
 exports.getOverviewAchievementMyPertaminaPropana = async function (req, res) {
   try {
-    const pid = "IDD3999";
     const qidx = "S11";
     const break1 = req.query.break1;
     const break2 = req.query.break2;
@@ -1488,29 +1419,24 @@ exports.getOverviewAchievementMyPertaminaPropana = async function (req, res) {
     var code1 = req.query.code1;
     var code2 = req.query.code2;
     var code3 = req.query.code3;
+    if (!code1) {
+      pid = ["IDD3999", "IDD3999_2"];
+    } else {
+      code1 > 1 ? (pid = [`IDD3999_${code1}`]) : (pid = [`IDD3999`]);
+    }
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
-        return data[x][break1] == code1;
+        // return data[x][break1] == code1;
+        return true;
       } else if (code1 && code2 && !code3) {
-        if (break2 === "KabCode") {
-          return data[x][break1] == code1 && data[x]["KabCode"] == code2;
-        } else {
-          return (
-            data[x][break1] == code1 && data[x]["Kelurahan_pangkalan"] == code2
-          );
-        }
+        // return data[x][break1] == code1 && data[x][break2] == code2;
+        return data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
-        if (break2 === "KabCode") {
-          return (
-            data[x][break1] == code1 &&
-            data[x]["KabCode"] == code2 &&
-            data[x][break3] == code3
-          );
+        if (break3 === "KabCode") {
+          return data[x][break2] == code2 && data[x]["KabCode"] == code3;
         } else {
           return (
-            data[x][break1] == code1 &&
-            data[x]["Kelurahan_pangkalan"] == code2 &&
-            data[x][break3] == code3
+            data[x][break2] == code2 && data[x]["Kelurahan_pangkalan"] == code3
           );
         }
       } else if (!code1 && code2 && !code3) {
@@ -1523,29 +1449,32 @@ exports.getOverviewAchievementMyPertaminaPropana = async function (req, res) {
         return true;
       }
     };
-    var attribute = await attributeByQidx(pid, qidx);
-    if (attribute) {
-      var data = await excelData(pid);
-      rawdata = [
-        {
-          code: 1,
-          label: "Install MyPertamina",
-          y: 0,
-          count: 0,
-          target: 0,
-        },
-        {
-          code: 2,
-          label: "Install LinkAja",
-          y: 0,
-          count: 0,
-          target: 0,
-        },
-      ];
-      var base = 0;
+    rawdata = [
+      {
+        code: 1,
+        label: "Install MyPertamina",
+        y: 0,
+        count: 0,
+        target: 0,
+      },
+      {
+        code: 2,
+        label: "Install LinkAja",
+        y: 0,
+        count: 0,
+        target: 0,
+      },
+    ];
+    var base = 0;
+    for (let i = 0; i < pid.length; i++) {
+      var data = await excelData(pid[i]);
       for (let x = 0; x < data.length; x++) {
         if (data[x]["S20"] === 3 && filterLogic(x)) {
           base++;
+        }
+      }
+      for (let x = 0; x < data.length; x++) {
+        if (data[x]["S20"] === 3 && filterLogic(x)) {
           if (
             data[x]["UA6A"] === 1 ||
             data[x]["UA6B"] === 1 ||
@@ -1570,15 +1499,11 @@ exports.getOverviewAchievementMyPertaminaPropana = async function (req, res) {
           }
         }
       }
-      for (let i = 0; i < rawdata.length; i++) {
-        rawdata[i].target = base;
-      }
-      res.status(200).send(rawdata);
-    } else {
-      res.status(404).send({
-        messages: "Question not found",
-      });
     }
+    for (let i = 0; i < rawdata.length; i++) {
+      rawdata[i].target = base;
+    }
+    res.status(200).send(rawdata);
   } catch (error) {
     res.status(400).send(error);
   }
@@ -1586,31 +1511,32 @@ exports.getOverviewAchievementMyPertaminaPropana = async function (req, res) {
 
 exports.getOverviewAchievementSmartphonePropana = async function (req, res) {
   try {
-    const pid = "IDD3999";
-    var data = await excelData(pid);
     const break1 = req.query.break1;
     const break2 = req.query.break2;
     const break3 = req.query.break3;
     var code1 = req.query.code1;
     var code2 = req.query.code2;
     var code3 = req.query.code3;
+    if (!code1) {
+      pid = ["IDD3999", "IDD3999_2"];
+    } else {
+      code1 > 1 ? (pid = [`IDD3999_${code1}`]) : (pid = [`IDD3999`]);
+    }
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
-        return data[x][break1] == code1;
+        // return data[x][break1] == code1;
+        return true;
       } else if (code1 && code2 && !code3) {
-        if (break2 === "KabCode") {
-          return data[x][break1] == code1 && data[x]["KabCode"] == code2;
+        // return data[x][break1] == code1 && data[x][break2] == code2;
+        return data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        if (break3 === "KabCode") {
+          return data[x][break2] == code2 && data[x]["KabCode"] == code3;
         } else {
           return (
-            data[x][break1] == code1 && data[x]["Kelurahan_pangkalan"] == code2
+            data[x][break2] == code2 && data[x]["Kelurahan_pangkalan"] == code3
           );
         }
-      } else if (code1 && code2 && code3) {
-        return (
-          data[x][break1] == code1 &&
-          data[x][break2] == code2 &&
-          data[x][break3] == code3
-        );
       } else if (!code1 && code2 && !code3) {
         return data[x][break2] == code2;
       } else if (!code1 && code2 && code3) {
@@ -1638,19 +1564,26 @@ exports.getOverviewAchievementSmartphonePropana = async function (req, res) {
         target: 0,
       },
     ];
-    for (let x = 0; x < data.length; x++) {
-      if (data[x]["S20"] === 3 && filterLogic(x)) {
-        base++;
-        if (data[x]["UA1"] === 1 || data[x]["UA2"] === 1) {
-          rawdata[0].count++;
-          rawdata[0].y = parseFloat(
-            ((rawdata[0].count * 100) / base).toFixed(2)
-          );
-        } else {
-          rawdata[1].count++;
-          rawdata[1].y = parseFloat(
-            ((rawdata[1].count * 100) / base).toFixed(2)
-          );
+    for (let i = 0; i < pid.length; i++) {
+      var data = await excelData(pid[i]);
+      for (let x = 0; x < data.length; x++) {
+        if (data[x]["S20"] === 3 && filterLogic(x)) {
+          base++;
+        }
+      }
+      for (let x = 0; x < data.length; x++) {
+        if (data[x]["S20"] === 3 && filterLogic(x)) {
+          if (data[x]["UA1"] === 1 || data[x]["UA2"] === 1) {
+            rawdata[0].count++;
+            rawdata[0].y = parseFloat(
+              ((rawdata[0].count * 100) / base).toFixed(2)
+            );
+          } else {
+            rawdata[1].count++;
+            rawdata[1].y = parseFloat(
+              ((rawdata[1].count * 100) / base).toFixed(2)
+            );
+          }
         }
       }
     }
@@ -1665,7 +1598,7 @@ exports.getOverviewAchievementSmartphonePropana = async function (req, res) {
 
 exports.getStatusRekrutPropana = async function (req, res) {
   try {
-    const pid = "IDD3999";
+    var pid;
     const qidx = "S20";
     const break1 = req.query.break1;
     const break2 = req.query.break2;
@@ -1673,23 +1606,24 @@ exports.getStatusRekrutPropana = async function (req, res) {
     var code1 = req.query.code1;
     var code2 = req.query.code2;
     var code3 = req.query.code3;
+    if (!code1) {
+      pid = ["IDD3999", "IDD3999_2"];
+    } else {
+      code1 > 1 ? (pid = [`IDD3999_${code1}`]) : (pid = [`IDD3999`]);
+    }
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
-        return data[x][break1] == code1;
+        // return data[x][break1] == code1;
+        return true;
       } else if (code1 && code2 && !code3) {
-        return data[x][break1] == code1 && data[x][break2] == code2;
+        // return data[x][break1] == code1 && data[x][break2] == code2;
+        return data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
-        if (break2 === "KabCode") {
-          return (
-            data[x][break1] == code1 &&
-            data[x]["KabCode"] == code2 &&
-            data[x][break3] == code3
-          );
+        if (break3 === "KabCode") {
+          return data[x][break2] == code2 && data[x]["KabCode"] == code3;
         } else {
           return (
-            data[x][break1] == code1 &&
-            data[x]["Kelurahan_pangkalan"] == code2 &&
-            data[x][break3] == code3
+            data[x][break2] == code2 && data[x]["Kelurahan_pangkalan"] == code3
           );
         }
       } else if (!code1 && code2 && !code3) {
@@ -1702,71 +1636,59 @@ exports.getStatusRekrutPropana = async function (req, res) {
         return true;
       }
     };
-    const project = await projectByPid(pid);
-    var attribute = await attributeByQidx(pid, qidx);
-    if (project.length > 0) {
-      if (attribute) {
-        var data = await excelData(pid);
-        var rawdata = [];
-        if (attribute.type === "SA") {
-          for (let x = 0; x < data.length; x++) {
-            if (filterLogic(x) && data[x][qidx] != -1) {
-              var findOnObject = await findObj(
-                attribute.attribute,
-                "code",
-                parseInt(data[x][qidx])
-              );
-              var label;
-              if (data[x][qidx] === 3) {
-                label = "Berhasil";
-              } else if (data[x][qidx] !== 1) {
-                label = "Tidak Berhasil";
-              }
-              var reason = "";
-              if (data[x][qidx] === 1) {
-                reason = "SES Upper 1, Upper 2";
-              } else if (data[x][qidx] === 4) {
-                reason =
-                  "Tidak Menggunakan gas LPG 3 kg (pakai LPG Non PSO atau Gas Alam)";
-              } else if (data[x][qidx] === 5) {
-                reason = "Meninggal Dunia";
-              } else if (data[x][qidx] === 6) {
-                reason =
-                  "Berencana bepergian/ tidak menetap selama 1 bulan di rumah";
-              } else if (data[x][qidx] === 7) {
-                reason = "Pindah Rumah beda kelurahan";
-              } else if (data[x][qidx] === 8) {
-                reason = "Menolak";
-              } else {
-                reason = "Berhasil";
-              }
-              rawdata.push({
-                code: data[x][qidx],
-                label: label,
-                reason: reason,
-                y: 1,
-              });
-            }
+
+    var rawdata = [];
+    for (let i = 0; i < pid.length; i++) {
+      var data = await excelData(pid[i]);
+      for (let x = 0; x < data.length; x++) {
+        if (filterLogic(x) && data[x][qidx] != -1) {
+          // var findOnObject = await findObj(
+          //   attribute.attribute,
+          //   "code",
+          //   parseInt(data[x][qidx])
+          // );
+          var label;
+          if (data[x][qidx] === 3) {
+            label = "Berhasil";
+          } else if (data[x][qidx] !== 1) {
+            label = "Tidak Berhasil";
           }
-        }
-        if (rawdata.length === 0) {
+          var reason = "";
+          if (data[x][qidx] === 1) {
+            reason = "SES Upper 1, Upper 2";
+          } else if (data[x][qidx] === 4) {
+            reason =
+              "Tidak Menggunakan gas LPG 3 kg (pakai LPG Non PSO atau Gas Alam)";
+          } else if (data[x][qidx] === 5) {
+            reason = "Meninggal Dunia";
+          } else if (data[x][qidx] === 6) {
+            reason =
+              "Berencana bepergian/ tidak menetap selama 1 bulan di rumah";
+          } else if (data[x][qidx] === 7) {
+            reason = "Pindah Rumah beda kelurahan";
+          } else if (data[x][qidx] === 8) {
+            reason = "Menolak";
+          } else {
+            reason = "Berhasil";
+          }
           rawdata.push({
-            label: "",
-            reason: "",
-            y: 0,
+            code: data[x][qidx],
+            label: label,
+            reason: reason,
+            y: 1,
+            tahap: `Tahap ${i+1}`
           });
         }
-        res.status(200).send(rawdata);
-      } else {
-        res.status(404).send({
-          messages: "Question not found",
-        });
       }
-    } else {
-      res.status(404).send({
-        messages: "Project not found",
+    }
+    if (rawdata.length === 0) {
+      rawdata.push({
+        label: "",
+        reason: "",
+        y: 0,
       });
     }
+    res.status(200).send(rawdata);
   } catch (error) {
     res.status(400).send(error);
   }
