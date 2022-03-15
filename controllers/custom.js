@@ -510,7 +510,7 @@ exports.getDataPropanaFlexmonster = async function (req, res) {
         }
       }
       for (let x = 0; x < data_screening.length; x++) {
-        if (data_screening[x]["UB11"] === 4) {
+        if (data_screening[x]["UB11"] !== -1) {
           var findOnObject = await findObj(
             rawdata,
             "code",
@@ -1693,6 +1693,8 @@ exports.getStatusRekrutPropana = async function (req, res) {
             reason = "Pindah Rumah beda kelurahan";
           } else if (data[x][qidx] === 8) {
             reason = "Menolak";
+          } else if (data[x][qidx] === 9) {
+            reason = "Anak Dibawah 17 tahun";
           } else {
             reason = "Berhasil";
           }
