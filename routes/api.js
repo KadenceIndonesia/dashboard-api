@@ -77,6 +77,13 @@ Router.get("/propana/achievementquestion/smartphone", customControllers.getOverv
 Router.get("/propana/achievementquestion/mypertamina", customControllers.getOverviewAchievementMyPertaminaPropana);
 Router.get("/propana/status-rekrut", customControllers.getStatusRekrutPropana);
 
+//spellbound
+Router.get(
+  "/spellbound/flexmonster/:tom/:spont/:aided",
+  customControllers.getDataSpellboundFlexmonster
+);
+
+
 //split
 Router.post("/split/:pid", splitControllers.getSplitData);
 

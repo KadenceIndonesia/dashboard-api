@@ -68,6 +68,7 @@ exports.achievementByQidx = async function (req, res) {
             });
           }
           for (let x = 0; x < data.length; x++) {
+            console.log(filterLogic(x))
             if (filterLogic(x)) {
               var findOnObject = await findObj(
                 rawdata,

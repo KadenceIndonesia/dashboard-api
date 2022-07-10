@@ -106,11 +106,38 @@ exports.getApiData = async function (req, res) {
   var getattributebypid = await getAttributesByPid(pid, qidx);
   var rawdata = [];
   var labelAttr;
+  const break1 = req.query.break1;
+  const break2 = req.query.break2;
+  const break3 = req.query.break3;
+  var code1 = req.query.code1;
+  var code2 = req.query.code2;
+  var code3 = req.query.code3;
+  const filterLogic = (i) => {
+    if (code1 && !code2 && !code3) {
+      return data[i][break1] == code1;
+    } else if (code1 && code2 && !code3) {
+      return data[i][break1] == code1 && data[i][break2] == code2;
+    } else if (code1 && code2 && code3) {
+      return (
+        data[i][break1] == code1 &&
+        data[i][break2] == code2 &&
+        data[i][break3] == code3
+      );
+    } else if (!code1 && code2 && !code3) {
+      return data[i][break2] == code2;
+    } else if (!code1 && code2 && code3) {
+      return data[i][break2] == code2 && data[i][break3] == code3;
+    } else if (!code1 && !code2 && code3) {
+      return data[i][break3] == code3;
+    } else {
+      return true;
+    }
+  };
   if (getattributebypid.length > 0) {
     if (getattributebypid[0].type == "SA") {
       labelAttr = getattributebypid[0].attribute;
       for (let i = 0; i < data.length; i++) {
-        if (data[i][qidx] != -1) {
+        if (data[i][qidx] != -1 && filterLogic(i)) {
           for (let x = 0; x < labelAttr.length; x++) {
             if (labelAttr[x].code == data[i][qidx]) {
               rawdata.push({
@@ -128,7 +155,7 @@ exports.getApiData = async function (req, res) {
       labelAttr = getattributebypid[0].attribute;
       for (let i = 0; i < data.length; i++) {
         for (let y = 1; y <= getattributebypid[0].attribute.length; y++) {
-          if (data[i][qidx + "_O" + y] != -1) {
+          if (data[i][qidx + "_O" + y] != -1 && filterLogic(i)) {
             for (let z = 0; z < labelAttr.length; z++) {
               if (labelAttr[z].code == data[i][qidx + "_O" + y]) {
                 rawdata.push({

@@ -692,7 +692,6 @@ exports.getOverviewPropana = async function (req, res) {
       baseRecruitment = 100000;
       basePangkalan = 638;
     }
-    console.log(`rekrut = ${baseRecruitment} dan pangkalan = ${basePangkalan}`)
     for (let i = 0; i < pid.length; i++) {
       var data = await excelData(pid[i]);
       for (let x = 0; x < data.length; x++) {
@@ -739,7 +738,6 @@ exports.getOverviewPropana = async function (req, res) {
         } else {
           var codeKelurahan = code3;
         }
-        console.log(codeKelurahan)
         if (
           screeningpangkalan[x]["UB11"] === 4 &&
           screeningpangkalan[x]["BATCH"] == code1 &&
@@ -1780,3 +1778,114 @@ exports.getTestPropana = async function (req, res) {
   data[0].topbreak[1].attribute.push("medan");
   res.send(data);
 };
+
+
+exports.getDataSpellboundFlexmonster = async function(req,res){
+  try {
+    const tom = req.params.tom;
+    const spont = req.params.spont;
+    const aided = req.params.aided;
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        return data[x][break1] == code1 && data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        return (
+          data[x][break1] == code1 &&
+          data[x][break2] == code2 &&
+          data[x][break3] == code3
+        );
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
+    var attributeTom = await attributeByQidx("IDE3125", tom);
+    var rawdata = [];
+    for (let a = 0; a < attributeTom.attribute.length; a++) {
+      rawdata.push({
+        code: attributeTom.attribute[a].code,
+        attribute: attributeTom.attribute[a].label,
+        tom: 0,
+        spont: 0,
+        aided: 0
+      })
+    }
+    if (attributeTom) {
+      var data = await excelData("ide3125");
+      for (let x = 0; x < data.length; x++) {
+        if (filterLogic(x)) {
+          if(data[x][tom]!==-1 && data[x][tom] < 97){
+            var findCodeTom = await findObj(
+              rawdata,
+              "code",
+              parseInt(data[x][tom])
+            );
+            rawdata[findCodeTom].tom = rawdata[findCodeTom].tom+1
+          }
+          for (let y = 0; y < attributeTom.attribute.length; y++) {
+            if(data[x][`${spont}_O${y+1}`]!==-1 && data[x][`${spont}_O${y+1}`] < 97){
+              var findCodeSpont = await findObj(
+                rawdata,
+                "code",
+                parseInt(data[x][`${spont}_O${y+1}`])
+              );
+              rawdata[findCodeSpont].spont = rawdata[findCodeSpont].spont+1
+            }
+            if(data[x][`${aided}_O${y+1}`]!==-1 && data[x][`${aided}_O${y+1}`] < 97){
+              var findCodeAided = await findObj(
+                rawdata,
+                "code",
+                parseInt(data[x][`${aided}_O${y+1}`])
+              );
+              rawdata[findCodeAided].aided = rawdata[findCodeAided].aided+1
+            }
+          }
+        }
+      }
+      // for (let i = 0; i < datax.length; i++) {
+      //   if(datax[i][`A1`]!==-1){
+      //     var findCodeTom = await findObj(
+      //       attributeTom.attribute,
+      //       "code",
+      //       parseInt(datax[i][`A1`])
+      //     );
+      //     for (let x = 0; x < attributeSpont.attribute.length; x++) {
+      //       if(datax[i][`A2_O${x+1}`]!==-1 && datax[i][`A2_O${x+1}`]!==99){
+      //         var findCodeSpont = await findObj(
+      //           attributeSpont.attribute,
+      //           "code",
+      //           parseInt(datax[i][`A2_O${x+1}`])
+      //         );
+      //         rawdata.push({
+      //           sbjnum: datax[i][`SbjNum`],
+      //           tom: attributeTom.attribute[findCodeTom].label,
+      //           spont: attributeSpont.attribute[findCodeSpont].label,
+      //           y: 1
+      //         })
+      //       }
+      //     }
+      //   }
+      // }
+      res.status(200).send(rawdata);
+    } else {
+      res.status(404).send({
+        messages: "Question not found",
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+}
