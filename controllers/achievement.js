@@ -4,13 +4,46 @@ require("../lib/index");
 exports.getAchievementData = async function (req, res) {
   try {
     const pid = req.params.pid;
+    var total = 0;
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        return data[x][break1] == code1 && data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        return (
+          data[x][break1] == code1 &&
+          data[x][break2] == code2 &&
+          data[x][break3] == code3
+        );
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
     const project = await projectByPid(pid);
     if (project.length > 0) {
       var data = await excelData(pid);
+      for (let x = 0; x < data.length; x++) {
+        if(data[x]['SbjNum'] !== -1 && filterLogic(x)){
+          total++
+        }
+      }
       res.status(200).send({
         projectID: pid,
         projectName: project[0].projectName,
-        total: data.length,
+        total: total,
       });
     } else {
       res.status(404).send({
