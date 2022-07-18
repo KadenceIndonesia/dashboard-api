@@ -79,7 +79,7 @@ Router.get("/propana/status-rekrut", customControllers.getStatusRekrutPropana);
 
 //spellbound
 Router.get(
-  "/spellbound/flexmonster/:tom/:spont/:aided",
+  "/:pid/flexmonster/:tom/:spont/:aided",
   customControllers.getDataSpellboundFlexmonster
 );
 

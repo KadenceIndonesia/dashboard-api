@@ -1782,6 +1782,7 @@ exports.getTestPropana = async function (req, res) {
 
 exports.getDataSpellboundFlexmonster = async function(req,res){
   try {
+    const pid = req.params.pid;
     const tom = req.params.tom;
     const spont = req.params.spont;
     const aided = req.params.aided;
@@ -1812,7 +1813,7 @@ exports.getDataSpellboundFlexmonster = async function(req,res){
         return true;
       }
     };
-    var attributeTom = await attributeByQidx("IDE3125", tom);
+    var attributeTom = await attributeByQidx(pid, tom);
     var rawdata = [];
     for (let a = 0; a < attributeTom.attribute.length; a++) {
       rawdata.push({
