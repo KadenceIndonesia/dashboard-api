@@ -8,6 +8,8 @@ const projectSchema = mongoose.Schema({
     status: Number,
     startDate: Date,
     endDate: Date,
+    multiple: Boolean,
+    subDirectory: Array,
     topbreak: [
         {
             quest: String,

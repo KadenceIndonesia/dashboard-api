@@ -6,7 +6,7 @@ const attributeSchema = mongoose.Schema({
     questionID: String,
     type: String,
     attribute: Array,
-    loopLabel: Array
+    loopLabel: Array,
 })
 
 module.exports = mongoose.model('Attribute', attributeSchema);

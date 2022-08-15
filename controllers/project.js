@@ -48,6 +48,7 @@ exports.postCreateProject = async function(req,res){
             status: req.body.status,
             startDate: req.body.startdate,
             endDate: req.body.enddate,
+            multiple: req.body.multiple,
         })
         project
             .save()
