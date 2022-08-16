@@ -47,6 +47,7 @@ Router.get(
   achievementControllers.achievementByTopbreak
 );
 Router.get("/achievement/:pid/:qidx", achievementControllers.achievementByQidx);
+Router.get("/achievement/:pid/:qidx/age-group", achievementControllers.achievementByQidxAgeGroup);
 Router.get("/achievement/:pid/:qidx/percent-target", achievementControllers.achievementByQidxPercentTarget);
 Router.get("/achievement/:pid/:qidx/percent-total", achievementControllers.achievementByQidxPercentTotal);
 Router.get(

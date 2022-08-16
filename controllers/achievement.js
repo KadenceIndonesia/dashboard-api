@@ -125,7 +125,6 @@ exports.achievementByQidx = async function (req, res) {
             });
           }
           for (let x = 0; x < data.length; x++) {
-            console.log(filterLogic(x));
             if (filterLogic(x)) {
               var findOnObject = await findObj(
                 rawdata,
@@ -457,6 +456,51 @@ exports.achievementByQidxPercentTotal = async function (req, res) {
       } else {
         res.status(404).send({
           messages: 'Question not found',
+        });
+      }
+    } else {
+      res.status(404).send({
+        messages: 'Project not found',
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.achievementByQidxAgeGroup = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const qidx = req.params.qidx;
+    const project = await projectByPid(pid);
+    var attribute = await attributeByQidx(pid, qidx);
+    if (project.length > 0) {
+      if (attribute) {
+        var rawdata = [];
+        var total = 0;
+        for (let i = 0; i < attribute.attribute.length; i++) {
+          rawdata.push({
+            code: attribute.attribute[i].code,
+            label: `${attribute.attribute[i].label} Tahun`,
+            y: 0,
+            percent: 0,
+            total: 0,
+          });
+        }
+        var data = await excelData(pid);
+        for (let i = 0; i < data.length; i++) {
+          total++;
+          var _groupingAge = groupingAge(attribute.attribute, data[i][qidx]);
+          rawdata[_groupingAge].y++;
+        }
+        for (let i = 0; i < rawdata.length; i++) {
+          rawdata[i].percent = (rawdata[i].y * 100) / total;
+          rawdata[i].base = total;
+        }
+        res.send(rawdata);
+      } else {
+        res.status(404).send({
+          messages: 'Question Not Found',
         });
       }
     } else {
