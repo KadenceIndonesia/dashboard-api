@@ -406,6 +406,7 @@ exports.achievementByQidxPercentTotal = async function (req, res) {
           for (let x = 0; x < data.length; x++) {
             if (filterLogic(x)) {
               for (let y = 1; y <= attribute.attribute.length; y++) {
+                total++;
                 var findOnObject = await findObj(
                   rawdata,
                   'code',
