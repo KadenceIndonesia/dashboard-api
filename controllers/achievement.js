@@ -513,6 +513,41 @@ exports.achievementByQidxAgeGroup = async function (req, res) {
   }
 };
 
+exports.achievementByQidxAgeGroupAverage = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const qidx = req.params.qidx;
+    const project = await projectByPid(pid);
+    var attribute = await attributeByQidx(pid, qidx);
+    if (project.length > 0) {
+      if (attribute) {
+        var rawdata = [];
+        var total = 0;
+        
+        var data = await excelData(pid);
+        for (let i = 0; i < data.length; i++) {
+          total = total + data[i][qidx]
+        }
+        var avg = total / data.length
+        res.send({
+          project: pid,
+          average: parseInt(avg.toFixed(0))
+        });
+      } else {
+        res.status(404).send({
+          messages: 'Question Not Found',
+        });
+      }
+    } else {
+      res.status(404).send({
+        messages: 'Project not found',
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.achievementByTopbreak = async function (req, res) {
   try {
     const pid = req.params.pid;
