@@ -51,6 +51,7 @@ Router.get("/achievement/:pid/:qidx/age-group", achievementControllers.achieveme
 Router.get("/achievement/:pid/:qidx/age-average", achievementControllers.achievementByQidxAgeGroupAverage);
 Router.get("/achievement/:pid/:qidx/percent-target", achievementControllers.achievementByQidxPercentTarget);
 Router.get("/achievement/:pid/:qidx/percent-total", achievementControllers.achievementByQidxPercentTotal);
+Router.get("/achievement/:pid/:qidx/grouping", achievementControllers.achievementByQidxGrouping);
 Router.get(
   "/achievement/:pid/:qidx/:filter/:value",
   achievementControllers.achievementByFilter

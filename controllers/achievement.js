@@ -468,6 +468,110 @@ exports.achievementByQidxPercentTotal = async function (req, res) {
   }
 };
 
+
+// grouping belum bisa dipakai untuk general case
+exports.achievementByQidxGrouping = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const qidx = req.params.qidx;
+    const break1 = req.query.break1;
+    const break2 = req.query.break2;
+    const break3 = req.query.break3;
+    var code1 = req.query.code1;
+    var code2 = req.query.code2;
+    var code3 = req.query.code3;
+    const filterLogic = (x) => {
+      if (code1 && !code2 && !code3) {
+        return data[x][break1] == code1;
+      } else if (code1 && code2 && !code3) {
+        return data[x][break1] == code1 && data[x][break2] == code2;
+      } else if (code1 && code2 && code3) {
+        return (
+          data[x][break1] == code1 &&
+          data[x][break2] == code2 &&
+          data[x][break3] == code3
+        );
+      } else if (!code1 && code2 && !code3) {
+        return data[x][break2] == code2;
+      } else if (!code1 && code2 && code3) {
+        return data[x][break2] == code2 && data[x][break3] == code3;
+      } else if (!code1 && !code2 && code3) {
+        return data[x][break3] == code3;
+      } else {
+        return true;
+      }
+    };
+    const project = await projectByPid(pid);
+    var attribute = await attributeByQidx(pid, qidx);
+    var grouping = await groupingByQidx(pid, qidx);
+    if (project.length > 0) {
+      if (attribute) {
+        var data = await excelData(pid);
+        var rawdata = [];
+        var total = 0;
+        if (attribute.type === 'MA') {
+          for (let i = 0; i < grouping.length; i++) {
+            rawdata.push({
+              code: grouping[i].code,
+              label: grouping[i].label,
+              y: 0,
+              percent: 0,
+              base: 0,
+            });
+          }
+          for (let x = 0; x < data.length; x++) {
+            if (filterLogic(x)) {
+              // var indexOfRawdata = -1;
+              var tempData = [];
+              for (let y = 1; y <= attribute.attribute.length; y++) {
+                var findOnObject = await findObj(
+                  attribute.attribute,
+                  'code',
+                  parseInt(data[x][`${qidx}_O${y}`])
+                );
+                if (findOnObject !== -1) {
+                  tempData.push(parseInt(data[x][`${qidx}_O${y}`]));
+                  // for (let z = 0; z < grouping.length; z++) {
+                  // var isExist = grouping[z].group.indexOf(
+                  //   parseInt(data[x][`${qidx}_O${y}`])
+                  // );
+                  // if (isExist !== -1) {
+                  //   indexOfRawdata = z;
+                  //   break;
+                  // }
+                  // }
+                }
+              }
+              if (tempData.indexOf(2)) {
+                total++;
+                rawdata[0].y++;
+              } else {
+                total++;
+                rawdata[1].y++;
+              }
+            }
+          }
+        }
+        for (let i = 0; i < rawdata.length; i++) {
+          rawdata[i].percent = (rawdata[i].y * 100) / total;
+          rawdata[i].base = total;
+        }
+        res.status(200).send(rawdata);
+      } else {
+        res.status(404).send({
+          messages: 'Question not found',
+        });
+      }
+    } else {
+      res.status(404).send({
+        messages: 'Project not found',
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.achievementByQidxAgeGroup = async function (req, res) {
   try {
     const pid = req.params.pid;
@@ -523,15 +627,15 @@ exports.achievementByQidxAgeGroupAverage = async function (req, res) {
       if (attribute) {
         var rawdata = [];
         var total = 0;
-        
+
         var data = await excelData(pid);
         for (let i = 0; i < data.length; i++) {
-          total = total + data[i][qidx]
+          total = total + data[i][qidx];
         }
-        var avg = total / data.length
+        var avg = total / data.length;
         res.send({
           project: pid,
-          average: parseInt(avg.toFixed(0))
+          average: parseInt(avg.toFixed(0)),
         });
       } else {
         res.status(404).send({
