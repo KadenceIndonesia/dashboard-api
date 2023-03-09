@@ -52,18 +52,7 @@ global.excelData = function (pid) {
   });
 };
 
-global.getAttributesByPid = function (pid, qidx) {
-  return new Promise((resolve) => {
-    Attribute.find({ projectID: pid, questionID: qidx })
-      .exec()
-      .then((result) => {
-        resolve(result);
-      })
-      .catch((error) => {
-        resolve(error);
-      });
-  });
-};
+
 
 global.getAttributesSpecByPid = function (pid, qidx, code) {
   return new Promise((resolve) => {
