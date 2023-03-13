@@ -103,9 +103,13 @@ exports.getAchievementTotal = async function (req, res) {
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
     const pid = req.params.pid;
+
     var data = await excelData(pid);
     var count = 0;
     for (let i = 0; i < data.length; i++) {
+      console.log(
+        `${accessDealer.indexOf(data[i].dealer)} = ${data[i].dealer}`
+      );
       if (accessDealer.indexOf(data[i].dealer) !== -1) {
         count++;
       }
@@ -138,6 +142,7 @@ exports.getAchievementGroupByRegion = async function (req, res) {
 
     var _getRegionByPid = await getRegionByPid(pid, _groupingRegionByArea);
     var response = [];
+    console.log('_groupingRegionByArea', _groupingRegionByArea);
     // array region to response
     for (let i = 0; i < _getRegionByPid.length; i++) {
       response.push({
@@ -210,12 +215,16 @@ exports.getAchievementGroupByBrand = async function (req, res) {
   try {
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
+    console.log(detailUser)
     var accessDealer = detailUser.access;
     var response = [];
 
     const pid = req.params.pid;
     var data = await excelData(pid);
-    var attribute = await attributeByQidx(pid, 'Usership_Mobil');
+    var kodeAttributeSTG =
+      pid === 'IDE3358' ? 'Usership_Mobil' : 'USERSHIP_MOBIL';
+
+    var attribute = await attributeByQidx(pid, kodeAttributeSTG);
     for (let i = 0; i < attribute.attribute.length; i++) {
       response.push({
         id: attribute.attribute[i].code,
@@ -224,7 +233,7 @@ exports.getAchievementGroupByBrand = async function (req, res) {
       });
     }
     for (let i = 0; i < data.length; i++) {
-      var _findObj = await findObj(response, 'id', data[i]['Usership_Mobil']);
+      var _findObj = await findObj(response, 'id', data[i][kodeAttributeSTG]);
       if (_findObj !== -1) {
         response[_findObj].value = response[_findObj].value + 1;
       }
@@ -248,7 +257,9 @@ exports.getAchievementGroupBySkenario = async function (req, res) {
 
     const pid = req.params.pid;
     var data = await excelData(pid);
-    var attribute = await attributeByQidx(pid, 'Jenis_Skenario');
+    var kodeAttributeSTG =
+      pid === 'IDE3358' ? 'Jenis_Skenario' : 'JENIS_SCENARIO_SERVICE';
+    var attribute = await attributeByQidx(pid, kodeAttributeSTG);
     for (let i = 0; i < attribute.attribute.length; i++) {
       response.push({
         id: attribute.attribute[i].code,
@@ -257,7 +268,7 @@ exports.getAchievementGroupBySkenario = async function (req, res) {
       });
     }
     for (let i = 0; i < data.length; i++) {
-      var _findObj = await findObj(response, 'id', data[i]['Jenis_Skenario']);
+      var _findObj = await findObj(response, 'id', data[i][kodeAttributeSTG]);
       if (_findObj !== -1) {
         response[_findObj].value = response[_findObj].value + 1;
       }
