@@ -215,7 +215,7 @@ exports.getAchievementGroupByBrand = async function (req, res) {
   try {
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
-    console.log(detailUser)
+    console.log(detailUser);
     var accessDealer = detailUser.access;
     var response = [];
 
@@ -276,6 +276,57 @@ exports.getAchievementGroupBySkenario = async function (req, res) {
     res.status(200).json({
       statusCode: 200,
       message: 'Success get total achievement',
+      data: response,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getTouchPointGroupParent = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    var response = await getParentTouchPoint(pid);
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get touchpoint parent',
+      data: response,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getTouchPointChildGroup = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const group = req.params.group;
+    var response = await getTouchPointByParent(pid, group);
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get touchpoint child',
+      data: response,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getTouchPointScoreParent = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+
+    var response = [];
+    var touchPointParent = await getParentTouchPoint(pid);
+    for (let i = 0; i < touchPointParent.length; i++) {
+      response.push({
+        label: touchPointParent[i].label,
+        value: 0,
+      });
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get touchpoint score parent',
       data: response,
     });
   } catch (error) {

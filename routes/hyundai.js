@@ -15,4 +15,10 @@ Router.get('/:pid/achievement/group-area', hyundaiControllers.getAchievementGrou
 Router.get('/:pid/achievement/group-brand', hyundaiControllers.getAchievementGroupByBrand);
 Router.get('/:pid/achievement/group-skenario', hyundaiControllers.getAchievementGroupBySkenario);
 
+
+Router.get('/:pid/touchpoint/get/parent', hyundaiControllers.getTouchPointGroupParent);
+Router.get('/:pid/touchpoint/get/child/:group', hyundaiControllers.getTouchPointChildGroup);
+
+Router.get('/:pid/touchpoint/score/parent', hyundaiControllers.getTouchPointScoreParent);
+
 module.exports = Router;
