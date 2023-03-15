@@ -4,7 +4,8 @@ const Report = require('../models/reports');
 const Projects = require('../models/project');
 const fs = require('fs');
 const path = require('path');
-const xslx = require('xlsx');
+const xlsx = require('node-xlsx');
+const moment = require('moment');
 const attributes = require('../models/attributes');
 const jwt = require('jsonwebtoken');
 require('../lib/hyundai');
@@ -683,48 +684,83 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var _getDealerByPid = await getDealerByPid(pid, city, arrDealer);
-    var response = [];
 
+    var response = [];
     for (let i = 0; i < _getDealerByPid.length; i++) {
       response.push({
         idDealer: _getDealerByPid[i].idDealer,
         idCity: _getDealerByPid[i].idCity,
         dealerName: _getDealerByPid[i].dealerName,
-        data: 0,
+        data: [],
       });
     }
 
     var parentTouchPoint = await getParentTouchPoint(pid);
 
     for (let i = 0; i < response.length; i++) {
-      var _scoreTouchPointByParent = await scoreTouchPointByParent(
+      var _scoreTouchPointByParentDealer = await scoreTouchPointByParentDealer(
         pid,
-        'score',
         response[i].idDealer
       );
-      if (_scoreTouchPointByParent.length > 0) {
-        response[i].data = _scoreTouchPointByParent[0].score;
+      var arrResult = [];
+      if (_scoreTouchPointByParentDealer.length > 0) {
+        for (let x = 0; x < _scoreTouchPointByParentDealer.length; x++) {
+          var _findObj = await findObj(
+            parentTouchPoint,
+            'code',
+            _scoreTouchPointByParentDealer[x].code
+          );
+          if (_findObj !== -1) {
+            arrResult.push(_scoreTouchPointByParentDealer[x]);
+          }
+        }
+        response[i].data = arrResult;
       }
     }
-    bubbleSort(response, 'data');
+
+    var isifile = [];
+    for (let i = 0; i < response.length; i++) {
+      if (response[i].data.length > 0) {
+        var tempFile = [
+          response[i].dealerName,
+          response[i].data[0].score,
+          response[i].data[1].score,
+          response[i].data[2].score,
+          response[i].data[3].score,
+          response[i].data[4].score,
+          response[i].data[5].score,
+          response[i].data[6].score,
+          response[i].data[7].score,
+          response[i].data[8].score,
+          response[i].data[9].score,
+        ];
+        isifile.push(tempFile);
+      }
+    }
+    var header = [['Dealer Name']];
+    var isiHeader = parentTouchPoint.map((data) => data.label);
+    var createHeader = [header[0].concat(isiHeader)];
+    var formatdate = moment().format('YYYY_MM_DD_HH_mm_ss');
+    var newfilename = `${pid}_${formatdate}.xlsx`;
+    // var newfilename = type + '_' + formatdate + '.xlsx';
+    var createfile = createHeader.concat(isifile);
+    const progress = xlsx.build([{ name: 'Data', data: createfile }]);
     fs.writeFile(
-      'public/filexls/' + newfilename,
+      `public/fileexcel/${newfilename}`,
       progress,
       function (errwritefile) {
         if (errwritefile) {
           console.log('error');
         } else {
-          res.render('download', {
-            newfilename: newfilename,
+          console.log('tidak error');
+          res.status(200).json({
+            statusCode: 200,
+            message: 'Success get touchpoint score parent',
+            data: `${process.env.HOSTNAME}fileexcel/${newfilename}`,
           });
         }
       }
     );
-    res.status(200).json({
-      statusCode: 200,
-      message: 'Success get touchpoint score parent',
-      data: response,
-    });
   } catch (error) {
     res.status(400).send(error);
   }
