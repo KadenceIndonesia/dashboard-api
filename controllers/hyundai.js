@@ -119,6 +119,34 @@ exports.getHyundaiDealer = async function (req, res) {
   }
 };
 
+exports.getHyundaiDealerFilter = async function (req, res) {
+  try {
+    const authHeaders = req.headers.userid;
+    const detailUser = await getUserById(authHeaders);
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const area = req.query.area;
+    const city = req.query.city;
+
+    var accessDealer = detailUser.access;
+    var _getDealerByPid = await getDealerByFilter(
+      pid,
+      region,
+      area,
+      city,
+      accessDealer
+    );
+    console.log(_getDealerByPid);
+    var response = [];
+    for (let i = 0; i < _getDealerByPid.length; i++) {
+      response.push(_getDealerByPid[i]);
+    }
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getAchievementTotal = async function (req, res) {
   try {
     const authHeaders = req.headers.userid;
@@ -303,6 +331,7 @@ exports.getAchievementGroupBySkenario = async function (req, res) {
 exports.getTouchPointGroupParent = async function (req, res) {
   try {
     const pid = req.params.pid;
+
     var response = await getParentTouchPoint(pid);
     res.status(200).json({
       statusCode: 200,
@@ -332,10 +361,15 @@ exports.getTouchPointChildGroup = async function (req, res) {
 exports.getTouchPointScoreParent = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const region = req.query.region;
+    const area = req.query.area;
+    const city = req.query.city;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
+    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var arrDealer = dealer.map((data) => data.idDealer);
 
     var response = [];
     var touchPointParent = await getParentTouchPoint(pid);
@@ -353,7 +387,7 @@ exports.getTouchPointScoreParent = async function (req, res) {
       var _touchPointScore = await scoreTouchPointByParent(
         pid,
         response[i].code,
-        accessDealer
+        arrDealer
       );
       var touchPointCount = 0;
       var touchPointLength = 0;
@@ -383,10 +417,15 @@ exports.getTouchPointScoreParent = async function (req, res) {
 exports.getTouchPointScoreQuarterTotal = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const region = req.query.region;
+    const area = req.query.area;
+    const city = req.query.city;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
+    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var arrDealer = dealer.map((data) => data.idDealer);
 
     var response = [
       {
@@ -410,8 +449,9 @@ exports.getTouchPointScoreQuarterTotal = async function (req, res) {
     var _touchPointScore = await scoreTouchPointByParent(
       pid,
       'score',
-      accessDealer
+      arrDealer
     );
+
     for (let x = 0; x < _touchPointScore.length; x++) {
       touchPointCount = touchPointCount + _touchPointScore[x].score;
     }
@@ -429,11 +469,17 @@ exports.getTouchPointScoreQuarterTotal = async function (req, res) {
 exports.getTouchPointScoreRegionTotal = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const region = req.query.region;
+    const area = req.query.area;
+    const city = req.query.city;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
-    var _groupingCityByDealer = await groupingCityByDealer(pid, accessDealer);
+    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var arrDealer = dealer.map((data) => data.idDealer);
+
+    var _groupingCityByDealer = await groupingCityByDealer(pid, arrDealer);
     var _groupingAreaByCity = await groupingAreaByCity(
       pid,
       _groupingCityByDealer
@@ -444,15 +490,15 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
     );
 
     var _getRegionByPid = await getRegionByPid(pid, _groupingRegionByArea);
-    var region = [];
+    var regionArr = [];
     for (let i = 0; i < _getRegionByPid.length; i++) {
-      region.push(_getRegionByPid[i]);
+      regionArr.push(_getRegionByPid[i]);
     }
     var response = [];
-    for (let i = 0; i < region.length; i++) {
+    for (let i = 0; i < regionArr.length; i++) {
       response.push({
-        code: region[i].idRegion,
-        label: region[i].regionName,
+        code: regionArr[i].idRegion,
+        label: regionArr[i].regionName,
         value: 0,
       });
     }
@@ -484,30 +530,30 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
 exports.getTouchPointScoreTotal = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const region = req.query.region;
+    const area = req.query.area;
+    const city = req.query.city;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
-    var _groupingCityByDealer = await groupingCityByDealer(pid, accessDealer);
-    var _groupingAreaByCity = await groupingAreaByCity(
-      pid,
-      _groupingCityByDealer
-    );
-    var _groupingRegionByArea = await groupingRegionByArea(
-      pid,
-      _groupingAreaByCity
-    );
+    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var arrDealer = dealer.map((data) => data.idDealer);
+
     var _scoreTouchPointByParent = await scoreTouchPointByParent(
       pid,
       'score',
-      accessDealer
+      arrDealer
     );
     var total = 0;
     var response = 0;
-    for (let i = 0; i < _scoreTouchPointByParent.length; i++) {
-      total = total + _scoreTouchPointByParent[i].score;
+
+    if (_scoreTouchPointByParent.length > 0) {
+      for (let i = 0; i < _scoreTouchPointByParent.length; i++) {
+        total = total + _scoreTouchPointByParent[i].score;
+      }
+      response = total / _scoreTouchPointByParent.length;
     }
-    response = total / _scoreTouchPointByParent.length;
     res.status(200).json({
       statusCode: 200,
       message: 'Success get touchpoint score parent',
@@ -520,12 +566,18 @@ exports.getTouchPointScoreTotal = async function (req, res) {
 exports.getTouchPointScoreDealerTotal = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const region = req.query.region;
+    const area = req.query.area;
+    const city = req.query.city;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
-    const city = req.query.city;
-    var _getDealerByPid = await getDealerByPid(pid, city, accessDealer);
+    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var arrDealer = dealer.map((data) => data.idDealer);
+
+    var _getDealerByPid = await getDealerByPid(pid, city, arrDealer);
+
     var response = [];
     for (let i = 0; i < _getDealerByPid.length; i++) {
       response.push({
@@ -537,7 +589,7 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
     }
 
     var parentTouchPoint = await getParentTouchPoint(pid);
-    // console.log(parentTouchPoint);
+
     for (let i = 0; i < response.length; i++) {
       var _scoreTouchPointByParentDealer = await scoreTouchPointByParentDealer(
         pid,
@@ -572,13 +624,19 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
 exports.getTouchPointScoreDealerSort = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const region = req.query.region;
+    const area = req.query.area;
+    const city = req.query.city;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
-    const city = req.query.city;
-    var _getDealerByPid = await getDealerByPid(pid, city, accessDealer);
+    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var arrDealer = dealer.map((data) => data.idDealer);
+
+    var _getDealerByPid = await getDealerByPid(pid, city, arrDealer);
     var response = [];
+
     for (let i = 0; i < _getDealerByPid.length; i++) {
       response.push({
         idDealer: _getDealerByPid[i].idDealer,
@@ -601,6 +659,67 @@ exports.getTouchPointScoreDealerSort = async function (req, res) {
       }
     }
     bubbleSort(response, 'data');
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get touchpoint score parent',
+      data: response,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getTouchPointScoreDealerExport = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const area = req.query.area;
+    const city = req.query.city;
+    //users
+    const authHeaders = req.headers.userid;
+    const detailUser = await getUserById(authHeaders);
+    var accessDealer = detailUser.access;
+    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var arrDealer = dealer.map((data) => data.idDealer);
+
+    var _getDealerByPid = await getDealerByPid(pid, city, arrDealer);
+    var response = [];
+
+    for (let i = 0; i < _getDealerByPid.length; i++) {
+      response.push({
+        idDealer: _getDealerByPid[i].idDealer,
+        idCity: _getDealerByPid[i].idCity,
+        dealerName: _getDealerByPid[i].dealerName,
+        data: 0,
+      });
+    }
+
+    var parentTouchPoint = await getParentTouchPoint(pid);
+
+    for (let i = 0; i < response.length; i++) {
+      var _scoreTouchPointByParent = await scoreTouchPointByParent(
+        pid,
+        'score',
+        response[i].idDealer
+      );
+      if (_scoreTouchPointByParent.length > 0) {
+        response[i].data = _scoreTouchPointByParent[0].score;
+      }
+    }
+    bubbleSort(response, 'data');
+    fs.writeFile(
+      'public/filexls/' + newfilename,
+      progress,
+      function (errwritefile) {
+        if (errwritefile) {
+          console.log('error');
+        } else {
+          res.render('download', {
+            newfilename: newfilename,
+          });
+        }
+      }
+    );
     res.status(200).json({
       statusCode: 200,
       message: 'Success get touchpoint score parent',
