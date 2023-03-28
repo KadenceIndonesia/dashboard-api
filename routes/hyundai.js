@@ -12,6 +12,7 @@ Router.get('/:pid/administration/get/dealer-filter', hyundaiControllers.getHyund
 Router.get('/:pid/administration/get/dealer-total', hyundaiControllers.getHyundaiDealerTotal);
 
 Router.get('/:pid/achievement/total', hyundaiControllers.getAchievementTotal);
+Router.get('/:pid/achievement/group-quarter', hyundaiControllers.getAchievementGroupByQuarter);
 Router.get('/:pid/achievement/group-region', hyundaiControllers.getAchievementGroupByRegion);
 Router.get('/:pid/achievement/group-area', hyundaiControllers.getAchievementGroupByArea);
 

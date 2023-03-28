@@ -155,17 +155,58 @@ exports.getAchievementTotal = async function (req, res) {
     var accessDealer = detailUser.access;
     const pid = req.params.pid;
 
+    const quarter = req.query.quarter;
     var data = await excelData(pid);
     var count = 0;
     for (let i = 0; i < data.length; i++) {
       if (accessDealer.indexOf(data[i].dealer) !== -1) {
-        count++;
+        if (quarter && parseInt(data[i]['Quartal']) === parseInt(quarter)) {
+          count++;
+        }
+        if (!quarter) {
+          count++;
+        }
       }
     }
     res.status(200).json({
       statusCode: 200,
       message: 'Success get total achievement',
       total: count,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getAchievementGroupByQuarter = async function (req, res) {
+  try {
+    const authHeaders = req.headers.userid;
+    const detailUser = await getUserById(authHeaders);
+    var accessDealer = detailUser.access;
+    var response = [];
+
+    const pid = req.params.pid;
+    var data = await excelData(pid);
+    var kodeAttributeSTG = 'Quartal';
+
+    var attribute = await attributeByQidx(pid, kodeAttributeSTG);
+    for (let i = 0; i < attribute.attribute.length; i++) {
+      response.push({
+        id: attribute.attribute[i].code,
+        label: attribute.attribute[i].label,
+        value: 0,
+      });
+    }
+    for (let i = 0; i < data.length; i++) {
+      var _findObj = await findObj(response, 'id', data[i][kodeAttributeSTG]);
+      if (_findObj !== -1) {
+        response[_findObj].value = response[_findObj].value + 1;
+      }
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get total achievement',
+      data: response,
     });
   } catch (error) {
     res.status(400).send(error);
@@ -199,10 +240,19 @@ exports.getAchievementGroupByRegion = async function (req, res) {
       });
     }
 
+    const quarter = req.query.quarter;
     var data = await excelData(pid);
     for (let i = 0; i < data.length; i++) {
       var _findObj = await findObj(response, 'id', data[i].region);
-      response[_findObj].value = response[_findObj].value + 1;
+      if (_findObj !== -1) {
+        if (quarter && parseInt(quarter) === parseInt(data[i]['Quartal'])) {
+          response[_findObj].value = response[_findObj].value + 1;
+        }
+
+        if (!quarter) {
+          response[_findObj].value = response[_findObj].value + 1;
+        }
+      }
     }
 
     res.status(200).json({
@@ -238,13 +288,19 @@ exports.getAchievementGroupByArea = async function (req, res) {
         value: 0,
       });
     }
-
+    const quarter = req.query.quarter;
     var data = await excelData(pid);
     for (let i = 0; i < data.length; i++) {
       var areaByDealer = await getAreaByCity(pid, data[i]['S0']);
       var _findObj = await findObj(response, 'id', areaByDealer[0].idArea);
       if (_findObj !== -1) {
-        response[_findObj].value = response[_findObj].value + 1;
+        if (quarter && parseInt(quarter) === parseInt(data[i]['Quartal'])) {
+          response[_findObj].value = response[_findObj].value + 1;
+        }
+
+        if (!quarter) {
+          response[_findObj].value = response[_findObj].value + 1;
+        }
       }
     }
 
@@ -266,6 +322,7 @@ exports.getAchievementGroupByBrand = async function (req, res) {
     var response = [];
 
     const pid = req.params.pid;
+    const quarter = req.query.quarter;
     var data = await excelData(pid);
     var kodeAttributeSTG =
       pid === 'IDE3358' ? 'Usership_Mobil' : 'USERSHIP_MOBIL';
@@ -281,7 +338,12 @@ exports.getAchievementGroupByBrand = async function (req, res) {
     for (let i = 0; i < data.length; i++) {
       var _findObj = await findObj(response, 'id', data[i][kodeAttributeSTG]);
       if (_findObj !== -1) {
-        response[_findObj].value = response[_findObj].value + 1;
+        if (quarter && parseInt(quarter) === parseInt(data[i]['Quartal'])) {
+          response[_findObj].value = response[_findObj].value + 1;
+        }
+        if (!quarter) {
+          response[_findObj].value = response[_findObj].value + 1;
+        }
       }
     }
     res.status(200).json({
@@ -302,6 +364,7 @@ exports.getAchievementGroupBySkenario = async function (req, res) {
     var response = [];
 
     const pid = req.params.pid;
+    const quarter = req.query.quarter;
     var data = await excelData(pid);
     var kodeAttributeSTG =
       pid === 'IDE3358' ? 'Jenis_Skenario' : 'JENIS_SCENARIO_SERVICE';
@@ -316,7 +379,12 @@ exports.getAchievementGroupBySkenario = async function (req, res) {
     for (let i = 0; i < data.length; i++) {
       var _findObj = await findObj(response, 'id', data[i][kodeAttributeSTG]);
       if (_findObj !== -1) {
-        response[_findObj].value = response[_findObj].value + 1;
+        if (quarter && parseInt(quarter) === parseInt(data[i]['Quartal'])) {
+          response[_findObj].value = response[_findObj].value + 1;
+        }
+        if (!quarter) {
+          response[_findObj].value = response[_findObj].value + 1;
+        }
       }
     }
     res.status(200).json({
@@ -365,6 +433,7 @@ exports.getTouchPointScoreParent = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const quarter = req.query.quarter;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
@@ -388,7 +457,8 @@ exports.getTouchPointScoreParent = async function (req, res) {
       var _touchPointScore = await scoreTouchPointByParent(
         pid,
         response[i].code,
-        arrDealer
+        arrDealer,
+        quarter
       );
       var touchPointCount = 0;
       var touchPointLength = 0;
@@ -473,6 +543,7 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const quarter = req.query.quarter;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
@@ -508,7 +579,8 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
       var _scoreTouchPointByRegion = await scoreTouchPointByRegion(
         pid,
         'score',
-        response[i].code
+        response[i].code,
+        quarter
       );
       var touchPointCount = 0;
       if (_scoreTouchPointByRegion.length > 0) {
@@ -534,6 +606,7 @@ exports.getTouchPointScoreTotal = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const quarter = req.query.quarter;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
@@ -544,7 +617,8 @@ exports.getTouchPointScoreTotal = async function (req, res) {
     var _scoreTouchPointByParent = await scoreTouchPointByParent(
       pid,
       'score',
-      arrDealer
+      arrDealer,
+      quarter
     );
     var total = 0;
     var response = 0;
@@ -570,6 +644,7 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const quarter = req.query.quarter;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
@@ -594,7 +669,8 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
     for (let i = 0; i < response.length; i++) {
       var _scoreTouchPointByParentDealer = await scoreTouchPointByParentDealer(
         pid,
-        response[i].idDealer
+        response[i].idDealer,
+        quarter
       );
       var arrResult = [];
       if (_scoreTouchPointByParentDealer.length > 0) {
@@ -628,6 +704,7 @@ exports.getTouchPointScoreDealerSort = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const quarter = req.query.quarter;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
@@ -653,7 +730,8 @@ exports.getTouchPointScoreDealerSort = async function (req, res) {
       var _scoreTouchPointByParent = await scoreTouchPointByParent(
         pid,
         'score',
-        response[i].idDealer
+        response[i].idDealer,
+        quarter
       );
       if (_scoreTouchPointByParent.length > 0) {
         response[i].data = _scoreTouchPointByParent[0].score;
