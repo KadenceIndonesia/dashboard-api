@@ -11,7 +11,7 @@ const touchpointscoreSchema = mongoose.Schema({
   code: String,
   score: Number,
   quarter: Number,
-  brand: String,
+  brand: Number,
 });
 
 module.exports = mongoose.model('Touchpointscore', touchpointscoreSchema);

@@ -137,7 +137,6 @@ exports.getHyundaiDealerFilter = async function (req, res) {
       city,
       accessDealer
     );
-    console.log(_getDealerByPid);
     var response = [];
     for (let i = 0; i < _getDealerByPid.length; i++) {
       response.push(_getDealerByPid[i]);
@@ -254,7 +253,7 @@ exports.getAchievementGroupByRegion = async function (req, res) {
         }
       }
     }
-
+    bubbleSort(response, 'id');
     res.status(200).json({
       statusCode: 200,
       message: 'Success get total achievement',
@@ -434,6 +433,7 @@ exports.getTouchPointScoreParent = async function (req, res) {
     const area = req.query.area;
     const city = req.query.city;
     const quarter = req.query.quarter;
+    const brand = req.query.brand;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
@@ -458,7 +458,8 @@ exports.getTouchPointScoreParent = async function (req, res) {
         pid,
         response[i].code,
         arrDealer,
-        quarter
+        quarter,
+        brand
       );
       var touchPointCount = 0;
       var touchPointLength = 0;
@@ -544,6 +545,7 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
     const area = req.query.area;
     const city = req.query.city;
     const quarter = req.query.quarter;
+    const brand = req.query.brand;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
@@ -580,7 +582,8 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
         pid,
         'score',
         response[i].code,
-        quarter
+        quarter,
+        brand
       );
       var touchPointCount = 0;
       if (_scoreTouchPointByRegion.length > 0) {
@@ -607,6 +610,7 @@ exports.getTouchPointScoreTotal = async function (req, res) {
     const area = req.query.area;
     const city = req.query.city;
     const quarter = req.query.quarter;
+    const brand = req.query.brand;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
@@ -618,7 +622,8 @@ exports.getTouchPointScoreTotal = async function (req, res) {
       pid,
       'score',
       arrDealer,
-      quarter
+      quarter,
+      brand
     );
     var total = 0;
     var response = 0;
@@ -638,6 +643,7 @@ exports.getTouchPointScoreTotal = async function (req, res) {
     res.status(400).send(error);
   }
 };
+
 exports.getTouchPointScoreDealerTotal = async function (req, res) {
   try {
     const pid = req.params.pid;
@@ -705,6 +711,7 @@ exports.getTouchPointScoreDealerSort = async function (req, res) {
     const area = req.query.area;
     const city = req.query.city;
     const quarter = req.query.quarter;
+    const brand = req.query.brand;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
@@ -731,7 +738,8 @@ exports.getTouchPointScoreDealerSort = async function (req, res) {
         pid,
         'score',
         response[i].idDealer,
-        quarter
+        quarter,
+        brand
       );
       if (_scoreTouchPointByParent.length > 0) {
         response[i].data = _scoreTouchPointByParent[0].score;
