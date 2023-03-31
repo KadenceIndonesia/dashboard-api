@@ -153,12 +153,13 @@ exports.getAchievementTotal = async function (req, res) {
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
     const pid = req.params.pid;
+    const quest = pid === 'IDE3358' ? 'dealer' : 'DEALER';
 
     const quarter = req.query.quarter;
     var data = await excelData(pid);
     var count = 0;
     for (let i = 0; i < data.length; i++) {
-      if (accessDealer.indexOf(data[i].dealer) !== -1) {
+      if (accessDealer.indexOf(data[i][quest]) !== -1) {
         if (quarter && parseInt(data[i]['Quartal']) === parseInt(quarter)) {
           count++;
         }
@@ -218,6 +219,8 @@ exports.getAchievementGroupByRegion = async function (req, res) {
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
     const pid = req.params.pid;
+    const questRegion = pid === 'IDE3358' ? 'region' : 'REGION';
+
     var _groupingCityByDealer = await groupingCityByDealer(pid, accessDealer);
     var _groupingAreaByCity = await groupingAreaByCity(
       pid,
@@ -242,7 +245,7 @@ exports.getAchievementGroupByRegion = async function (req, res) {
     const quarter = req.query.quarter;
     var data = await excelData(pid);
     for (let i = 0; i < data.length; i++) {
-      var _findObj = await findObj(response, 'id', data[i].region);
+      var _findObj = await findObj(response, 'id', data[i][questRegion]);
       if (_findObj !== -1) {
         if (quarter && parseInt(quarter) === parseInt(data[i]['Quartal'])) {
           response[_findObj].value = response[_findObj].value + 1;
@@ -277,18 +280,20 @@ exports.getAchievementGroupByArea = async function (req, res) {
       _groupingCityByDealer
     );
 
+
     var _getAreaByPid = await getAreaByPid(pid, region, _groupingAreaByCity);
     var response = [];
     // array region to response
     for (let i = 0; i < _getAreaByPid.length; i++) {
       response.push({
-        id: _getAreaByPid[i].idRegion,
+        id: _getAreaByPid[i].idArea,
         label: _getAreaByPid[i].areaName,
         value: 0,
       });
     }
     const quarter = req.query.quarter;
     var data = await excelData(pid);
+    
     for (let i = 0; i < data.length; i++) {
       var areaByDealer = await getAreaByCity(pid, data[i]['S0']);
       var _findObj = await findObj(response, 'id', areaByDealer[0].idArea);
