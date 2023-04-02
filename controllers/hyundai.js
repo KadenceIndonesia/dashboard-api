@@ -128,6 +128,7 @@ exports.getHyundaiDealerFilter = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const qDealer = req.query.dealer;
 
     var accessDealer = detailUser.access;
     var _getDealerByPid = await getDealerByFilter(
@@ -135,6 +136,7 @@ exports.getHyundaiDealerFilter = async function (req, res) {
       region,
       area,
       city,
+      qDealer,
       accessDealer
     );
     var response = [];
@@ -280,7 +282,6 @@ exports.getAchievementGroupByArea = async function (req, res) {
       _groupingCityByDealer
     );
 
-
     var _getAreaByPid = await getAreaByPid(pid, region, _groupingAreaByCity);
     var response = [];
     // array region to response
@@ -293,7 +294,7 @@ exports.getAchievementGroupByArea = async function (req, res) {
     }
     const quarter = req.query.quarter;
     var data = await excelData(pid);
-    
+
     for (let i = 0; i < data.length; i++) {
       var areaByDealer = await getAreaByCity(pid, data[i]['S0']);
       var _findObj = await findObj(response, 'id', areaByDealer[0].idArea);
@@ -437,13 +438,21 @@ exports.getTouchPointScoreParent = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const qDealer = req.query.dealer;
     const quarter = req.query.quarter;
     const brand = req.query.brand;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
-    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var dealer = await getDealerByFilter(
+      pid,
+      region,
+      area,
+      city,
+      qDealer,
+      accessDealer
+    );
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var response = [];
@@ -497,11 +506,19 @@ exports.getTouchPointScoreQuarterTotal = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const qDealer = req.query.dealer;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
-    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var dealer = await getDealerByFilter(
+      pid,
+      region,
+      area,
+      city,
+      qDealer,
+      accessDealer
+    );
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var response = [
@@ -549,13 +566,21 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const qDealer = req.query.dealer;
     const quarter = req.query.quarter;
     const brand = req.query.brand;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
-    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var dealer = await getDealerByFilter(
+      pid,
+      region,
+      area,
+      city,
+      qDealer,
+      accessDealer
+    );
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var _groupingCityByDealer = await groupingCityByDealer(pid, arrDealer);
@@ -614,13 +639,21 @@ exports.getTouchPointScoreTotal = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const qDealer = req.query.dealer;
     const quarter = req.query.quarter;
     const brand = req.query.brand;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
-    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var dealer = await getDealerByFilter(
+      pid,
+      region,
+      area,
+      city,
+      qDealer,
+      accessDealer
+    );
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var _scoreTouchPointByParent = await scoreTouchPointByParent(
@@ -655,12 +688,20 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const qDealer = req.query.dealer;
     const quarter = req.query.quarter;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
-    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var dealer = await getDealerByFilter(
+      pid,
+      region,
+      area,
+      city,
+      qDealer,
+      accessDealer
+    );
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var _getDealerByPid = await getDealerByPid(pid, city, arrDealer);
@@ -715,13 +756,21 @@ exports.getTouchPointScoreDealerSort = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const qDealer = req.query.dealer;
     const quarter = req.query.quarter;
     const brand = req.query.brand;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
-    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var dealer = await getDealerByFilter(
+      pid,
+      region,
+      area,
+      city,
+      qDealer,
+      accessDealer
+    );
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var _getDealerByPid = await getDealerByPid(pid, city, arrDealer);
@@ -767,11 +816,19 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
+    const qDealer = req.query.dealer;
     //users
     const authHeaders = req.headers.userid;
     const detailUser = await getUserById(authHeaders);
     var accessDealer = detailUser.access;
-    var dealer = await getDealerByFilter(pid, region, area, city, accessDealer);
+    var dealer = await getDealerByFilter(
+      pid,
+      region,
+      area,
+      city,
+      qDealer,
+      accessDealer
+    );
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var _getDealerByPid = await getDealerByPid(pid, city, arrDealer);
