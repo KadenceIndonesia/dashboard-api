@@ -881,6 +881,7 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
           response[i].data[7].score,
           response[i].data[8].score,
           response[i].data[9].score,
+          response[i].data[10].score,
         ];
         isifile.push(tempFile);
       }
