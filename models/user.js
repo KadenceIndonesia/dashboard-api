@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema({
   password: String,
   status: Number,
   role: String,
-  access: Array,
+  access: [{ idProject: String, data: Array }],
 });
 
 module.exports = mongoose.model('User', userSchema);

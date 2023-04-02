@@ -12,11 +12,19 @@ require('../lib/hyundai');
 
 exports.getHyundaiRegion = async function (req, res) {
   try {
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
     const pid = req.params.pid;
-    var _groupingCityByDealer = await groupingCityByDealer(pid, accessDealer);
+
+    //users
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
+    var _groupingCityByDealer = await groupingCityByDealer(
+      pid,
+      accessDealerByProject
+    );
     var _groupingAreaByCity = await groupingAreaByCity(
       pid,
       _groupingCityByDealer
@@ -39,12 +47,20 @@ exports.getHyundaiRegion = async function (req, res) {
 
 exports.getHyundaiArea = async function (req, res) {
   try {
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
     const pid = req.params.pid;
     const region = req.query.region;
-    var _groupingCityByDealer = await groupingCityByDealer(pid, accessDealer);
+
+    //users
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
+    var _groupingCityByDealer = await groupingCityByDealer(
+      pid,
+      accessDealerByProject
+    );
     var _groupingAreaByCity = await groupingAreaByCity(
       pid,
       _groupingCityByDealer
@@ -63,12 +79,20 @@ exports.getHyundaiArea = async function (req, res) {
 
 exports.getHyundaiCity = async function (req, res) {
   try {
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
     const pid = req.params.pid;
     const area = req.query.area;
-    var _groupingCityByDealer = await groupingCityByDealer(pid, accessDealer);
+
+    //users
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
+    var _groupingCityByDealer = await groupingCityByDealer(
+      pid,
+      accessDealerByProject
+    );
     var _getCityByPid = await getCityByPid(pid, area, _groupingCityByDealer);
     var region = [];
     for (let i = 0; i < _getCityByPid.length; i++) {
@@ -82,12 +106,21 @@ exports.getHyundaiCity = async function (req, res) {
 
 exports.getHyundaiDealerTotal = async function (req, res) {
   try {
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
     const pid = req.params.pid;
     const city = req.query.city;
-    var accessDealer = detailUser.access;
-    var _getDealerByPid = await getDealerByPid(pid, city, accessDealer);
+
+    //users
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
+    var _getDealerByPid = await getDealerByPid(
+      pid,
+      city,
+      accessDealerByProject
+    );
     var response = [];
     for (let i = 0; i < _getDealerByPid.length; i++) {
       res.status(200).json({
@@ -104,12 +137,20 @@ exports.getHyundaiDealerTotal = async function (req, res) {
 
 exports.getHyundaiDealer = async function (req, res) {
   try {
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
     const pid = req.params.pid;
     const city = req.query.city;
-    var accessDealer = detailUser.access;
-    var _getDealerByPid = await getDealerByPid(pid, city, accessDealer);
+    //users
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
+    var _getDealerByPid = await getDealerByPid(
+      pid,
+      city,
+      accessDealerByProject
+    );
     var response = [];
     for (let i = 0; i < _getDealerByPid.length; i++) {
       response.push(_getDealerByPid[i]);
@@ -122,22 +163,26 @@ exports.getHyundaiDealer = async function (req, res) {
 
 exports.getHyundaiDealerFilter = async function (req, res) {
   try {
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
     const pid = req.params.pid;
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
     const qDealer = req.query.dealer;
 
-    var accessDealer = detailUser.access;
+    //users
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
     var _getDealerByPid = await getDealerByFilter(
       pid,
       region,
       area,
       city,
       qDealer,
-      accessDealer
+      accessDealerByProject
     );
     var response = [];
     for (let i = 0; i < _getDealerByPid.length; i++) {
@@ -151,17 +196,21 @@ exports.getHyundaiDealerFilter = async function (req, res) {
 
 exports.getAchievementTotal = async function (req, res) {
   try {
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
     const pid = req.params.pid;
     const quest = pid === 'IDE3358' ? 'dealer' : 'DEALER';
+
+    //users
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
 
     const quarter = req.query.quarter;
     var data = await excelData(pid);
     var count = 0;
     for (let i = 0; i < data.length; i++) {
-      if (accessDealer.indexOf(data[i][quest]) !== -1) {
+      if (accessDealerByProject.indexOf(data[i][quest]) !== -1) {
         if (quarter && parseInt(data[i]['Quartal']) === parseInt(quarter)) {
           count++;
         }
@@ -217,13 +266,20 @@ exports.getAchievementGroupByQuarter = async function (req, res) {
 
 exports.getAchievementGroupByRegion = async function (req, res) {
   try {
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
     const pid = req.params.pid;
     const questRegion = pid === 'IDE3358' ? 'region' : 'REGION';
 
-    var _groupingCityByDealer = await groupingCityByDealer(pid, accessDealer);
+    //users
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
+    var _groupingCityByDealer = await groupingCityByDealer(
+      pid,
+      accessDealerByProject
+    );
     var _groupingAreaByCity = await groupingAreaByCity(
       pid,
       _groupingCityByDealer
@@ -271,12 +327,20 @@ exports.getAchievementGroupByRegion = async function (req, res) {
 
 exports.getAchievementGroupByArea = async function (req, res) {
   try {
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
     const pid = req.params.pid;
     const region = req.query.region;
-    var _groupingCityByDealer = await groupingCityByDealer(pid, accessDealer);
+
+    //users
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
+    var _groupingCityByDealer = await groupingCityByDealer(
+      pid,
+      accessDealerByProject
+    );
     var _groupingAreaByCity = await groupingAreaByCity(
       pid,
       _groupingCityByDealer
@@ -442,16 +506,19 @@ exports.getTouchPointScoreParent = async function (req, res) {
     const quarter = req.query.quarter;
     const brand = req.query.brand;
     //users
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
     var dealer = await getDealerByFilter(
       pid,
       region,
       area,
       city,
       qDealer,
-      accessDealer
+      accessDealerByProject
     );
     var arrDealer = dealer.map((data) => data.idDealer);
 
@@ -508,16 +575,19 @@ exports.getTouchPointScoreQuarterTotal = async function (req, res) {
     const city = req.query.city;
     const qDealer = req.query.dealer;
     //users
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
     var dealer = await getDealerByFilter(
       pid,
       region,
       area,
       city,
       qDealer,
-      accessDealer
+      accessDealerByProject
     );
     var arrDealer = dealer.map((data) => data.idDealer);
 
@@ -570,16 +640,19 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
     const quarter = req.query.quarter;
     const brand = req.query.brand;
     //users
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
     var dealer = await getDealerByFilter(
       pid,
       region,
       area,
       city,
       qDealer,
-      accessDealer
+      accessDealerByProject
     );
     var arrDealer = dealer.map((data) => data.idDealer);
 
@@ -643,16 +716,19 @@ exports.getTouchPointScoreTotal = async function (req, res) {
     const quarter = req.query.quarter;
     const brand = req.query.brand;
     //users
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
     var dealer = await getDealerByFilter(
       pid,
       region,
       area,
       city,
       qDealer,
-      accessDealer
+      accessDealerByProject
     );
     var arrDealer = dealer.map((data) => data.idDealer);
 
@@ -691,16 +767,19 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
     const qDealer = req.query.dealer;
     const quarter = req.query.quarter;
     //users
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
     var dealer = await getDealerByFilter(
       pid,
       region,
       area,
       city,
       qDealer,
-      accessDealer
+      accessDealerByProject
     );
     var arrDealer = dealer.map((data) => data.idDealer);
 
@@ -760,17 +839,21 @@ exports.getTouchPointScoreDealerSort = async function (req, res) {
     const quarter = req.query.quarter;
     const brand = req.query.brand;
     //users
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
     var dealer = await getDealerByFilter(
       pid,
       region,
       area,
       city,
       qDealer,
-      accessDealer
+      accessDealerByProject
     );
+
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var _getDealerByPid = await getDealerByPid(pid, city, arrDealer);
@@ -818,16 +901,19 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
     const city = req.query.city;
     const qDealer = req.query.dealer;
     //users
-    const authHeaders = req.headers.userid;
-    const detailUser = await getUserById(authHeaders);
-    var accessDealer = detailUser.access;
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
     var dealer = await getDealerByFilter(
       pid,
       region,
       area,
       city,
       qDealer,
-      accessDealer
+      accessDealerByProject
     );
     var arrDealer = dealer.map((data) => data.idDealer);
 
