@@ -65,7 +65,7 @@ exports.getHyundaiArea = async function (req, res) {
       pid,
       _groupingCityByDealer
     );
-    console.log(_groupingAreaByCity)
+    console.log(_groupingAreaByCity);
     var _getAreaByPid = await getAreaByPid(pid, region, _groupingAreaByCity);
     var response = [];
     for (let i = 0; i < _getAreaByPid.length; i++) {
@@ -527,14 +527,12 @@ exports.getTouchPointScoreParent = async function (req, res) {
     var touchPointParent = await getParentTouchPoint(pid);
 
     for (let i = 0; i < touchPointParent.length; i++) {
-      if (touchPointParent[i].group > 0) {
-        response.push({
-          code: touchPointParent[i].code,
-          label: touchPointParent[i].label,
-          count: 0,
-          value: 0,
-        });
-      }
+      response.push({
+        code: touchPointParent[i].code,
+        label: touchPointParent[i].label,
+        count: 0,
+        value: 0,
+      });
     }
 
     for (let i = 0; i < response.length; i++) {
@@ -678,7 +676,7 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
     }
 
     var response = [];
-
+    var base = [];
     if (parseInt(region) === 0) {
       for (let i = 0; i < regionArr.length; i++) {
         response.push({
@@ -686,6 +684,7 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
           label: regionArr[i].regionName,
           value: 0,
         });
+        base.push(80);
       }
       for (let i = 0; i < response.length; i++) {
         var _scoreTouchPointByRegion = await scoreTouchPointByRegion(
@@ -711,6 +710,7 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
           label: dealer[i].dealerName,
           value: 0,
         });
+        base.push(80);
       }
       for (let i = 0; i < response.length; i++) {
         var _scoreTouchPointByDealer = await scoreTouchPointByDelaer(
@@ -734,6 +734,7 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
       statusCode: 200,
       message: 'Success get touchpoint score parent',
       data: response,
+      base: base,
     });
   } catch (error) {
     res.status(400).send(error);
@@ -776,9 +777,11 @@ exports.getTouchPointScoreTotal = async function (req, res) {
     );
     var total = 0;
     var response = 0;
+    var base = 0;
 
     if (_scoreTouchPointByParent.length > 0) {
       for (let i = 0; i < _scoreTouchPointByParent.length; i++) {
+        base++;
         total = total + _scoreTouchPointByParent[i].score;
       }
       response = total / _scoreTouchPointByParent.length;
@@ -787,6 +790,7 @@ exports.getTouchPointScoreTotal = async function (req, res) {
       statusCode: 200,
       message: 'Success get touchpoint score parent',
       data: response,
+      base: base,
     });
   } catch (error) {
     res.status(400).send(error);
