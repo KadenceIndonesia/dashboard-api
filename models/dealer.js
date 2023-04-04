@@ -8,6 +8,7 @@ const dealerSchema = mongoose.Schema({
   idArea: Number,
   idProject: String,
   dealerName: String,
+  type: String,
 });
 
 module.exports = mongoose.model('Dealer', dealerSchema);
