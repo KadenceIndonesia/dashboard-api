@@ -59,13 +59,14 @@ exports.getHyundaiArea = async function (req, res) {
 
     var _groupingCityByDealer = await groupingCityByDealer(
       pid,
-      accessDealerByProject
+      accessDealerByProject,
+      parseInt(region)
     );
     var _groupingAreaByCity = await groupingAreaByCity(
       pid,
       _groupingCityByDealer
     );
-    console.log(_groupingAreaByCity);
+    console.log(_groupingAreaByCity)
     var _getAreaByPid = await getAreaByPid(pid, region, _groupingAreaByCity);
     var response = [];
     for (let i = 0; i < _getAreaByPid.length; i++) {
