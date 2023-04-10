@@ -66,7 +66,6 @@ exports.getHyundaiArea = async function (req, res) {
       pid,
       _groupingCityByDealer
     );
-    console.log(_groupingAreaByCity)
     var _getAreaByPid = await getAreaByPid(pid, region, _groupingAreaByCity);
     var response = [];
     for (let i = 0; i < _getAreaByPid.length; i++) {
@@ -647,7 +646,6 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
     var accessDealer = detailUser.access; // array access dealer
     var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
-
     var dealer = await getDealerByFilter(
       pid,
       region,
@@ -705,6 +703,35 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
         }
       }
     } else {
+      // cari angka region
+      for (let i = 0; i < regionArr.length; i++) {
+        if (regionArr[i].idRegion === parseInt(region)) {
+          response.push({
+            code: regionArr[i].idRegion,
+            label: regionArr[i].regionName,
+            value: 0,
+          });
+          base.push(80);
+        }
+      }
+      for (let i = 0; i < response.length; i++) {
+        var _scoreTouchPointByRegion = await scoreTouchPointByRegion(
+          pid,
+          'score',
+          response[i].code,
+          quarter,
+          brand
+        );
+        var touchPointCount = 0;
+        if (_scoreTouchPointByRegion.length > 0) {
+          for (let x = 0; x < _scoreTouchPointByRegion.length; x++) {
+            touchPointCount =
+              touchPointCount + _scoreTouchPointByRegion[x].score;
+          }
+          response[i].value = touchPointCount / _scoreTouchPointByRegion.length;
+        }
+      }
+
       for (let i = 0; i < dealer.length; i++) {
         response.push({
           code: dealer[i].idDealer,
