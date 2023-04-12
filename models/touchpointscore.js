@@ -9,9 +9,11 @@ const touchpointscoreSchema = mongoose.Schema({
   idCity: Number,
   idProject: String,
   code: String,
+  label: String,
   score: Number,
   quarter: Number,
   brand: Number,
+  group: Number,
 });
 
 module.exports = mongoose.model('Touchpointscore', touchpointscoreSchema);

@@ -1070,3 +1070,89 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
     res.status(400).send(error);
   }
 };
+
+exports.getTouchPointScoreDealerDetail = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const dealer = req.params.dealerId;
+    //auth
+    // const authHeaders = req.headers.userid; // headers userid
+    // const detailUser = await getUserById(authHeaders); // get detail user by headers
+    // var accessDealer = detailUser.access; // array access dealer
+    // var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    // var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
+    var _response = [];
+    var response = [];
+    var _scoreTouchPointByDealer = await scoreTouchPointByDealer(pid, dealer);
+    for (let i = 0; i < _scoreTouchPointByDealer.length; i++) {
+      _response.push({
+        code: _scoreTouchPointByDealer[i].code,
+        label: _scoreTouchPointByDealer[i].label,
+        group: _scoreTouchPointByDealer[i].group,
+        value: _scoreTouchPointByDealer[i].score,
+      });
+    }
+    if (pid === 'IDE3358') {
+      for (let i = 0; i <= 10; i++) {
+        var arrResponse = [];
+        for (let x = 0; x < _response.length; x++) {
+          if (parseInt(_response[x].group) === i) {
+            arrResponse.push({
+              code: _response[x].code,
+              label: _response[x].label,
+              group: _response[x].group,
+              value: _response[x].value,
+            });
+          }
+        }
+        response.push(arrResponse);
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get dealer detail score',
+      data: response,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getTouchPointScoreDealerDetailParent = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const dealer = req.params.dealerId;
+    //auth
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    // var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
+    // get parent
+    var _getParentTouchPoint = await getParentTouchPoint(pid);
+    var arrayParent = _getParentTouchPoint.map((data) => data.code);
+
+    var response = [];
+    var _scoreTouchPointParentDealerByCode =
+      await scoreTouchPointParentDealerByCode(pid, dealer, arrayParent);
+    for (let i = 0; i < _scoreTouchPointParentDealerByCode.length; i++) {
+      response.push({
+        code: _scoreTouchPointParentDealerByCode[i].code,
+        label: _scoreTouchPointParentDealerByCode[i].label,
+        group: _scoreTouchPointParentDealerByCode[i].group,
+        value: _scoreTouchPointParentDealerByCode[i].score,
+      });
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get dealer detail score',
+      data: response,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};

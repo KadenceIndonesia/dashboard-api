@@ -29,6 +29,8 @@ Router.get('/:pid/touchpoint/score/region-total', hyundaiControllers.getTouchPoi
 Router.get('/:pid/touchpoint/score/total', hyundaiControllers.getTouchPointScoreTotal);
 Router.get('/:pid/touchpoint/score/dealer-total', hyundaiControllers.getTouchPointScoreDealerTotal);
 Router.get('/:pid/touchpoint/score/dealer-sort', hyundaiControllers.getTouchPointScoreDealerSort);
+Router.get('/:pid/touchpoint/score/dealer/:dealerId', hyundaiControllers.getTouchPointScoreDealerDetail);
+Router.get('/:pid/touchpoint/score/dealer/:dealerId/parent', hyundaiControllers.getTouchPointScoreDealerDetailParent);
 
 Router.get('/:pid/touchpoint/score/dealer-export', hyundaiControllers.getTouchPointScoreDealerExport);
 
