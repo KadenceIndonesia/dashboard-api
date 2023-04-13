@@ -890,6 +890,7 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
         response[i].idDealer,
         quarter
       );
+      bubbleSortAsc(_scoreTouchPointByParentDealer, 'group');
       var arrResult = [];
       if (_scoreTouchPointByParentDealer.length > 0) {
         for (let x = 0; x < _scoreTouchPointByParentDealer.length; x++) {
@@ -1127,6 +1128,21 @@ exports.getTouchPointScoreDealerDetail = async function (req, res) {
         }
         response.push(arrResponse);
       }
+    } else {
+      for (let i = 0; i <= 13; i++) {
+        var arrResponse = [];
+        for (let x = 0; x < _response.length; x++) {
+          if (parseInt(_response[x].group) === i) {
+            arrResponse.push({
+              code: _response[x].code,
+              label: _response[x].label,
+              group: _response[x].group,
+              value: _response[x].value,
+            });
+          }
+        }
+        response.push(arrResponse);
+      }
     }
 
     res.status(200).json({
@@ -1165,7 +1181,7 @@ exports.getTouchPointScoreDealerDetailParent = async function (req, res) {
         value: _scoreTouchPointParentDealerByCode[i].score,
       });
     }
-
+    bubbleSortAsc(response, 'group');
     res.status(200).json({
       statusCode: 200,
       message: 'Success get dealer detail score',
