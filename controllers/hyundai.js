@@ -546,6 +546,7 @@ exports.getTouchPointScoreParent = async function (req, res) {
       response.push({
         code: touchPointParent[i].code,
         label: touchPointParent[i].label,
+        group: touchPointParent[i].group,
         count: 0,
         value: 0,
       });
@@ -574,6 +575,7 @@ exports.getTouchPointScoreParent = async function (req, res) {
         touchPointCount / touchPointLength
       ).toFixed(2);
     }
+    bubbleSortAsc(response, 'group');
     res.status(200).json({
       statusCode: 200,
       message: 'Success get touchpoint score parent',
