@@ -161,6 +161,22 @@ exports.getHyundaiDealer = async function (req, res) {
   }
 };
 
+exports.getHyundaiDealerDetail = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const dealer = req.params.idDealer;
+    var _getDealerByIdDealer = await getDealerByIdDealer(pid, dealer);
+    var response = _getDealerByIdDealer[0];
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Dealer By ID',
+      data: response,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getHyundaiDealerFilter = async function (req, res) {
   try {
     const pid = req.params.pid;
@@ -857,6 +873,7 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
     for (let i = 0; i < _getDealerByPid.length; i++) {
       response.push({
         idDealer: _getDealerByPid[i].idDealer,
+        task: _getDealerByPid[i].task,
         idCity: _getDealerByPid[i].idCity,
         dealerName: _getDealerByPid[i].dealerName,
         data: [],

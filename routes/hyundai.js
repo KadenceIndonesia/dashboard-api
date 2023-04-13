@@ -7,6 +7,7 @@ Router.get('/:pid/administration/get/region', hyundaiControllers.getHyundaiRegio
 Router.get('/:pid/administration/get/area', hyundaiControllers.getHyundaiArea);
 Router.get('/:pid/administration/get/city', hyundaiControllers.getHyundaiCity);
 Router.get('/:pid/administration/get/dealer', hyundaiControllers.getHyundaiDealer);
+Router.get('/:pid/administration/get/dealer/:idDealer', hyundaiControllers.getHyundaiDealerDetail);
 Router.get('/:pid/administration/get/dealer-filter', hyundaiControllers.getHyundaiDealerFilter);
 
 Router.get('/:pid/administration/get/dealer-total', hyundaiControllers.getHyundaiDealerTotal);
