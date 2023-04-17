@@ -191,7 +191,6 @@ exports.getHyundaiDealerFilter = async function (req, res) {
     var accessDealer = detailUser.access; // array access dealer
     var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
-    
 
     var _getDealerByPid = await getDealerByFilter(
       pid,
@@ -1021,7 +1020,8 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
       });
     }
 
-    var parentTouchPoint = await getParentTouchPoint(pid);
+    var parentTouchPoint = await getAllTouchPoint(pid);
+    bubbleSortAsc(parentTouchPoint, 'group');
 
     for (let i = 0; i < response.length; i++) {
       var _scoreTouchPointByParentDealer = await scoreTouchPointByParentDealer(
@@ -1043,24 +1043,13 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
         response[i].data = arrResult;
       }
     }
-
     var isifile = [];
     for (let i = 0; i < response.length; i++) {
       if (response[i].data.length > 0) {
-        var tempFile = [
-          response[i].dealerName,
-          response[i].data[0].score,
-          response[i].data[1].score,
-          response[i].data[2].score,
-          response[i].data[3].score,
-          response[i].data[4].score,
-          response[i].data[5].score,
-          response[i].data[6].score,
-          response[i].data[7].score,
-          response[i].data[8].score,
-          response[i].data[9].score,
-          response[i].data[10].score,
-        ];
+        var tempFile = [response[i].dealerName];
+        for (let x = 0; x < response[i].data.length; x++) {
+          tempFile.push(response[i].data[x].score);
+        }
         isifile.push(tempFile);
       }
     }
@@ -1088,6 +1077,11 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
         }
       }
     );
+    // res.status(200).json({
+    //   statusCode: 200,
+    //   message: 'Success get touchpoint score parent',
+    //   data: response,
+    // });
   } catch (error) {
     res.status(400).send(error);
   }
