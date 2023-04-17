@@ -191,6 +191,7 @@ exports.getHyundaiDealerFilter = async function (req, res) {
     var accessDealer = detailUser.access; // array access dealer
     var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+    
 
     var _getDealerByPid = await getDealerByFilter(
       pid,
@@ -198,7 +199,8 @@ exports.getHyundaiDealerFilter = async function (req, res) {
       area,
       city,
       qDealer,
-      accessDealerByProject
+      accessDealerByProject,
+      ['hyundai']
     );
     var response = [];
     for (let i = 0; i < _getDealerByPid.length; i++) {
