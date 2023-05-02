@@ -8,6 +8,7 @@ const touchpointgroupSchema = mongoose.Schema({
   isParent: Boolean,
   group: Number,
   idProject: String,
+  weight: Number,
 });
 
 module.exports = mongoose.model('Touchpointgroup', touchpointgroupSchema);

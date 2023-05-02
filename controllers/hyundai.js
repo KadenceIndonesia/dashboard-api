@@ -548,6 +548,7 @@ exports.getTouchPointScoreParent = async function (req, res) {
         code: touchPointParent[i].code,
         label: touchPointParent[i].label,
         group: touchPointParent[i].group,
+        weight: touchPointParent[i].weight,
         count: 0,
         value: 0,
       });
