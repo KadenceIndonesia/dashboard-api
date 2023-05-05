@@ -742,13 +742,13 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
           quarter,
           brand
         );
-        var touchPointCount = 0;
+        var touchPointCountRegion = 0;
         if (_scoreTouchPointByRegion.length > 0) {
           for (let x = 0; x < _scoreTouchPointByRegion.length; x++) {
-            touchPointCount =
-              touchPointCount + _scoreTouchPointByRegion[x].score;
+            touchPointCountRegion =
+            touchPointCountRegion + _scoreTouchPointByRegion[x].score;
           }
-          response[i].value = touchPointCount / _scoreTouchPointByRegion.length;
+          response[i].value = touchPointCountRegion / _scoreTouchPointByRegion.length;
         }
       }
 
@@ -760,7 +760,7 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
         });
         base.push(80);
       }
-      for (let i = 0; i < response.length; i++) {
+      for (let i = 1; i < response.length; i++) {
         var _scoreTouchPointByDealer = await scoreTouchPointByDelaer(
           pid,
           'score',
