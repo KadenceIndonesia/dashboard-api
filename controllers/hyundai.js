@@ -487,7 +487,8 @@ exports.getTouchPointGroupParent = async function (req, res) {
   try {
     const pid = req.params.pid;
 
-    var response = await getParentTouchPoint(pid);
+    var response = await getParentTouchPointWithScore(pid);
+    bubbleSortAsc(response, 'group');
     res.status(200).json({
       statusCode: 200,
       message: 'Success get touchpoint parent',
@@ -522,6 +523,7 @@ exports.getTouchPointScoreParent = async function (req, res) {
     const qDealer = req.query.dealer;
     const quarter = req.query.quarter;
     const brand = req.query.brand;
+    const sort = req.query.sort;
     //users
     const authHeaders = req.headers.userid; // headers userid
     const detailUser = await getUserById(authHeaders); // get detail user by headers
@@ -570,14 +572,20 @@ exports.getTouchPointScoreParent = async function (req, res) {
           touchPointLength++;
         }
       }
-      response[i].count = Math.round(
-        touchPointCount / touchPointLength
-      ).toFixed(2);
-      response[i].value = Math.round(
-        touchPointCount / touchPointLength
-      ).toFixed(2);
+      response[i].count = parseFloat(
+        Math.round(touchPointCount / touchPointLength).toFixed(2)
+      );
+      response[i].value = parseFloat(
+        Math.round(touchPointCount / touchPointLength).toFixed(2)
+      );
     }
-    bubbleSortAsc(response, 'group');
+    if (sort === 'highest') {
+      bubbleSort(response, 'value');
+    } else if (sort === 'lowest') {
+      bubbleSortAsc(response, 'value');
+    } else {
+      bubbleSortAsc(response, 'group');
+    }
     res.status(200).json({
       statusCode: 200,
       message: 'Success get touchpoint score parent',
@@ -719,7 +727,8 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
             touchPointCount =
               touchPointCount + _scoreTouchPointByRegion[x].score;
           }
-          response[i].value = touchPointCount / _scoreTouchPointByRegion.length;
+          var responses = touchPointCount / _scoreTouchPointByRegion.length;
+          response[i].value = parseFloat(responses.toFixed(2));
         }
       }
     } else {
@@ -746,9 +755,10 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
         if (_scoreTouchPointByRegion.length > 0) {
           for (let x = 0; x < _scoreTouchPointByRegion.length; x++) {
             touchPointCountRegion =
-            touchPointCountRegion + _scoreTouchPointByRegion[x].score;
+              touchPointCountRegion + _scoreTouchPointByRegion[x].score;
           }
-          response[i].value = touchPointCountRegion / _scoreTouchPointByRegion.length;
+          response[i].value =
+            touchPointCountRegion / _scoreTouchPointByRegion.length;
         }
       }
 
@@ -959,7 +969,7 @@ exports.getTouchPointScoreDealerSort = async function (req, res) {
       });
     }
 
-    var parentTouchPoint = await getParentTouchPoint(pid);
+    // var parentTouchPoint = await getParentTouchPoint(pid);
 
     for (let i = 0; i < response.length; i++) {
       var _scoreTouchPointByParent = await scoreTouchPointByParent(
@@ -970,7 +980,8 @@ exports.getTouchPointScoreDealerSort = async function (req, res) {
         brand
       );
       if (_scoreTouchPointByParent.length > 0) {
-        response[i].data = _scoreTouchPointByParent[0].score;
+        var responses = _scoreTouchPointByParent[0].score;
+        response[i].data = responses.toFixed(2);
       }
     }
     bubbleSort(response, 'data');
