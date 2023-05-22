@@ -11,5 +11,6 @@ Router.get('/:pid/achievement/device-total', propanaController.getAchievementDev
 Router.get('/:pid/achievement/device-type', propanaController.getAchievementDeviceType);
 
 Router.get('/:pid/pangkalan/list', propanaController.getDataListPangkalan);
+Router.get('/:pid/pangkalan/detail/:key', propanaController.getDetailPangkalan);
 
 module.exports = Router;

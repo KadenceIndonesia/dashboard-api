@@ -24,13 +24,29 @@ const A114Code = [
 exports.getVisitAchievement = async function (req, res) {
   try {
     const pid = req.params.pid;
-    var result = [];
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var result = 0;
     var data = await excelData(pid);
+    for (let i = 0; i < data.length; i++) {
+      if (parseInt(province) !== 0 && parseInt(city) === 0) {
+        if (data[i]['A2'] === province) {
+          result++;
+        }
+      } else if (parseInt(province) !== 0 && parseInt(city) !== 0) {
+        if (data[i]['A3'] === city) {
+          result++;
+        }
+      } else {
+        result++;
+      }
+    }
 
     res.status(200).json({
       statusCode: 200,
       message: 'Success get Administration provinces',
-      data: data.length,
+      data: result,
     });
   } catch (error) {
     res.status(400).send(error);
@@ -281,7 +297,6 @@ exports.getDataListPangkalan = async function (req, res) {
     const province = req.query.province;
     const city = req.query.city;
 
-
     var data = await excelData(pid);
     var result = [];
 
@@ -331,7 +346,7 @@ exports.getDataListPangkalan = async function (req, res) {
             province: data[i]['A2'],
             city: data[i]['A3'],
             key: data[i]['KID_KEPO'],
-            device: A114Code[0].label,
+            device: A114Code[findDevice].label,
             pangkalan: data[i]['NAMAPEMILIK'],
             kecamatan: data[i]['KECAMATAN'],
             kelurahan: data[i]['KELURAHAN'],
@@ -339,6 +354,33 @@ exports.getDataListPangkalan = async function (req, res) {
         }
       }
     }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Pangkalan List',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getDetailPangkalan = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const key = req.params.key;
+    var result = '';
+
+    var data = await excelData(pid);
+    var findData = await findObj(data, 'KID_KEPO', key);
+    result = {
+      province: data[findData]['A2'],
+      city: data[findData]['A3'],
+      key: data[findData]['KID_KEPO'],
+      pangkalan: data[findData]['NAMAPEMILIK'],
+      kecamatan: data[findData]['KECAMATAN'],
+      kelurahan: data[findData]['KELURAHAN'],
+    };
 
     res.status(200).json({
       statusCode: 200,
