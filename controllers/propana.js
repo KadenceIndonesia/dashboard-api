@@ -205,7 +205,7 @@ exports.getAchievementDeviceType = async function (req, res) {
 
           countData++;
         }
-      } else if (parseInt(province) !== 0 && parseInt(city) === 0) {
+      } else if (parseInt(province) !== 0 && parseInt(city) !== 0) {
         if (data[i]['A3'] === city) {
           result[data[i]['A114'] - 1].count =
             result[data[i]['A114'] - 1].count + 1;
@@ -241,15 +241,6 @@ exports.getAchievementDeviceTotal = async function (req, res) {
     var result = 0;
     var data = await excelData(pid);
 
-    // for (let i = 0; i < A114Code.length; i++) {
-    //   result.push({
-    //     code: A114Code[i].code,
-    //     label: A114Code[i].label,
-    //     count: 0,
-    //     value: 0,
-    //   });
-    // }
-
     for (let i = 0; i < data.length; i++) {
       if (parseInt(province) !== 0 && parseInt(city) === 0) {
         if (data[i]['A2'] === province) {
@@ -257,7 +248,7 @@ exports.getAchievementDeviceTotal = async function (req, res) {
             result++;
           }
         }
-      } else if (parseInt(province) !== 0 && parseInt(city) === 0) {
+      } else if (parseInt(province) !== 0 && parseInt(city) !== 0) {
         if (data[i]['A3'] === city) {
           if (data[i]['A113'] === 1) {
             result++;
@@ -277,6 +268,81 @@ exports.getAchievementDeviceTotal = async function (req, res) {
     res.status(200).json({
       statusCode: 200,
       message: 'Success get Achievement by cities',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getDataListPangkalan = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const province = req.query.province;
+    const city = req.query.city;
+
+
+    var data = await excelData(pid);
+    var result = [];
+
+    for (let i = 0; i < data.length; i++) {
+      if (parseInt(province) !== 0 && parseInt(city) === 0) {
+        if (data[i]['A2'] === province) {
+          var findDevice = await findObj(
+            A114Code,
+            'code',
+            parseInt(data[i]['A114'])
+          );
+          result.push({
+            province: data[i]['A2'],
+            city: data[i]['A3'],
+            key: data[i]['KID_KEPO'],
+            device: A114Code[findDevice].label,
+            pangkalan: data[i]['NAMAPEMILIK'],
+            kecamatan: data[i]['KECAMATAN'],
+            kelurahan: data[i]['KELURAHAN'],
+          });
+        }
+      } else if (parseInt(province) !== 0 && parseInt(city) !== 0) {
+        if (data[i]['A3'] === city) {
+          var findDevice = await findObj(
+            A114Code,
+            'code',
+            parseInt(data[i]['A114'])
+          );
+          result.push({
+            province: data[i]['A2'],
+            city: data[i]['A3'],
+            key: data[i]['KID_KEPO'],
+            device: A114Code[findDevice].label,
+            pangkalan: data[i]['NAMAPEMILIK'],
+            kecamatan: data[i]['KECAMATAN'],
+            kelurahan: data[i]['KELURAHAN'],
+          });
+        }
+      } else {
+        if (data[i]['A113'] === 1) {
+          var findDevice = await findObj(
+            A114Code,
+            'code',
+            parseInt(data[i]['A114'])
+          );
+          result.push({
+            province: data[i]['A2'],
+            city: data[i]['A3'],
+            key: data[i]['KID_KEPO'],
+            device: A114Code[0].label,
+            pangkalan: data[i]['NAMAPEMILIK'],
+            kecamatan: data[i]['KECAMATAN'],
+            kelurahan: data[i]['KELURAHAN'],
+          });
+        }
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Pangkalan List',
       data: result,
     });
   } catch (error) {
