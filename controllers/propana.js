@@ -166,6 +166,8 @@ exports.getVisitByCity = async function (req, res) {
       }
     }
 
+    bubbleSort(result, 'visitPercentage');
+
     res.status(200).json({
       statusCode: 200,
       message: 'Success get Achievement by cities',
