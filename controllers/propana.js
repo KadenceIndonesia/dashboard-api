@@ -40,6 +40,9 @@ exports.getVisitAchievement = async function (req, res) {
 exports.getStatusVisitAchievement = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const province = req.query.province;
+    const city = req.query.city;
+
     var result = [];
     for (let i = 0; i < A6Code.length; i++) {
       result.push({
@@ -51,7 +54,17 @@ exports.getStatusVisitAchievement = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      result[data[i]['A6'] - 1].value = result[data[i]['A6'] - 1].value + 1;
+      if (parseInt(province) !== 0 && parseInt(city) === 0) {
+        if (data[i]['A2'] === province) {
+          result[data[i]['A6'] - 1].value = result[data[i]['A6'] - 1].value + 1;
+        }
+      } else if (parseInt(province) !== 0 && parseInt(city) !== 0) {
+        if (data[i]['A3'] === city) {
+          result[data[i]['A6'] - 1].value = result[data[i]['A6'] - 1].value + 1;
+        }
+      } else {
+        result[data[i]['A6'] - 1].value = result[data[i]['A6'] - 1].value + 1;
+      }
     }
 
     res.status(200).json({
@@ -67,8 +80,17 @@ exports.getStatusVisitAchievement = async function (req, res) {
 exports.getVisitByRegion = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const province = req.query.province;
+
     var result = [];
-    var _getAdminstrationProvince = await getAdminstrationProvince(pid);
+    if (parseInt(province) !== 0) {
+      var _getAdminstrationProvince = await getAdminstrationProvinceById(
+        pid,
+        province
+      );
+    } else {
+      var _getAdminstrationProvince = await getAdminstrationProvince(pid);
+    }
     for (let i = 0; i < _getAdminstrationProvince.length; i++) {
       result.push({
         code: _getAdminstrationProvince[i].idProvince,
@@ -83,7 +105,9 @@ exports.getVisitByRegion = async function (req, res) {
 
     for (let i = 0; i < data.length; i++) {
       var findData = await findObj(result, 'label', data[i]['A2']);
-      result[findData].value = result[findData].value + 1;
+      if (findData !== -1) {
+        result[findData].value = result[findData].value + 1;
+      }
     }
 
     // for (let i = 0; i < result.length; i++) {
@@ -103,9 +127,19 @@ exports.getVisitByRegion = async function (req, res) {
 exports.getVisitByCity = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const province = req.query.province;
+    const city = req.query.city;
+
     var result = [];
-    var _getAdminstrationCityAll = await getAdminstrationCityAll(pid);
-    console.log(_getAdminstrationCityAll);
+    if (parseInt(province) !== 0) {
+      var _getAdminstrationCityAll = await getAdminstrationCityByProvince(
+        pid,
+        province
+      );
+    } else {
+      var _getAdminstrationCityAll = await getAdminstrationCityAll(pid);
+    }
+
     for (let i = 0; i < _getAdminstrationCityAll.length; i++) {
       result.push({
         code: _getAdminstrationCityAll[i].idCity,
@@ -120,7 +154,9 @@ exports.getVisitByCity = async function (req, res) {
 
     for (let i = 0; i < data.length; i++) {
       var findData = await findObj(result, 'cityName', data[i]['A3']);
-      result[findData].visit = result[findData].visit + 1;
+      if (findData !== -1) {
+        result[findData].visit = result[findData].visit + 1;
+      }
     }
 
     for (let i = 0; i < result.length; i++) {
@@ -143,6 +179,9 @@ exports.getVisitByCity = async function (req, res) {
 exports.getAchievementDeviceType = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const province = req.query.province;
+    const city = req.query.city;
+
     var result = [];
     var data = await excelData(pid);
 
@@ -156,7 +195,20 @@ exports.getAchievementDeviceType = async function (req, res) {
     }
 
     for (let i = 0; i < data.length; i++) {
-      result[data[i]['A114'] - 1].count = result[data[i]['A114'] - 1].count + 1;
+      if (parseInt(province) !== 0 && parseInt(city) === 0) {
+        if (data[i]['A2'] === province) {
+          result[data[i]['A114'] - 1].count =
+            result[data[i]['A114'] - 1].count + 1;
+        }
+      } else if (parseInt(province) !== 0 && parseInt(city) === 0) {
+        if (data[i]['A3'] === city) {
+          result[data[i]['A114'] - 1].count =
+            result[data[i]['A114'] - 1].count + 1;
+        }
+      } else {
+        result[data[i]['A114'] - 1].count =
+          result[data[i]['A114'] - 1].count + 1;
+      }
     }
 
     for (let i = 0; i < result.length; i++) {
