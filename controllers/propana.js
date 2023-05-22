@@ -186,6 +186,7 @@ exports.getAchievementDeviceType = async function (req, res) {
 
     var result = [];
     var data = await excelData(pid);
+    var countData = 0;
 
     for (let i = 0; i < A114Code.length; i++) {
       result.push({
@@ -201,15 +202,71 @@ exports.getAchievementDeviceType = async function (req, res) {
         if (data[i]['A2'] === province) {
           result[data[i]['A114'] - 1].count =
             result[data[i]['A114'] - 1].count + 1;
+
+          countData++;
         }
       } else if (parseInt(province) !== 0 && parseInt(city) === 0) {
         if (data[i]['A3'] === city) {
           result[data[i]['A114'] - 1].count =
             result[data[i]['A114'] - 1].count + 1;
+          countData++;
         }
       } else {
         result[data[i]['A114'] - 1].count =
           result[data[i]['A114'] - 1].count + 1;
+        countData++;
+      }
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      result[i].value = (result[i].count / countData) * 100;
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Achievement by cities',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getAchievementDeviceTotal = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var result = 0;
+    var data = await excelData(pid);
+
+    // for (let i = 0; i < A114Code.length; i++) {
+    //   result.push({
+    //     code: A114Code[i].code,
+    //     label: A114Code[i].label,
+    //     count: 0,
+    //     value: 0,
+    //   });
+    // }
+
+    for (let i = 0; i < data.length; i++) {
+      if (parseInt(province) !== 0 && parseInt(city) === 0) {
+        if (data[i]['A2'] === province) {
+          if (data[i]['A113'] === 1) {
+            result++;
+          }
+        }
+      } else if (parseInt(province) !== 0 && parseInt(city) === 0) {
+        if (data[i]['A3'] === city) {
+          if (data[i]['A113'] === 1) {
+            result++;
+          }
+        }
+      } else {
+        if (data[i]['A113'] === 1) {
+          result++;
+        }
       }
     }
 
