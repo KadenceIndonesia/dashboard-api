@@ -6,6 +6,7 @@ const citySchema = mongoose.Schema({
   idArea: Number,
   idProject: String,
   cityName: String,
+  target: Number
 });
 
 module.exports = mongoose.model('City', citySchema);
