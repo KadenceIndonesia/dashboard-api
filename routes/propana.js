@@ -8,6 +8,12 @@ Router.get('/:pid/achievement/visit-region', propanaController.getVisitByRegion)
 Router.get('/:pid/achievement/visit-city', propanaController.getVisitByCity);
 Router.get('/:pid/achievement/status-boarding-pangkalan', propanaController.getStatusOnBoardingPangkalan);
 
+
+Router.get('/:pid/achievement/poster', propanaController.getPosterAchievement);
+Router.get('/:pid/achievement/poster-view', propanaController.getPosterViewAchievement);
+
+Router.get('/:pid/sort/poster/:type', propanaController.getSortPoster);
+
 Router.get('/:pid/achievement/device-total', propanaController.getAchievementDeviceTotal);
 Router.get('/:pid/achievement/device-type', propanaController.getAchievementDeviceType);
 

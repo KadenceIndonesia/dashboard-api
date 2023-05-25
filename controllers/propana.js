@@ -271,6 +271,270 @@ exports.getStatusVisitAchievement = async function (req, res) {
   }
 };
 
+exports.getPosterAchievement = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var result = [
+      {
+        code: 1,
+        label: 'Ada',
+        value: 0,
+      },
+      {
+        code: 2,
+        label: 'Tidak Ada',
+        value: 0,
+      },
+    ];
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i]['A35']) {
+        if (region !== '0' && province === '0') {
+          if (data[i]['A1'] === region) {
+            result[data[i]['A35'] - 1].value =
+              result[data[i]['A35'] - 1].value + 1;
+          }
+        } else if (region !== '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              result[data[i]['A35'] - 1].value =
+                result[data[i]['A35'] - 1].value + 1;
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              result[data[i]['A35'] - 1].value =
+                result[data[i]['A35'] - 1].value + 1;
+            }
+          }
+        } else if (region === '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              result[data[i]['A35'] - 1].value =
+                result[data[i]['A35'] - 1].value + 1;
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              result[data[i]['A35'] - 1].value =
+                result[data[i]['A35'] - 1].value + 1;
+            }
+          }
+        } else {
+          result[data[i]['A35'] - 1].value =
+            result[data[i]['A35'] - 1].value + 1;
+        }
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Achievement Poster',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getPosterViewAchievement = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var result = [
+      {
+        code: 1,
+        label: 'Terlihat',
+        value: 0,
+      },
+      {
+        code: 2,
+        label: 'Tidak Terlihat',
+        value: 0,
+      },
+    ];
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i]['A36']) {
+        if (region !== '0' && province === '0') {
+          if (data[i]['A1'] === region) {
+            result[data[i]['A36'] - 1].value =
+              result[data[i]['A36'] - 1].value + 1;
+          }
+        } else if (region !== '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              result[data[i]['A36'] - 1].value =
+                result[data[i]['A36'] - 1].value + 1;
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              result[data[i]['A36'] - 1].value =
+                result[data[i]['A36'] - 1].value + 1;
+            }
+          }
+        } else if (region === '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              result[data[i]['A36'] - 1].value =
+                result[data[i]['A36'] - 1].value + 1;
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              result[data[i]['A36'] - 1].value =
+                result[data[i]['A36'] - 1].value + 1;
+            }
+          }
+        } else {
+          result[data[i]['A36'] - 1].value =
+            result[data[i]['A36'] - 1].value + 1;
+        }
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Achievement Poster',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getSortPoster = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const type = req.params.type;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var result = [];
+
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      if (region !== '0' && province === '0') {
+        if (data[i]['A1'] === region) {
+          var findCity = await findObj(result, 'label', data[i]['A3']);
+          if (findCity === -1) {
+            result.push({
+              label: data[i]['A3'],
+              value: 0,
+            });
+          } else {
+            if (data[i]['A35'] === 1) {
+              result[findCity].value = result[findCity].value + 1;
+            }
+          }
+        }
+      } else if (region !== '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            var findCity = await findObj(result, 'label', data[i]['A3']);
+            if (findCity === -1) {
+              result.push({
+                label: data[i]['A3'],
+                value: 0,
+              });
+            } else {
+              if (data[i]['A35'] === 1) {
+                result[findCity].value = result[findCity].value + 1;
+              }
+            }
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            var findCity = await findObj(result, 'label', data[i]['A3']);
+            if (findCity === -1) {
+              result.push({
+                label: data[i]['A3'],
+                value: 0,
+              });
+            } else {
+              if (data[i]['A35'] === 1) {
+                result[findCity].value = result[findCity].value + 1;
+              }
+            }
+          }
+        }
+      } else if (region === '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            var findCity = await findObj(result, 'label', data[i]['A3']);
+            if (findCity === -1) {
+              result.push({
+                label: data[i]['A3'],
+                value: 0,
+              });
+            } else {
+              if (data[i]['A35'] === 1) {
+                result[findCity].value = result[findCity].value + 1;
+              }
+            }
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            var findCity = await findObj(result, 'label', data[i]['A3']);
+            if (findCity === -1) {
+              result.push({
+                label: data[i]['A3'],
+                value: 0,
+              });
+            } else {
+              if (data[i]['A35'] === 1) {
+                result[findCity].value = result[findCity].value + 1;
+              }
+            }
+          }
+        }
+      } else {
+        var findCity = await findObj(result, 'label', data[i]['A3']);
+        if (findCity === -1) {
+          result.push({
+            label: data[i]['A3'],
+            value: 0,
+          });
+        } else {
+          if (data[i]['A35'] === 1) {
+            result[findCity].value = result[findCity].value + 1;
+          }
+        }
+      }
+    }
+
+    if (type === 'top') {
+      bubbleSort(result, 'value');
+    } else {
+      bubbleSortAsc(result, 'value');
+    }
+
+    var response = [];
+
+    for (let i = 0; i < result.length; i++) {
+      if (i < 10) {
+        response.push(result[i]);
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Sort Poster',
+      data: response,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getStatusOnBoardingPangkalan = async function (req, res) {
   try {
     const pid = req.params.pid;
@@ -595,6 +859,7 @@ exports.getAchievementDeviceTotal = async function (req, res) {
 exports.getDataListPangkalan = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
 
@@ -602,58 +867,284 @@ exports.getDataListPangkalan = async function (req, res) {
     var result = [];
 
     for (let i = 0; i < data.length; i++) {
-      if (parseInt(province) !== 0 && parseInt(city) === 0) {
-        if (data[i]['A2'] === province) {
-          var findDevice = await findObj(
-            A114Code,
-            'code',
-            parseInt(data[i]['A114'])
-          );
+      if (region !== '0' && province === '0') {
+        if (data[i]['A1'] === region) {
+          var A14 = [
+            data[i]['A14_1'] > 0 && 1,
+            data[i]['A14_2'] > 0 && 2,
+            data[i]['A14_3'] > 0 && 3,
+            data[i]['A14_4'] > 0 && 4,
+            data[i]['A14_5'] > 0 && 5,
+            data[i]['A14_6'] > 0 && 6,
+            data[i]['A14_7'] > 0 && 7,
+          ];
           result.push({
+            id: data[i]['KID_Pangkalan'],
+            region: data[i]['A1'],
             province: data[i]['A2'],
             city: data[i]['A3'],
             key: data[i]['KID_KEPO'],
-            device: A114Code[findDevice].label,
             pangkalan: data[i]['NAMAPEMILIK'],
             kecamatan: data[i]['KECAMATAN'],
             kelurahan: data[i]['KELURAHAN'],
+            A6: data[i]['A6'],
+            A6C: data[i]['A6C'],
+            A6b: data[i]['A6b'],
+            A113: data[i]['A113'],
+            A12: data[i]['A12'],
+            A13: data[i]['A13'],
+            A13: data[i]['A13'],
+            A14: A14,
+            A28: data[i]['A28'],
+            A29: data[i]['A29'],
+            A29B: data[i]['A29B'],
+            A31: data[i]['A31'],
+            A18: '',
+            A33: data[i]['A33'],
+            A20: data[i]['A20'],
+            A21: '',
+            A35: data[i]['A35'],
+            A36: data[i]['A36'],
           });
         }
-      } else if (parseInt(province) !== 0 && parseInt(city) !== 0) {
-        if (data[i]['A3'] === city) {
-          var findDevice = await findObj(
-            A114Code,
-            'code',
-            parseInt(data[i]['A114'])
-          );
-          result.push({
-            province: data[i]['A2'],
-            city: data[i]['A3'],
-            key: data[i]['KID_KEPO'],
-            device: A114Code[findDevice].label,
-            pangkalan: data[i]['NAMAPEMILIK'],
-            kecamatan: data[i]['KECAMATAN'],
-            kelurahan: data[i]['KELURAHAN'],
-          });
+      } else if (region !== '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            var A14 = [
+              data[i]['A14_1'] > 0 && 1,
+              data[i]['A14_2'] > 0 && 2,
+              data[i]['A14_3'] > 0 && 3,
+              data[i]['A14_4'] > 0 && 4,
+              data[i]['A14_5'] > 0 && 5,
+              data[i]['A14_6'] > 0 && 6,
+              data[i]['A14_7'] > 0 && 7,
+            ];
+            result.push({
+              id: data[i]['KID_Pangkalan'],
+              region: data[i]['A1'],
+              province: data[i]['A2'],
+              city: data[i]['A3'],
+              key: data[i]['KID_KEPO'],
+              pangkalan: data[i]['NAMAPEMILIK'],
+              kecamatan: data[i]['KECAMATAN'],
+              kelurahan: data[i]['KELURAHAN'],
+              A6: data[i]['A6'],
+              A6C: data[i]['A6C'],
+              A6b: data[i]['A6b'],
+              A113: data[i]['A113'],
+              A12: data[i]['A12'],
+              A13: data[i]['A13'],
+              A13: data[i]['A13'],
+              A14: A14,
+              A28: data[i]['A28'],
+              A29: data[i]['A29'],
+              A29B: data[i]['A29B'],
+              A31: data[i]['A31'],
+              A18: '',
+              A33: data[i]['A33'],
+              A20: data[i]['A20'],
+              A21: '',
+              A35: data[i]['A35'],
+              A36: data[i]['A36'],
+            });
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            var A14 = [
+              data[i]['A14_1'] > 0 && 1,
+              data[i]['A14_2'] > 0 && 2,
+              data[i]['A14_3'] > 0 && 3,
+              data[i]['A14_4'] > 0 && 4,
+              data[i]['A14_5'] > 0 && 5,
+              data[i]['A14_6'] > 0 && 6,
+              data[i]['A14_7'] > 0 && 7,
+            ];
+            result.push({
+              id: data[i]['KID_Pangkalan'],
+              region: data[i]['A1'],
+              province: data[i]['A2'],
+              city: data[i]['A3'],
+              key: data[i]['KID_KEPO'],
+              pangkalan: data[i]['NAMAPEMILIK'],
+              kecamatan: data[i]['KECAMATAN'],
+              kelurahan: data[i]['KELURAHAN'],
+              A6: data[i]['A6'],
+              A6C: data[i]['A6C'],
+              A6b: data[i]['A6b'],
+              A113: data[i]['A113'],
+              A12: data[i]['A12'],
+              A13: data[i]['A13'],
+              A13: data[i]['A13'],
+              A14: A14,
+              A28: data[i]['A28'],
+              A29: data[i]['A29'],
+              A29B: data[i]['A29B'],
+              A31: data[i]['A31'],
+              A18: '',
+              A33: data[i]['A33'],
+              A20: data[i]['A20'],
+              A21: '',
+              A35: data[i]['A35'],
+              A36: data[i]['A36'],
+            });
+          }
+        }
+      } else if (region === '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            var A14 = [
+              data[i]['A14_1'] > 0 && 1,
+              data[i]['A14_2'] > 0 && 2,
+              data[i]['A14_3'] > 0 && 3,
+              data[i]['A14_4'] > 0 && 4,
+              data[i]['A14_5'] > 0 && 5,
+              data[i]['A14_6'] > 0 && 6,
+              data[i]['A14_7'] > 0 && 7,
+            ];
+            result.push({
+              id: data[i]['KID_Pangkalan'],
+              region: data[i]['A1'],
+              province: data[i]['A2'],
+              city: data[i]['A3'],
+              key: data[i]['KID_KEPO'],
+              pangkalan: data[i]['NAMAPEMILIK'],
+              kecamatan: data[i]['KECAMATAN'],
+              kelurahan: data[i]['KELURAHAN'],
+              A6: data[i]['A6'],
+              A6C: data[i]['A6C'],
+              A6b: data[i]['A6b'],
+              A113: data[i]['A113'],
+              A12: data[i]['A12'],
+              A13: data[i]['A13'],
+              A13: data[i]['A13'],
+              A14: A14,
+              A28: data[i]['A28'],
+              A29: data[i]['A29'],
+              A29B: data[i]['A29B'],
+              A31: data[i]['A31'],
+              A18: '',
+              A33: data[i]['A33'],
+              A20: data[i]['A20'],
+              A21: '',
+              A35: data[i]['A35'],
+              A36: data[i]['A36'],
+            });
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            var A14 = [
+              data[i]['A14_1'] > 0 && 1,
+              data[i]['A14_2'] > 0 && 2,
+              data[i]['A14_3'] > 0 && 3,
+              data[i]['A14_4'] > 0 && 4,
+              data[i]['A14_5'] > 0 && 5,
+              data[i]['A14_6'] > 0 && 6,
+              data[i]['A14_7'] > 0 && 7,
+            ];
+            result.push({
+              id: data[i]['KID_Pangkalan'],
+              region: data[i]['A1'],
+              province: data[i]['A2'],
+              city: data[i]['A3'],
+              key: data[i]['KID_KEPO'],
+              pangkalan: data[i]['NAMAPEMILIK'],
+              kecamatan: data[i]['KECAMATAN'],
+              kelurahan: data[i]['KELURAHAN'],
+              A6: data[i]['A6'],
+              A6C: data[i]['A6C'],
+              A6b: data[i]['A6b'],
+              A113: data[i]['A113'],
+              A12: data[i]['A12'],
+              A13: data[i]['A13'],
+              A13: data[i]['A13'],
+              A14: A14,
+              A28: data[i]['A28'],
+              A29: data[i]['A29'],
+              A29B: data[i]['A29B'],
+              A31: data[i]['A31'],
+              A18: '',
+              A33: data[i]['A33'],
+              A20: data[i]['A20'],
+              A21: '',
+              A35: data[i]['A35'],
+              A36: data[i]['A36'],
+            });
+          }
         }
       } else {
-        if (data[i]['A113'] === 1) {
-          var findDevice = await findObj(
-            A114Code,
-            'code',
-            parseInt(data[i]['A114'])
-          );
-          result.push({
-            province: data[i]['A2'],
-            city: data[i]['A3'],
-            key: data[i]['KID_KEPO'],
-            device: A114Code[findDevice].label,
-            pangkalan: data[i]['NAMAPEMILIK'],
-            kecamatan: data[i]['KECAMATAN'],
-            kelurahan: data[i]['KELURAHAN'],
-          });
-        }
+        var A14 = [
+          data[i]['A14_1'] > 0 && 1,
+          data[i]['A14_2'] > 0 && 2,
+          data[i]['A14_3'] > 0 && 3,
+          data[i]['A14_4'] > 0 && 4,
+          data[i]['A14_5'] > 0 && 5,
+          data[i]['A14_6'] > 0 && 6,
+          data[i]['A14_7'] > 0 && 7,
+        ];
+        result.push({
+          id: data[i]['KID_Pangkalan'],
+          region: data[i]['A1'],
+          province: data[i]['A2'],
+          city: data[i]['A3'],
+          key: data[i]['KID_KEPO'],
+          pangkalan: data[i]['NAMAPEMILIK'],
+          kecamatan: data[i]['KECAMATAN'],
+          kelurahan: data[i]['KELURAHAN'],
+          A6: data[i]['A6'],
+          A6C: data[i]['A6C'],
+          A6b: data[i]['A6b'],
+          A113: data[i]['A113'],
+          A12: data[i]['A12'],
+          A13: data[i]['A13'],
+          A13: data[i]['A13'],
+          A14: A14,
+          A28: data[i]['A28'],
+          A29: data[i]['A29'],
+          A29B: data[i]['A29B'],
+          A31: data[i]['A31'],
+          A18: '',
+          A33: data[i]['A33'],
+          A20: data[i]['A20'],
+          A21: '',
+          A35: data[i]['A35'],
+          A36: data[i]['A36'],
+        });
       }
+
+      // if (parseInt(province) !== 0 && parseInt(city) === 0) {
+      //   if (data[i]['A2'] === province) {
+      //     result.push({
+      //       province: data[i]['A2'],
+      //       city: data[i]['A3'],
+      //       key: data[i]['KID_KEPO'],
+      //       pangkalan: data[i]['NAMAPEMILIK'],
+      //       kecamatan: data[i]['KECAMATAN'],
+      //       kelurahan: data[i]['KELURAHAN'],
+      //     });
+      //   }
+      // } else if (parseInt(province) !== 0 && parseInt(city) !== 0) {
+      //   if (data[i]['A3'] === city) {
+      //     result.push({
+      //       province: data[i]['A2'],
+      //       city: data[i]['A3'],
+      //       key: data[i]['KID_KEPO'],
+      //       pangkalan: data[i]['NAMAPEMILIK'],
+      //       kecamatan: data[i]['KECAMATAN'],
+      //       kelurahan: data[i]['KELURAHAN'],
+      //     });
+      //   }
+      // } else {
+      //   if (data[i]['A113'] === 1) {
+      //     result.push({
+      //       province: data[i]['A2'],
+      //       city: data[i]['A3'],
+      //       key: data[i]['KID_KEPO'],
+      //       pangkalan: data[i]['NAMAPEMILIK'],
+      //       kecamatan: data[i]['KECAMATAN'],
+      //       kelurahan: data[i]['KELURAHAN'],
+      //     });
+      //   }
+      // }
     }
 
     res.status(200).json({
