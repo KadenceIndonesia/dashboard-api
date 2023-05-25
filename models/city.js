@@ -8,7 +8,8 @@ const citySchema = mongoose.Schema({
   idProject: String,
   cityName: String,
   target: Number,
-  dataList: Number
+  dataList: Number,
+  list: Number
 });
 
 module.exports = mongoose.model('City', citySchema);

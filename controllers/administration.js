@@ -3,8 +3,16 @@ require('../lib/administration');
 exports.getProvinces = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const region = req.query.region;
 
-    var _getAdminstrationProvince = await getAdminstrationProvince(pid);
+    if (region === '0' || region === undefined) {
+      var _getAdminstrationProvince = await getAdminstrationProvince(pid);
+    } else {
+      var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
+        pid,
+        region
+      );
+    }
 
     res.status(200).json({
       statusCode: 200,

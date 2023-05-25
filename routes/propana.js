@@ -10,6 +10,9 @@ Router.get('/:pid/achievement/visit-city', propanaController.getVisitByCity);
 Router.get('/:pid/achievement/device-total', propanaController.getAchievementDeviceTotal);
 Router.get('/:pid/achievement/device-type', propanaController.getAchievementDeviceType);
 
+Router.get('/:pid/pangkalan/target', propanaController.getTargetPangkalan);
+Router.get('/:pid/pangkalan/data-list', propanaController.getTotalListPangkalan);
+
 Router.get('/:pid/pangkalan/list', propanaController.getDataListPangkalan);
 Router.get('/:pid/pangkalan/detail/:key', propanaController.getDetailPangkalan);
 

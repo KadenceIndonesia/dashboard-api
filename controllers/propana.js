@@ -21,9 +21,141 @@ const A114Code = [
   { code: 4, label: 'Laptop' },
 ];
 
+exports.getTargetPangkalan = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var result = 0;
+    if (region === '0') {
+      if (province === '0') {
+        var _getAdminstrationProvince = await getAdminstrationProvince(pid);
+      } else {
+        if (city === '0') {
+          var _getAdminstrationProvince = await getAdminstrationProvinceById(
+            pid,
+            province
+          );
+        } else {
+          var _getAdminstrationProvince = await getAdminstrationCityByName(
+            pid,
+            city
+          );
+        }
+      }
+    } else {
+      if (province === '0') {
+        var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
+          pid,
+          region
+        );
+      } else {
+        if (city === '0') {
+          var _getAdminstrationProvince = await getAdminstrationProvinceById(
+            pid,
+            province
+          );
+        } else {
+          var _getAdminstrationProvince = await getAdminstrationCityByName(
+            pid,
+            city
+          );
+        }
+      }
+    }
+    console.log(_getAdminstrationProvince);
+
+    for (let i = 0; i < _getAdminstrationProvince.length; i++) {
+      result = result + _getAdminstrationProvince[i].target;
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Administration provinces',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getTotalListPangkalan = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var result = {
+      dataList: 0,
+      target: 0,
+      percentage: 0,
+    };
+    if (region === '0') {
+      if (province === '0') {
+        var getDataCity = await getAdminstrationCityAll(pid);
+      } else {
+        if (city === '0') {
+          var _getAdminstrationProvince = await getAdminstrationProvinceById(
+            pid,
+            province
+          );
+          var dataProvince = _getAdminstrationProvince.map(
+            (data) => data.provinceName
+          );
+          var getDataCity = await getAdminstrationCityByArrayProvince(
+            pid,
+            dataProvince
+          );
+        } else {
+          var getDataCity = await getAdminstrationCityByName(pid, city);
+        }
+      }
+    } else {
+      if (province === '0') {
+        var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
+          pid,
+          region
+        );
+        var dataProvince = _getAdminstrationProvince.map(
+          (data) => data.provinceName
+        );
+        var getDataCity = await getAdminstrationCityByArrayProvince(
+          pid,
+          dataProvince
+        );
+      } else {
+        if (city === '0') {
+          var getDataCity = await getAdminstrationCityByProvince(pid, province);
+        } else {
+          var getDataCity = await getAdminstrationCityByName(pid, city);
+        }
+      }
+    }
+
+    for (let i = 0; i < getDataCity.length; i++) {
+      result.dataList = result.dataList + getDataCity[i].dataList;
+      result.target = result.target + getDataCity[i].target;
+    }
+
+    result.percentage = (result.dataList / result.target) * 100;
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Pangkalan Data List',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getVisitAchievement = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
 
@@ -56,6 +188,7 @@ exports.getVisitAchievement = async function (req, res) {
 exports.getStatusVisitAchievement = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
 
@@ -70,7 +203,11 @@ exports.getStatusVisitAchievement = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (parseInt(province) !== 0 && parseInt(city) === 0) {
+      if (parseInt(region) !== 0 && parseInt(province) === 0) {
+        if (data[i]['A1'] === region) {
+          result[data[i]['A6'] - 1].value = result[data[i]['A6'] - 1].value + 1;
+        }
+      } else if (parseInt(province) !== 0 && parseInt(city) === 0) {
         if (data[i]['A2'] === province) {
           result[data[i]['A6'] - 1].value = result[data[i]['A6'] - 1].value + 1;
         }
