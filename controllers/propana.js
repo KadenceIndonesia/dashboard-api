@@ -3,14 +3,17 @@ require('../lib/administration');
 require('../lib/dataExcel');
 
 const A6Code = [
-  { code: 1, label: 'Pangkalan aktif/ beroperasi' },
-  { code: 2, label: 'Pangkalan tidak aktif (tutup permanen)' },
-  { code: 3, label: 'Pangkalan tidak dapat ditemukan' },
+  { code: 1, label: 'Pangkalan aktif bertemu pemilik' },
+  { code: 2, label: 'Tutup Permanen' },
+  { code: 3, label: 'Pangkalan tidak ditemukan' },
   { code: 4, label: 'Pangkalan pindah alamat' },
   {
     code: 5,
-    label:
-      'Pangkalan sedang tutup (hanya tutup sementara/ tutup saat kunjungan saja)',
+    label: 'Sedang Tutup',
+  },
+  {
+    code: 6,
+    label: 'Pangkalan Aktif Tidak Ketemu Pemilik ',
   },
 ];
 
@@ -19,6 +22,13 @@ const A114Code = [
   { code: 2, label: 'Tablet' },
   { code: 3, label: 'PC' },
   { code: 4, label: 'Laptop' },
+];
+
+const A12Code = [
+  { code: 1, label: 'Belum On Boarding & Memiliki Device' },
+  { code: 2, label: 'Belum On Boarding dan Tidak Memiliki Device' },
+  { code: 3, label: 'On boarding belum transaksi' },
+  { code: 4, label: 'On boarding transaksi' },
 ];
 
 exports.getTargetPangkalan = async function (req, res) {
@@ -65,7 +75,6 @@ exports.getTargetPangkalan = async function (req, res) {
         }
       }
     }
-    console.log(_getAdminstrationProvince);
 
     for (let i = 0; i < _getAdminstrationProvince.length; i++) {
       result = result + _getAdminstrationProvince[i].target;
@@ -162,13 +171,29 @@ exports.getVisitAchievement = async function (req, res) {
     var result = 0;
     var data = await excelData(pid);
     for (let i = 0; i < data.length; i++) {
-      if (parseInt(province) !== 0 && parseInt(city) === 0) {
-        if (data[i]['A2'] === province) {
+      if (region !== '0' && province === '0') {
+        if (data[i]['A1'] === region) {
           result++;
         }
-      } else if (parseInt(province) !== 0 && parseInt(city) !== 0) {
-        if (data[i]['A3'] === city) {
-          result++;
+      } else if (region !== '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            result++;
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            result++;
+          }
+        }
+      } else if (region === '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            result++;
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            result++;
+          }
         }
       } else {
         result++;
@@ -203,17 +228,33 @@ exports.getStatusVisitAchievement = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (parseInt(region) !== 0 && parseInt(province) === 0) {
+      if (region !== '0' && province === '0') {
         if (data[i]['A1'] === region) {
           result[data[i]['A6'] - 1].value = result[data[i]['A6'] - 1].value + 1;
         }
-      } else if (parseInt(province) !== 0 && parseInt(city) === 0) {
-        if (data[i]['A2'] === province) {
-          result[data[i]['A6'] - 1].value = result[data[i]['A6'] - 1].value + 1;
+      } else if (region !== '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            result[data[i]['A6'] - 1].value =
+              result[data[i]['A6'] - 1].value + 1;
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            result[data[i]['A6'] - 1].value =
+              result[data[i]['A6'] - 1].value + 1;
+          }
         }
-      } else if (parseInt(province) !== 0 && parseInt(city) !== 0) {
-        if (data[i]['A3'] === city) {
-          result[data[i]['A6'] - 1].value = result[data[i]['A6'] - 1].value + 1;
+      } else if (region === '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            result[data[i]['A6'] - 1].value =
+              result[data[i]['A6'] - 1].value + 1;
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            result[data[i]['A6'] - 1].value =
+              result[data[i]['A6'] - 1].value + 1;
+          }
         }
       } else {
         result[data[i]['A6'] - 1].value = result[data[i]['A6'] - 1].value + 1;
@@ -223,6 +264,129 @@ exports.getStatusVisitAchievement = async function (req, res) {
     res.status(200).json({
       statusCode: 200,
       message: 'Success get Administration provinces',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getStatusOnBoardingPangkalan = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var result = [];
+    for (let i = 0; i < A12Code.length; i++) {
+      result.push({
+        code: A12Code[i].code,
+        label: A12Code[i].label,
+        value: 0,
+      });
+    }
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      if (region !== '0' && province === '0') {
+        if (data[i]['A1'] === region) {
+          if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+            result[0].value = result[0].value + 1;
+          }
+          if (data[i]['A113'] === 2) {
+            result[1].value = result[1].value + 1;
+          }
+          if (data[i]['A12'] === 2) {
+            result[2].value = result[1].value + 1;
+          }
+          if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+            result[3].value = result[1].value + 1;
+          }
+        }
+      } else if (region !== '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+              result[0].value = result[0].value + 1;
+            }
+            if (data[i]['A113'] === 2) {
+              result[1].value = result[1].value + 1;
+            }
+            if (data[i]['A12'] === 2) {
+              result[2].value = result[1].value + 1;
+            }
+            if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+              result[3].value = result[1].value + 1;
+            }
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+              result[0].value = result[0].value + 1;
+            }
+            if (data[i]['A113'] === 2) {
+              result[1].value = result[1].value + 1;
+            }
+            if (data[i]['A12'] === 2) {
+              result[2].value = result[1].value + 1;
+            }
+            if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+              result[3].value = result[1].value + 1;
+            }
+          }
+        }
+      } else if (region === '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+              result[0].value = result[0].value + 1;
+            }
+            if (data[i]['A113'] === 2) {
+              result[1].value = result[1].value + 1;
+            }
+            if (data[i]['A12'] === 2) {
+              result[2].value = result[1].value + 1;
+            }
+            if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+              result[3].value = result[1].value + 1;
+            }
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+              result[0].value = result[0].value + 1;
+            }
+            if (data[i]['A113'] === 2) {
+              result[1].value = result[1].value + 1;
+            }
+            if (data[i]['A12'] === 2) {
+              result[2].value = result[1].value + 1;
+            }
+            if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+              result[3].value = result[1].value + 1;
+            }
+          }
+        }
+      } else {
+        if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+          result[0].value = result[0].value + 1;
+        }
+        if (data[i]['A113'] === 2) {
+          result[1].value = result[1].value + 1;
+        }
+        if (data[i]['A12'] === 2) {
+          result[2].value = result[1].value + 1;
+        }
+        if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+          result[3].value = result[1].value + 1;
+        }
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get achievement boarding pangkalan',
       data: result,
     });
   } catch (error) {

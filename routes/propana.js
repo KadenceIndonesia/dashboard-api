@@ -6,6 +6,7 @@ Router.get('/:pid/achievement/visit', propanaController.getVisitAchievement);
 Router.get('/:pid/achievement/status-visit', propanaController.getStatusVisitAchievement);
 Router.get('/:pid/achievement/visit-region', propanaController.getVisitByRegion);
 Router.get('/:pid/achievement/visit-city', propanaController.getVisitByCity);
+Router.get('/:pid/achievement/status-boarding-pangkalan', propanaController.getStatusOnBoardingPangkalan);
 
 Router.get('/:pid/achievement/device-total', propanaController.getAchievementDeviceTotal);
 Router.get('/:pid/achievement/device-type', propanaController.getAchievementDeviceType);
