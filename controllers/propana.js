@@ -276,6 +276,80 @@ exports.getStatusVisitAchievement = async function (req, res) {
   }
 };
 
+exports.getStatusVisitAchievementPercent = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var result = [];
+    var total = 0;
+    for (let i = 0; i < A6Code.length; i++) {
+      result.push({
+        code: A6Code[i].code,
+        label: A6Code[i].label,
+        count: 0,
+        value: 0,
+      });
+    }
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      if (region !== '0' && province === '0') {
+        if (data[i]['A1'] === region) {
+          result[data[i]['A6'] - 1].count = result[data[i]['A6'] - 1].count + 1;
+          total++;
+        }
+      } else if (region !== '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            result[data[i]['A6'] - 1].count =
+              result[data[i]['A6'] - 1].count + 1;
+            total++;
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            result[data[i]['A6'] - 1].count =
+              result[data[i]['A6'] - 1].count + 1;
+            total++;
+          }
+        }
+      } else if (region === '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            result[data[i]['A6'] - 1].count =
+              result[data[i]['A6'] - 1].count + 1;
+            total++;
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            result[data[i]['A6'] - 1].count =
+              result[data[i]['A6'] - 1].count + 1;
+            total++;
+          }
+        }
+      } else {
+        result[data[i]['A6'] - 1].count = result[data[i]['A6'] - 1].count + 1;
+        total++;
+      }
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      result[i].value = (result[i].count / total) * 100;
+      result[i].value = decimalPlaces(result[i].value, 2);
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Administration provinces',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getPosterAchievement = async function (req, res) {
   try {
     const pid = req.params.pid;
@@ -752,6 +826,8 @@ exports.getSortBoarding = async function (req, res) {
     const province = req.query.province;
     const city = req.query.city;
 
+    var _getCity = await getAdminstrationCityAll(pid);
+
     var result = [];
 
     var data = await excelData(pid);
@@ -763,11 +839,12 @@ exports.getSortBoarding = async function (req, res) {
           if (findCity === -1) {
             result.push({
               label: data[i]['A3'],
+              count: 0,
               value: 0,
             });
           } else {
             if (data[i]['A31'] === 1) {
-              result[findCity].value = result[findCity].value + 1;
+              result[findCity].count = result[findCity].count + 1;
             }
           }
         }
@@ -778,11 +855,12 @@ exports.getSortBoarding = async function (req, res) {
             if (findCity === -1) {
               result.push({
                 label: data[i]['A3'],
+                count: 0,
                 value: 0,
               });
             } else {
               if (data[i]['A31'] === 1) {
-                result[findCity].value = result[findCity].value + 1;
+                result[findCity].count = result[findCity].count + 1;
               }
             }
           }
@@ -792,11 +870,12 @@ exports.getSortBoarding = async function (req, res) {
             if (findCity === -1) {
               result.push({
                 label: data[i]['A3'],
+                count: 0,
                 value: 0,
               });
             } else {
               if (data[i]['A31'] === 1) {
-                result[findCity].value = result[findCity].value + 1;
+                result[findCity].count = result[findCity].count + 1;
               }
             }
           }
@@ -808,11 +887,12 @@ exports.getSortBoarding = async function (req, res) {
             if (findCity === -1) {
               result.push({
                 label: data[i]['A3'],
+                count: 0,
                 value: 0,
               });
             } else {
               if (data[i]['A31'] === 1) {
-                result[findCity].value = result[findCity].value + 1;
+                result[findCity].count = result[findCity].count + 1;
               }
             }
           }
@@ -822,11 +902,12 @@ exports.getSortBoarding = async function (req, res) {
             if (findCity === -1) {
               result.push({
                 label: data[i]['A3'],
+                count: 0,
                 value: 0,
               });
             } else {
               if (data[i]['A31'] === 1) {
-                result[findCity].value = result[findCity].value + 1;
+                result[findCity].count = result[findCity].count + 1;
               }
             }
           }
@@ -836,14 +917,21 @@ exports.getSortBoarding = async function (req, res) {
         if (findCity === -1) {
           result.push({
             label: data[i]['A3'],
+            count: 0,
             value: 0,
           });
         } else {
           if (data[i]['A31'] === 1) {
-            result[findCity].value = result[findCity].value + 1;
+            result[findCity].count = result[findCity].count + 1;
           }
         }
       }
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      var findIndexCity = await findObj(_getCity, 'cityName', result[i].label);
+      result[i].value = (result[i].count / _getCity[findIndexCity].list) * 100;
+      result[i].value = decimalPlaces(result[i].value, 2);
     }
 
     if (type === 'top') {
