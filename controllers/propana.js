@@ -1,6 +1,13 @@
+const fs = require('fs');
+const path = require('path');
+const xlsx = require('node-xlsx');
+const moment = require('moment');
+
 require('../lib/index');
 require('../lib/administration');
 require('../lib/dataExcel');
+require('../lib/hyundai');
+require('../lib/glossary');
 
 const A6Code = [
   { code: 1, label: 'Pangkalan aktif bertemu pemilik' },
@@ -1084,6 +1091,7 @@ exports.getVisitByCity = async function (req, res) {
     for (let i = 0; i < _getAdminstrationCityAll.length; i++) {
       result.push({
         code: _getAdminstrationCityAll[i].idCity,
+        province: _getAdminstrationCityAll[i].areaName,
         cityName: _getAdminstrationCityAll[i].cityName,
         dataList: _getAdminstrationCityAll[i].dataList,
         visit: 0,
@@ -1558,41 +1566,6 @@ exports.getDataListPangkalan = async function (req, res) {
           A36: data[i]['A36'],
         });
       }
-
-      // if (parseInt(province) !== 0 && parseInt(city) === 0) {
-      //   if (data[i]['A2'] === province) {
-      //     result.push({
-      //       province: data[i]['A2'],
-      //       city: data[i]['A3'],
-      //       key: data[i]['KID_KEPO'],
-      //       pangkalan: data[i]['NAMAPEMILIK'],
-      //       kecamatan: data[i]['KECAMATAN'],
-      //       kelurahan: data[i]['KELURAHAN'],
-      //     });
-      //   }
-      // } else if (parseInt(province) !== 0 && parseInt(city) !== 0) {
-      //   if (data[i]['A3'] === city) {
-      //     result.push({
-      //       province: data[i]['A2'],
-      //       city: data[i]['A3'],
-      //       key: data[i]['KID_KEPO'],
-      //       pangkalan: data[i]['NAMAPEMILIK'],
-      //       kecamatan: data[i]['KECAMATAN'],
-      //       kelurahan: data[i]['KELURAHAN'],
-      //     });
-      //   }
-      // } else {
-      //   if (data[i]['A113'] === 1) {
-      //     result.push({
-      //       province: data[i]['A2'],
-      //       city: data[i]['A3'],
-      //       key: data[i]['KID_KEPO'],
-      //       pangkalan: data[i]['NAMAPEMILIK'],
-      //       kecamatan: data[i]['KECAMATAN'],
-      //       kelurahan: data[i]['KELURAHAN'],
-      //     });
-      //   }
-      // }
     }
 
     res.status(200).json({
@@ -1849,6 +1822,320 @@ exports.getSortBoardingTransaction = async function (req, res) {
       message: 'Success get Sort Poster',
       data: response,
     });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getExportPangkalan = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+    var data = await excelData(pid);
+    var isifile = [];
+
+    for (let i = 0; i < data.length; i++) {
+      if (region !== '0' && province === '0') {
+        if (data[i]['A1'] === region) {
+          var datas = [];
+          var dataA14 = [
+            data[i]['A14_1'] > 0 && 1,
+            data[i]['A14_2'] > 0 && 2,
+            data[i]['A14_3'] > 0 && 3,
+            data[i]['A14_4'] > 0 && 4,
+            data[i]['A14_5'] > 0 && 5,
+            data[i]['A14_6'] > 0 && 6,
+            data[i]['A14_7'] > 0 && 7,
+          ];
+          datas.push(
+            data[i]['KID_Pangkalan'],
+            data[i]['NAMAPEMILIK'],
+            data[i]['A1'],
+            data[i]['A2'],
+            data[i]['A3'],
+            data[i]['KECAMATAN'],
+            data[i]['KELURAHAN'],
+            data[i]['A6'] >= 1 ? A6(data[i]['A6']) : '',
+            data[i]['A6C'],
+            data[i]['A6b'],
+            data[i]['A113'] >= 1 ? A113(data[i]['A113']) : '',
+            data[i]['A12'] >= 1 ? A12(data[i]['A12']) : '',
+            data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
+            A14(dataA14),
+            data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
+            data[i]['A29'] >= 1 ? A29(data[i]['A29']) : '',
+            data[i]['A29B'],
+            data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
+            '', //A18
+            data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
+            data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
+            '', //A21
+            data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
+            data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
+          );
+          isifile.push(datas);
+        }
+      } else if (region !== '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            var datas = [];
+            var dataA14 = [
+              data[i]['A14_1'] > 0 && 1,
+              data[i]['A14_2'] > 0 && 2,
+              data[i]['A14_3'] > 0 && 3,
+              data[i]['A14_4'] > 0 && 4,
+              data[i]['A14_5'] > 0 && 5,
+              data[i]['A14_6'] > 0 && 6,
+              data[i]['A14_7'] > 0 && 7,
+            ];
+            datas.push(
+              data[i]['KID_Pangkalan'],
+              data[i]['NAMAPEMILIK'],
+              data[i]['A1'],
+              data[i]['A2'],
+              data[i]['A3'],
+              data[i]['KECAMATAN'],
+              data[i]['KELURAHAN'],
+              data[i]['A6'] >= 1 ? A6(data[i]['A6']) : '',
+              data[i]['A6C'],
+              data[i]['A6b'],
+              data[i]['A113'] >= 1 ? A113(data[i]['A113']) : '',
+              data[i]['A12'] >= 1 ? A12(data[i]['A12']) : '',
+              data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
+              A14(dataA14),
+              data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
+              data[i]['A29'] >= 1 ? A29(data[i]['A29']) : '',
+              data[i]['A29B'],
+              data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
+              '', //A18
+              data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
+              data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
+              '', //A21
+              data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
+              data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
+            );
+            isifile.push(datas);
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            var datas = [];
+            var dataA14 = [
+              data[i]['A14_1'] > 0 && 1,
+              data[i]['A14_2'] > 0 && 2,
+              data[i]['A14_3'] > 0 && 3,
+              data[i]['A14_4'] > 0 && 4,
+              data[i]['A14_5'] > 0 && 5,
+              data[i]['A14_6'] > 0 && 6,
+              data[i]['A14_7'] > 0 && 7,
+            ];
+            datas.push(
+              data[i]['KID_Pangkalan'],
+              data[i]['NAMAPEMILIK'],
+              data[i]['A1'],
+              data[i]['A2'],
+              data[i]['A3'],
+              data[i]['KECAMATAN'],
+              data[i]['KELURAHAN'],
+              data[i]['A6'] >= 1 ? A6(data[i]['A6']) : '',
+              data[i]['A6C'],
+              data[i]['A6b'],
+              data[i]['A113'] >= 1 ? A113(data[i]['A113']) : '',
+              data[i]['A12'] >= 1 ? A12(data[i]['A12']) : '',
+              data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
+              A14(dataA14),
+              data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
+              data[i]['A29'] >= 1 ? A29(data[i]['A29']) : '',
+              data[i]['A29B'],
+              data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
+              '', //A18
+              data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
+              data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
+              '', //A21
+              data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
+              data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
+            );
+            isifile.push(datas);
+          }
+        }
+      } else if (region === '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            var datas = [];
+            var dataA14 = [
+              data[i]['A14_1'] > 0 && 1,
+              data[i]['A14_2'] > 0 && 2,
+              data[i]['A14_3'] > 0 && 3,
+              data[i]['A14_4'] > 0 && 4,
+              data[i]['A14_5'] > 0 && 5,
+              data[i]['A14_6'] > 0 && 6,
+              data[i]['A14_7'] > 0 && 7,
+            ];
+            datas.push(
+              data[i]['KID_Pangkalan'],
+              data[i]['NAMAPEMILIK'],
+              data[i]['A1'],
+              data[i]['A2'],
+              data[i]['A3'],
+              data[i]['KECAMATAN'],
+              data[i]['KELURAHAN'],
+              data[i]['A6'] >= 1 ? A6(data[i]['A6']) : '',
+              data[i]['A6C'],
+              data[i]['A6b'],
+              data[i]['A113'] >= 1 ? A113(data[i]['A113']) : '',
+              data[i]['A12'] >= 1 ? A12(data[i]['A12']) : '',
+              data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
+              A14(dataA14),
+              data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
+              data[i]['A29'] >= 1 ? A29(data[i]['A29']) : '',
+              data[i]['A29B'],
+              data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
+              '', //A18
+              data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
+              data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
+              '', //A21
+              data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
+              data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
+            );
+            isifile.push(datas);
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            var datas = [];
+            var dataA14 = [
+              data[i]['A14_1'] > 0 && 1,
+              data[i]['A14_2'] > 0 && 2,
+              data[i]['A14_3'] > 0 && 3,
+              data[i]['A14_4'] > 0 && 4,
+              data[i]['A14_5'] > 0 && 5,
+              data[i]['A14_6'] > 0 && 6,
+              data[i]['A14_7'] > 0 && 7,
+            ];
+            datas.push(
+              data[i]['KID_Pangkalan'],
+              data[i]['NAMAPEMILIK'],
+              data[i]['A1'],
+              data[i]['A2'],
+              data[i]['A3'],
+              data[i]['KECAMATAN'],
+              data[i]['KELURAHAN'],
+              data[i]['A6'] >= 1 ? A6(data[i]['A6']) : '',
+              data[i]['A6C'],
+              data[i]['A6b'],
+              data[i]['A113'] >= 1 ? A113(data[i]['A113']) : '',
+              data[i]['A12'] >= 1 ? A12(data[i]['A12']) : '',
+              data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
+              A14(dataA14),
+              data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
+              data[i]['A29'] >= 1 ? A29(data[i]['A29']) : '',
+              data[i]['A29B'],
+              data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
+              '', //A18
+              data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
+              data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
+              '', //A21
+              data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
+              data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
+            );
+            isifile.push(datas);
+          }
+        }
+      } else {
+        var datas = [];
+        var dataA14 = [
+          data[i]['A14_1'] > 0 && 1,
+          data[i]['A14_2'] > 0 && 2,
+          data[i]['A14_3'] > 0 && 3,
+          data[i]['A14_4'] > 0 && 4,
+          data[i]['A14_5'] > 0 && 5,
+          data[i]['A14_6'] > 0 && 6,
+          data[i]['A14_7'] > 0 && 7,
+        ];
+        datas.push(
+          data[i]['KID_Pangkalan'],
+          data[i]['NAMAPEMILIK'],
+          data[i]['A1'],
+          data[i]['A2'],
+          data[i]['A3'],
+          data[i]['KECAMATAN'],
+          data[i]['KELURAHAN'],
+          data[i]['A6'] >= 1 ? A6(data[i]['A6']) : '',
+          data[i]['A6C'],
+          data[i]['A6b'],
+          data[i]['A113'] >= 1 ? A113(data[i]['A113']) : '',
+          data[i]['A12'] >= 1 ? A12(data[i]['A12']) : '',
+          data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
+          A14(dataA14),
+          data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
+          data[i]['A29'] >= 1 ? A29(data[i]['A29']) : '',
+          data[i]['A29B'],
+          data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
+          '', //A18
+          data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
+          data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
+          '', //A21
+          data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
+          data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
+        );
+        isifile.push(datas);
+      }
+    }
+
+    var header = [
+      [
+        'ID Pangkalan',
+        'Nama Pangkalan',
+        'Region',
+        'Provinsi',
+        'Kota',
+        'Kecamatan',
+        'Kelurahan',
+        'Keberadaan Pangkalan',
+        'Alamat Baru Jika Pangkalan sudah ditemukan',
+        'Alamat Jika Pindah Alamat',
+        'Kepemilikan Perangkat Device Pendukung',
+        'Status Boarding Pangkalan',
+        'Sudah Menerima Email Dari Pertamina',
+        'Alsan Belum On-Boarding Padahal Sudah Terima Email',
+        'Kesesuain Email Jika Belum Terima Email',
+        'Email Yang Sesuai',
+        'Email Baru',
+        'Keberhasilan Boarding Setelah Dibantu',
+        'Alasan On Boarding Tapi Belum Transaksi',
+        'Keberhasilan Transaksi Setelah Dibantu',
+        'Kendala Saat Transaksi',
+        'Kendala Saat Transaksi',
+        'Kepemilikan Poster',
+        'Poster Terlihat atau Tidak',
+      ],
+    ];
+
+    var formatdate = moment().format('YYYY_MM_DD_HH_mm_ss');
+    var newfilename = `${pid}_${formatdate}.xlsx`;
+    var createfile = header.concat(isifile);
+    const progress = xlsx.build([{ name: 'Data', data: createfile }]);
+    fs.writeFile(
+      `public/fileexcel/${newfilename}`,
+      progress,
+      function (errwritefile) {
+        if (errwritefile) {
+          console.log('error');
+        } else {
+          console.log('tidak error');
+          res.status(200).json({
+            statusCode: 200,
+            message: 'Success export data pangkalan',
+            data: `https://dashboard.kadence.co.id/fileexcel/${newfilename}`,
+          });
+        }
+      }
+    );
+    // res.status(200).json({
+    //   statusCode: 200,
+    //   message: 'Success get touchpoint score parent',
+    //   data: isifile,
+    // });
   } catch (error) {
     res.status(400).send(error);
   }
