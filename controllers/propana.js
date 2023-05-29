@@ -1027,14 +1027,54 @@ exports.getVisitByCity = async function (req, res) {
     const region = req.query.region;
 
     var result = [];
-    if (province !== '0') {
-      var _getAdminstrationCityAll = await getAdminstrationCityByProvince(
-        pid,
-        province
-      );
+    if (region === '0') {
+      if (province === '0') {
+        var _getAdminstrationCityAll = await getAdminstrationCityAll(pid);
+      } else {
+        if (city === '0') {
+          var _getAdminstrationCityAll = await getAdminstrationCityByProvince(
+            pid,
+            province
+          );
+        } else {
+          var _getAdminstrationCityAll = await getAdminstrationCityByName(
+            pid,
+            city
+          );
+        }
+      }
     } else {
-      var _getAdminstrationCityAll = await getAdminstrationCityAll(pid);
+      if (province === '0') {
+        var _getAdminstrationProvinceByRegion =
+          await getAdminstrationProvinceByRegion(pid, region);
+        var dataProvince = _getAdminstrationProvinceByRegion.map(
+          (data) => data.provinceName
+        );
+        var _getAdminstrationCityAll =
+          await getAdminstrationCityByArrayProvince(pid, dataProvince);
+      } else {
+        if (city === '0') {
+          var _getAdminstrationCityAll = await getAdminstrationCityByProvince(
+            pid,
+            province
+          );
+        } else {
+          var _getAdminstrationCityAll = await getAdminstrationCityByName(
+            pid,
+            city
+          );
+        }
+      }
     }
+
+    // if (province !== '0') {
+    //   var _getAdminstrationCityAll = await getAdminstrationCityByProvince(
+    //     pid,
+    //     province
+    //   );
+    // } else {
+    //   var _getAdminstrationCityAll = await getAdminstrationCityAll(pid);
+    // }
 
     for (let i = 0; i < _getAdminstrationCityAll.length; i++) {
       result.push({
@@ -1060,7 +1100,7 @@ exports.getVisitByCity = async function (req, res) {
         boardingSuccessTransaction: 0,
         boardingFailedTransaction: 0,
         successTransaction: 0,
-        failedTransaction: 0
+        failedTransaction: 0,
       });
     }
 
@@ -1123,19 +1163,22 @@ exports.getVisitByCity = async function (req, res) {
           result[findData].failedOthers = result[findData].failedOthers + 1;
         }
 
-
         // transaction
         if (data[i]['A50'] === 1) {
-          result[findData].boardingSuccessTransaction = result[findData].boardingSuccessTransaction + 1;
+          result[findData].boardingSuccessTransaction =
+            result[findData].boardingSuccessTransaction + 1;
         }
         if (data[i]['A50'] === 2 || data[i]['A50'] === 3) {
-          result[findData].boardingFailedTransaction = result[findData].boardingFailedTransaction + 1;
+          result[findData].boardingFailedTransaction =
+            result[findData].boardingFailedTransaction + 1;
         }
         if (data[i]['A33'] === 1) {
-          result[findData].successTransaction = result[findData].successTransaction + 1;
+          result[findData].successTransaction =
+            result[findData].successTransaction + 1;
         }
         if (data[i]['A33'] === 2 || data[i]['A33'] === 3) {
-          result[findData].failedTransaction = result[findData].failedTransaction + 1;
+          result[findData].failedTransaction =
+            result[findData].failedTransaction + 1;
         }
       }
     }
