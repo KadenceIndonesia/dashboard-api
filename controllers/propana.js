@@ -36,6 +36,11 @@ const helBoardingCode = [
   { code: 2, label: 'Tidak Berhasil' },
 ];
 
+const boardingNoTransactionCode = [
+  { code: 1, label: 'Berhasil' },
+  { code: 2, label: 'Tidak Berhasil' },
+];
+
 exports.getTargetPangkalan = async function (req, res) {
   try {
     const pid = req.params.pid;
@@ -1621,6 +1626,228 @@ exports.getDetailPangkalan = async function (req, res) {
       statusCode: 200,
       message: 'Success get Pangkalan List',
       data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+// on boarding belum transaksi
+exports.getOnBoardingNoTransaction = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var result = [];
+    for (let i = 0; i < boardingNoTransactionCode.length; i++) {
+      result.push({
+        code: boardingNoTransactionCode[i].code,
+        label: boardingNoTransactionCode[i].label,
+        value: 0,
+      });
+    }
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      if (region !== '0' && province === '0') {
+        if (data[i]['A1'] === region) {
+          if (data[i]['A33'] === 1) {
+            result[0].value = result[0].value + 1;
+          } else {
+            result[1].value = result[1].value + 1;
+          }
+        }
+      } else if (region !== '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            if (data[i]['A33'] === 1) {
+              result[0].value = result[0].value + 1;
+            } else {
+              result[1].value = result[1].value + 1;
+            }
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            if (data[i]['A33'] === 1) {
+              result[0].value = result[0].value + 1;
+            } else {
+              result[1].value = result[1].value + 1;
+            }
+          }
+        }
+      } else if (region === '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            if (data[i]['A33'] === 1) {
+              result[0].value = result[0].value + 1;
+            } else {
+              result[1].value = result[1].value + 1;
+            }
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            if (data[i]['A33'] === 1) {
+              result[0].value = result[0].value + 1;
+            } else {
+              result[1].value = result[1].value + 1;
+            }
+          }
+        }
+      } else {
+        if (data[i]['A33'] === 1) {
+          result[0].value = result[0].value + 1;
+        } else {
+          result[1].value = result[1].value + 1;
+        }
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get achievement boarding pangkalan',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getSortBoardingTransaction = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const type = req.params.type;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var _getCity = await getAdminstrationCityAll(pid);
+
+    var result = [];
+
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      if (region !== '0' && province === '0') {
+        if (data[i]['A1'] === region) {
+          var findCity = await findObj(result, 'label', data[i]['A3']);
+          if (findCity === -1) {
+            result.push({
+              label: data[i]['A3'],
+              count: 0,
+              value: 0,
+            });
+          } else {
+            if (data[i]['A33'] === 1) {
+              result[findCity].count = result[findCity].count + 1;
+            }
+          }
+        }
+      } else if (region !== '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            var findCity = await findObj(result, 'label', data[i]['A3']);
+            if (findCity === -1) {
+              result.push({
+                label: data[i]['A3'],
+                count: 0,
+                value: 0,
+              });
+            } else {
+              if (data[i]['A33'] === 1) {
+                result[findCity].count = result[findCity].count + 1;
+              }
+            }
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            var findCity = await findObj(result, 'label', data[i]['A3']);
+            if (findCity === -1) {
+              result.push({
+                label: data[i]['A3'],
+                count: 0,
+                value: 0,
+              });
+            } else {
+              if (data[i]['A33'] === 1) {
+                result[findCity].count = result[findCity].count + 1;
+              }
+            }
+          }
+        }
+      } else if (region === '0' && province !== '0') {
+        if (city !== '0') {
+          if (data[i]['A3'] === city) {
+            var findCity = await findObj(result, 'label', data[i]['A3']);
+            if (findCity === -1) {
+              result.push({
+                label: data[i]['A3'],
+                count: 0,
+                value: 0,
+              });
+            } else {
+              if (data[i]['A33'] === 1) {
+                result[findCity].count = result[findCity].count + 1;
+              }
+            }
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            var findCity = await findObj(result, 'label', data[i]['A3']);
+            if (findCity === -1) {
+              result.push({
+                label: data[i]['A3'],
+                count: 0,
+                value: 0,
+              });
+            } else {
+              if (data[i]['A33'] === 1) {
+                result[findCity].count = result[findCity].count + 1;
+              }
+            }
+          }
+        }
+      } else {
+        var findCity = await findObj(result, 'label', data[i]['A3']);
+        if (findCity === -1) {
+          result.push({
+            label: data[i]['A3'],
+            count: 0,
+            value: 0,
+          });
+        } else {
+          if (data[i]['A33'] === 1) {
+            result[findCity].count = result[findCity].count + 1;
+          }
+        }
+      }
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      var findIndexCity = await findObj(_getCity, 'cityName', result[i].label);
+      result[i].value = (result[i].count / _getCity[findIndexCity].list) * 100;
+      result[i].value = decimalPlaces(result[i].value, 2);
+    }
+
+    if (type === 'top') {
+      bubbleSort(result, 'value');
+    } else {
+      bubbleSortAsc(result, 'value');
+    }
+
+    var response = [];
+
+    for (let i = 0; i < result.length; i++) {
+      if (i < 10) {
+        response.push(result[i]);
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Sort Poster',
+      data: response,
     });
   } catch (error) {
     res.status(400).send(error);

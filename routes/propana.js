@@ -11,6 +11,10 @@ Router.get('/:pid/achievement/status-boarding-pangkalan', propanaController.getS
 Router.get('/:pid/achievement/help-boarding', propanaController.getHelpBoardingPangkalan);
 Router.get('/:pid/sort/boarding/:type', propanaController.getSortBoarding);
 
+// on boarding belum transaksi
+Router.get('/:pid/achievement/boarding-no-transaction', propanaController.getOnBoardingNoTransaction);
+Router.get('/:pid/sort/boarding-no-transaction/:type', propanaController.getSortBoardingTransaction);
+
 Router.get('/:pid/achievement/poster', propanaController.getPosterAchievement);
 Router.get('/:pid/achievement/poster-view', propanaController.getPosterViewAchievement);
 Router.get('/:pid/sort/poster/:type', propanaController.getSortPoster);
