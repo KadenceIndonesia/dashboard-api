@@ -496,6 +496,8 @@ exports.getSortPoster = async function (req, res) {
     const province = req.query.province;
     const city = req.query.city;
 
+    var _getCity = await getAdminstrationCityAll(pid);
+
     var result = [];
 
     var data = await excelData(pid);
@@ -508,10 +510,11 @@ exports.getSortPoster = async function (req, res) {
             result.push({
               label: data[i]['A3'],
               value: 0,
+              count: 0,
             });
           } else {
             if (data[i]['A35'] === 1) {
-              result[findCity].value = result[findCity].value + 1;
+              result[findCity].count = result[findCity].count + 1;
             }
           }
         }
@@ -523,10 +526,11 @@ exports.getSortPoster = async function (req, res) {
               result.push({
                 label: data[i]['A3'],
                 value: 0,
+                count: 0,
               });
             } else {
               if (data[i]['A35'] === 1) {
-                result[findCity].value = result[findCity].value + 1;
+                result[findCity].count = result[findCity].count + 1;
               }
             }
           }
@@ -537,10 +541,11 @@ exports.getSortPoster = async function (req, res) {
               result.push({
                 label: data[i]['A3'],
                 value: 0,
+                count: 0,
               });
             } else {
               if (data[i]['A35'] === 1) {
-                result[findCity].value = result[findCity].value + 1;
+                result[findCity].count = result[findCity].count + 1;
               }
             }
           }
@@ -553,10 +558,11 @@ exports.getSortPoster = async function (req, res) {
               result.push({
                 label: data[i]['A3'],
                 value: 0,
+                count: 0,
               });
             } else {
               if (data[i]['A35'] === 1) {
-                result[findCity].value = result[findCity].value + 1;
+                result[findCity].count = result[findCity].count + 1;
               }
             }
           }
@@ -567,10 +573,11 @@ exports.getSortPoster = async function (req, res) {
               result.push({
                 label: data[i]['A3'],
                 value: 0,
+                count: 0,
               });
             } else {
               if (data[i]['A35'] === 1) {
-                result[findCity].value = result[findCity].value + 1;
+                result[findCity].count = result[findCity].count + 1;
               }
             }
           }
@@ -581,13 +588,20 @@ exports.getSortPoster = async function (req, res) {
           result.push({
             label: data[i]['A3'],
             value: 0,
+            count: 0,
           });
         } else {
           if (data[i]['A35'] === 1) {
-            result[findCity].value = result[findCity].value + 1;
+            result[findCity].count = result[findCity].count + 1;
           }
         }
       }
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      var findIndexCity = await findObj(_getCity, 'cityName', result[i].label);
+      result[i].value = (result[i].count / _getCity[findIndexCity].list) * 100;
+      result[i].value = decimalPlaces(result[i].value, 2);
     }
 
     if (type === 'top') {
@@ -1010,9 +1024,10 @@ exports.getVisitByCity = async function (req, res) {
     const pid = req.params.pid;
     const province = req.query.province;
     const city = req.query.city;
+    const region = req.query.region;
 
     var result = [];
-    if (parseInt(province) !== 0) {
+    if (province !== '0') {
       var _getAdminstrationCityAll = await getAdminstrationCityByProvince(
         pid,
         province
@@ -1028,6 +1043,24 @@ exports.getVisitByCity = async function (req, res) {
         dataList: _getAdminstrationCityAll[i].dataList,
         visit: 0,
         visitPercentage: 0,
+        pangkalanAktif: 0,
+        tutupPermanen: 0,
+        tidakDitemukan: 0,
+        pindahAlamat: 0,
+        tutupSaatKunjungan: 0,
+        pangkalanAktif2: 0, // belum masuk
+        notBoardingWithDevice: 0,
+        notBoardingNoDevice: 0,
+        boardingNoTransaction: 0,
+        boardingTransaction: 0,
+        successBoarding: 0,
+        failedEmail: 0,
+        failedDontWantOnBoard: 0,
+        failedOthers: 0,
+        boardingSuccessTransaction: 0,
+        boardingFailedTransaction: 0,
+        successTransaction: 0,
+        failedTransaction: 0
       });
     }
 
@@ -1037,6 +1070,73 @@ exports.getVisitByCity = async function (req, res) {
       var findData = await findObj(result, 'cityName', data[i]['A3']);
       if (findData !== -1) {
         result[findData].visit = result[findData].visit + 1;
+
+        //status kunjungan pangkalan
+        if (data[i]['A6'] === 1) {
+          result[findData].pangkalanAktif = result[findData].pangkalanAktif + 1;
+        }
+        if (data[i]['A6'] === 2) {
+          result[findData].tutupPermanen = result[findData].tutupPermanen + 1;
+        }
+        if (data[i]['A6'] === 3) {
+          result[findData].tidakDitemukan = result[findData].tidakDitemukan + 1;
+        }
+        if (data[i]['A6'] === 4) {
+          result[findData].pindahAlamat = result[findData].pindahAlamat + 1;
+        }
+        if (data[i]['A6'] === 5) {
+          result[findData].tutupSaatKunjungan =
+            result[findData].tutupSaatKunjungan + 1;
+        }
+
+        // status boarding pangkalan
+        if (data[i]['A113'] === 1) {
+          result[findData].notBoardingWithDevice =
+            result[findData].notBoardingWithDevice + 1;
+        }
+        if (data[i]['A113'] === 2) {
+          result[findData].notBoardingNoDevice =
+            result[findData].notBoardingNoDevice + 1;
+        }
+        if (data[i]['A12'] === 2) {
+          result[findData].boardingNoTransaction =
+            result[findData].boardingNoTransaction + 1;
+        }
+        if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+          result[findData].boardingTransaction =
+            result[findData].boardingTransaction + 1;
+        }
+
+        // belum on boarding
+        if (data[i]['A31'] === 1) {
+          result[findData].successBoarding =
+            result[findData].successBoarding + 1;
+        }
+        if (data[i]['A31'] === 2) {
+          result[findData].failedEmail = result[findData].failedEmail + 1;
+        }
+        if (data[i]['A31'] === 3) {
+          result[findData].failedDontWantOnBoard =
+            result[findData].failedDontWantOnBoard + 1;
+        }
+        if (data[i]['A31'] === 4) {
+          result[findData].failedOthers = result[findData].failedOthers + 1;
+        }
+
+
+        // transaction
+        if (data[i]['A50'] === 1) {
+          result[findData].boardingSuccessTransaction = result[findData].boardingSuccessTransaction + 1;
+        }
+        if (data[i]['A50'] === 2 || data[i]['A50'] === 3) {
+          result[findData].boardingFailedTransaction = result[findData].boardingFailedTransaction + 1;
+        }
+        if (data[i]['A33'] === 1) {
+          result[findData].successTransaction = result[findData].successTransaction + 1;
+        }
+        if (data[i]['A33'] === 2 || data[i]['A33'] === 3) {
+          result[findData].failedTransaction = result[findData].failedTransaction + 1;
+        }
       }
     }
 
