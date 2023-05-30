@@ -380,6 +380,11 @@ bson@^1.1.4:
   resolved "https://registry.yarnpkg.com/bson/-/bson-1.1.6.tgz#fb819be9a60cd677e0853aee4ca712a785d6618a"
   integrity sha512-EvVNVeGo4tHxwi8L6bPj3y3itEvStdwvvlojVxxbyYfoaxJ6keLgrTuKdyfEAszFK+H3olzBuafE0yoh0D1gdg==
 
+bubblesort@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/bubblesort/-/bubblesort-1.0.1.tgz#c351cc9239ffdde9eaf4a112d6ea878e77a2cb47"
+  integrity sha512-7ywT18OgLw5O+BNlIJxjQ+NXSkyePmr+844TRdSczZCEQuvM4wy+ELGtsvXUrsDnzkTCxwn+1657GcOWFSD13w==
+
 buffer-equal-constant-time@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz#f8e71132f7ffe6e01a5c9697a4c6f3e48d5cc819"

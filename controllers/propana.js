@@ -754,9 +754,13 @@ exports.getSortPoster = async function (req, res) {
             result.push({
               label: data[i]['A3'],
               value: 0,
-              count: 0,
+              base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+              count: data[i]['A35'] === 1 ? 1 : 0,
             });
           } else {
+            if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+              result[findCity].base = result[findCity].base + 1;
+            }
             if (data[i]['A35'] === 1) {
               result[findCity].count = result[findCity].count + 1;
             }
@@ -770,9 +774,13 @@ exports.getSortPoster = async function (req, res) {
               result.push({
                 label: data[i]['A3'],
                 value: 0,
-                count: 0,
+                base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                count: data[i]['A35'] === 1 ? 1 : 0,
               });
             } else {
+              if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                result[findCity].base = result[findCity].base + 1;
+              }
               if (data[i]['A35'] === 1) {
                 result[findCity].count = result[findCity].count + 1;
               }
@@ -785,9 +793,13 @@ exports.getSortPoster = async function (req, res) {
               result.push({
                 label: data[i]['A3'],
                 value: 0,
-                count: 0,
+                base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                count: data[i]['A35'] === 1 ? 1 : 0,
               });
             } else {
+              if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                result[findCity].base = result[findCity].base + 1;
+              }
               if (data[i]['A35'] === 1) {
                 result[findCity].count = result[findCity].count + 1;
               }
@@ -802,9 +814,13 @@ exports.getSortPoster = async function (req, res) {
               result.push({
                 label: data[i]['A3'],
                 value: 0,
-                count: 0,
+                base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                count: data[i]['A35'] === 1 ? 1 : 0,
               });
             } else {
+              if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                result[findCity].base = result[findCity].base + 1;
+              }
               if (data[i]['A35'] === 1) {
                 result[findCity].count = result[findCity].count + 1;
               }
@@ -817,9 +833,13 @@ exports.getSortPoster = async function (req, res) {
               result.push({
                 label: data[i]['A3'],
                 value: 0,
-                count: 0,
+                base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                count: data[i]['A35'] === 1 ? 1 : 0,
               });
             } else {
+              if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                result[findCity].base = result[findCity].base + 1;
+              }
               if (data[i]['A35'] === 1) {
                 result[findCity].count = result[findCity].count + 1;
               }
@@ -832,9 +852,13 @@ exports.getSortPoster = async function (req, res) {
           result.push({
             label: data[i]['A3'],
             value: 0,
-            count: 0,
+            base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+            count: data[i]['A35'] === 1 ? 1 : 0,
           });
         } else {
+          if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+            result[findCity].base = result[findCity].base + 1;
+          }
           if (data[i]['A35'] === 1) {
             result[findCity].count = result[findCity].count + 1;
           }
@@ -843,9 +867,12 @@ exports.getSortPoster = async function (req, res) {
     }
 
     for (let i = 0; i < result.length; i++) {
-      var findIndexCity = await findObj(_getCity, 'cityName', result[i].label);
-      result[i].value = (result[i].count / _getCity[findIndexCity].list) * 100;
-      result[i].value = decimalPlaces(result[i].value, 2);
+      if (result[i].base > 0) {
+        result[i].value = (result[i].count / result[i].base) * 100;
+        result[i].value = decimalPlaces(result[i].value, 2);
+      } else {
+        result[i].value = 0;
+      }
     }
 
     if (type === 'top') {
@@ -1097,10 +1124,14 @@ exports.getSortBoarding = async function (req, res) {
           if (findCity === -1) {
             result.push({
               label: data[i]['A3'],
-              count: 0,
+              count: data[i]['A31'] === 1 ? 1 : 0,
               value: 0,
+              base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
             });
           } else {
+            if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+              result[findCity].base = result[findCity].base + 1;
+            }
             if (data[i]['A31'] === 1) {
               result[findCity].count = result[findCity].count + 1;
             }
@@ -1113,10 +1144,14 @@ exports.getSortBoarding = async function (req, res) {
             if (findCity === -1) {
               result.push({
                 label: data[i]['A3'],
-                count: 0,
+                count: data[i]['A31'] === 1 ? 1 : 0,
                 value: 0,
+                base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
               });
             } else {
+              if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                result[findCity].base = result[findCity].base + 1;
+              }
               if (data[i]['A31'] === 1) {
                 result[findCity].count = result[findCity].count + 1;
               }
@@ -1128,10 +1163,14 @@ exports.getSortBoarding = async function (req, res) {
             if (findCity === -1) {
               result.push({
                 label: data[i]['A3'],
-                count: 0,
+                count: data[i]['A31'] === 1 ? 1 : 0,
                 value: 0,
+                base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
               });
             } else {
+              if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                result[findCity].base = result[findCity].base + 1;
+              }
               if (data[i]['A31'] === 1) {
                 result[findCity].count = result[findCity].count + 1;
               }
@@ -1145,10 +1184,14 @@ exports.getSortBoarding = async function (req, res) {
             if (findCity === -1) {
               result.push({
                 label: data[i]['A3'],
-                count: 0,
+                count: data[i]['A31'] === 1 ? 1 : 0,
                 value: 0,
+                base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
               });
             } else {
+              if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                result[findCity].base = result[findCity].base + 1;
+              }
               if (data[i]['A31'] === 1) {
                 result[findCity].count = result[findCity].count + 1;
               }
@@ -1160,10 +1203,14 @@ exports.getSortBoarding = async function (req, res) {
             if (findCity === -1) {
               result.push({
                 label: data[i]['A3'],
-                count: 0,
+                count: data[i]['A31'] === 1 ? 1 : 0,
                 value: 0,
+                base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
               });
             } else {
+              if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                result[findCity].base = result[findCity].base + 1;
+              }
               if (data[i]['A31'] === 1) {
                 result[findCity].count = result[findCity].count + 1;
               }
@@ -1175,10 +1222,14 @@ exports.getSortBoarding = async function (req, res) {
         if (findCity === -1) {
           result.push({
             label: data[i]['A3'],
-            count: 0,
+            count: data[i]['A31'] === 1 ? 1 : 0,
             value: 0,
+            base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
           });
         } else {
+          if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+            result[findCity].base = result[findCity].base + 1;
+          }
           if (data[i]['A31'] === 1) {
             result[findCity].count = result[findCity].count + 1;
           }
@@ -1187,9 +1238,12 @@ exports.getSortBoarding = async function (req, res) {
     }
 
     for (let i = 0; i < result.length; i++) {
-      var findIndexCity = await findObj(_getCity, 'cityName', result[i].label);
-      result[i].value = (result[i].count / _getCity[findIndexCity].list) * 100;
-      result[i].value = decimalPlaces(result[i].value, 2);
+      if (result[i].base > 0) {
+        result[i].value = (result[i].count / result[i].base) * 100;
+        result[i].value = decimalPlaces(result[i].value, 2);
+      } else {
+        result[i].value;
+      }
     }
 
     if (type === 'top') {
@@ -1201,8 +1255,10 @@ exports.getSortBoarding = async function (req, res) {
     var response = [];
 
     for (let i = 0; i < result.length; i++) {
-      if (i < 10) {
-        response.push(result[i]);
+      if (result[i].base > 0) {
+        if (response.length < 10) {
+          response.push(result[i]);
+        }
       }
     }
 
@@ -1579,7 +1635,7 @@ exports.getDataListPangkalan = async function (req, res) {
             data[i]['A18_10'] > 0 && 10,
             data[i]['A18_11'] > 0 && 11,
             data[i]['A18_12'] > 0 && 12,
-            data[i]['A18_13'] > 0 && 13
+            data[i]['A18_13'] > 0 && 13,
           ];
           var A21 = [
             data[i]['A21_1'] > 0 && 1,
@@ -1592,7 +1648,7 @@ exports.getDataListPangkalan = async function (req, res) {
             data[i]['A21_8'] > 0 && 8,
             data[i]['A21_9'] > 0 && 9,
             data[i]['A21_10'] > 0 && 10,
-            data[i]['A21_11'] > 0 && 11
+            data[i]['A21_11'] > 0 && 11,
           ];
           result.push({
             id: data[i]['KID_Pangkalan'],
@@ -1688,7 +1744,7 @@ exports.getDataListPangkalan = async function (req, res) {
               data[i]['A18_10'] > 0 && 10,
               data[i]['A18_11'] > 0 && 11,
               data[i]['A18_12'] > 0 && 12,
-              data[i]['A18_13'] > 0 && 13
+              data[i]['A18_13'] > 0 && 13,
             ];
             var A21 = [
               data[i]['A21_1'] > 0 && 1,
@@ -1701,7 +1757,7 @@ exports.getDataListPangkalan = async function (req, res) {
               data[i]['A21_8'] > 0 && 8,
               data[i]['A21_9'] > 0 && 9,
               data[i]['A21_10'] > 0 && 10,
-              data[i]['A21_11'] > 0 && 11
+              data[i]['A21_11'] > 0 && 11,
             ];
             result.push({
               id: data[i]['KID_Pangkalan'],
@@ -1758,7 +1814,7 @@ exports.getDataListPangkalan = async function (req, res) {
               data[i]['A18_10'] > 0 && 10,
               data[i]['A18_11'] > 0 && 11,
               data[i]['A18_12'] > 0 && 12,
-              data[i]['A18_13'] > 0 && 13
+              data[i]['A18_13'] > 0 && 13,
             ];
             var A21 = [
               data[i]['A21_1'] > 0 && 1,
@@ -1771,7 +1827,7 @@ exports.getDataListPangkalan = async function (req, res) {
               data[i]['A21_8'] > 0 && 8,
               data[i]['A21_9'] > 0 && 9,
               data[i]['A21_10'] > 0 && 10,
-              data[i]['A21_11'] > 0 && 11
+              data[i]['A21_11'] > 0 && 11,
             ];
             result.push({
               id: data[i]['KID_Pangkalan'],
@@ -1826,7 +1882,7 @@ exports.getDataListPangkalan = async function (req, res) {
               data[i]['A18_10'] > 0 && 10,
               data[i]['A18_11'] > 0 && 11,
               data[i]['A18_12'] > 0 && 12,
-              data[i]['A18_13'] > 0 && 13
+              data[i]['A18_13'] > 0 && 13,
             ];
             var A21 = [
               data[i]['A21_1'] > 0 && 1,
@@ -1839,7 +1895,7 @@ exports.getDataListPangkalan = async function (req, res) {
               data[i]['A21_8'] > 0 && 8,
               data[i]['A21_9'] > 0 && 9,
               data[i]['A21_10'] > 0 && 10,
-              data[i]['A21_11'] > 0 && 11
+              data[i]['A21_11'] > 0 && 11,
             ];
             result.push({
               id: data[i]['KID_Pangkalan'],
@@ -1894,7 +1950,7 @@ exports.getDataListPangkalan = async function (req, res) {
           data[i]['A18_10'] > 0 && 10,
           data[i]['A18_11'] > 0 && 11,
           data[i]['A18_12'] > 0 && 12,
-          data[i]['A18_13'] > 0 && 13
+          data[i]['A18_13'] > 0 && 13,
         ];
         var A21 = [
           data[i]['A21_1'] > 0 && 1,
@@ -1907,7 +1963,7 @@ exports.getDataListPangkalan = async function (req, res) {
           data[i]['A21_8'] > 0 && 8,
           data[i]['A21_9'] > 0 && 9,
           data[i]['A21_10'] > 0 && 10,
-          data[i]['A21_11'] > 0 && 11
+          data[i]['A21_11'] > 0 && 11,
         ];
         result.push({
           id: data[i]['KID_Pangkalan'],
@@ -2081,9 +2137,13 @@ exports.getSortBoardingTransaction = async function (req, res) {
             result.push({
               label: data[i]['A3'],
               count: 0,
-              value: 0,
+              base: data[i]['A12'] === 2 ? 1 : 0,
+              value: data[i]['A33'] === 1 ? 1 : 0,
             });
           } else {
+            if (data[i]['A12'] === 2) {
+              result[findCity].base = result[findCity].base + 1;
+            }
             if (data[i]['A33'] === 1) {
               result[findCity].count = result[findCity].count + 1;
             }
@@ -2097,9 +2157,13 @@ exports.getSortBoardingTransaction = async function (req, res) {
               result.push({
                 label: data[i]['A3'],
                 count: 0,
-                value: 0,
+                base: data[i]['A12'] === 2 ? 1 : 0,
+                value: data[i]['A33'] === 1 ? 1 : 0,
               });
             } else {
+              if (data[i]['A12'] === 2) {
+                result[findCity].base = result[findCity].base + 1;
+              }
               if (data[i]['A33'] === 1) {
                 result[findCity].count = result[findCity].count + 1;
               }
@@ -2112,9 +2176,13 @@ exports.getSortBoardingTransaction = async function (req, res) {
               result.push({
                 label: data[i]['A3'],
                 count: 0,
-                value: 0,
+                base: data[i]['A12'] === 2 ? 1 : 0,
+                value: data[i]['A33'] === 1 ? 1 : 0,
               });
             } else {
+              if (data[i]['A12'] === 2) {
+                result[findCity].base = result[findCity].base + 1;
+              }
               if (data[i]['A33'] === 1) {
                 result[findCity].count = result[findCity].count + 1;
               }
@@ -2129,9 +2197,13 @@ exports.getSortBoardingTransaction = async function (req, res) {
               result.push({
                 label: data[i]['A3'],
                 count: 0,
-                value: 0,
+                base: data[i]['A12'] === 2 ? 1 : 0,
+                value: data[i]['A33'] === 1 ? 1 : 0,
               });
             } else {
+              if (data[i]['A12'] === 2) {
+                result[findCity].base = result[findCity].base + 1;
+              }
               if (data[i]['A33'] === 1) {
                 result[findCity].count = result[findCity].count + 1;
               }
@@ -2144,9 +2216,13 @@ exports.getSortBoardingTransaction = async function (req, res) {
               result.push({
                 label: data[i]['A3'],
                 count: 0,
-                value: 0,
+                base: data[i]['A12'] === 2 ? 1 : 0,
+                value: data[i]['A33'] === 1 ? 1 : 0,
               });
             } else {
+              if (data[i]['A12'] === 2) {
+                result[findCity].base = result[findCity].base + 1;
+              }
               if (data[i]['A33'] === 1) {
                 result[findCity].count = result[findCity].count + 1;
               }
@@ -2159,9 +2235,13 @@ exports.getSortBoardingTransaction = async function (req, res) {
           result.push({
             label: data[i]['A3'],
             count: 0,
-            value: 0,
+            base: data[i]['A12'] === 2 ? 1 : 0,
+            value: data[i]['A33'] === 1 ? 1 : 0,
           });
         } else {
+          if (data[i]['A12'] === 2) {
+            result[findCity].base = result[findCity].base + 1;
+          }
           if (data[i]['A33'] === 1) {
             result[findCity].count = result[findCity].count + 1;
           }
@@ -2170,9 +2250,12 @@ exports.getSortBoardingTransaction = async function (req, res) {
     }
 
     for (let i = 0; i < result.length; i++) {
-      var findIndexCity = await findObj(_getCity, 'cityName', result[i].label);
-      result[i].value = (result[i].count / _getCity[findIndexCity].list) * 100;
-      result[i].value = decimalPlaces(result[i].value, 2);
+      if (result[i].base > 0) {
+        result[i].value = (result[i].count / result[i].base) * 100;
+        result[i].value = decimalPlaces(result[i].value, 2);
+      } else {
+        result[i].value = 0;
+      }
     }
 
     if (type === 'top') {
@@ -2184,8 +2267,10 @@ exports.getSortBoardingTransaction = async function (req, res) {
     var response = [];
 
     for (let i = 0; i < result.length; i++) {
-      if (i < 10) {
-        response.push(result[i]);
+      if (result[i].base > 0) {
+        if (response.length < 10) {
+          response.push(result[i]);
+        }
       }
     }
 
@@ -2221,6 +2306,34 @@ exports.getExportPangkalan = async function (req, res) {
             data[i]['A14_6'] > 0 && 6,
             data[i]['A14_7'] > 0 && 7,
           ];
+          var dataA18 = [
+            data[i]['A18_1'] > 0 && 1,
+            data[i]['A18_2'] > 0 && 2,
+            data[i]['A18_3'] > 0 && 3,
+            data[i]['A18_4'] > 0 && 4,
+            data[i]['A18_5'] > 0 && 5,
+            data[i]['A18_6'] > 0 && 6,
+            data[i]['A18_7'] > 0 && 7,
+            data[i]['A18_8'] > 0 && 8,
+            data[i]['A18_9'] > 0 && 9,
+            data[i]['A18_10'] > 0 && 10,
+            data[i]['A18_11'] > 0 && 11,
+            data[i]['A18_12'] > 0 && 12,
+            data[i]['A18_13'] > 0 && 13,
+          ];
+          var dataA21 = [
+            data[i]['A21_1'] > 0 && 1,
+            data[i]['A21_2'] > 0 && 2,
+            data[i]['A21_3'] > 0 && 3,
+            data[i]['A21_4'] > 0 && 4,
+            data[i]['A21_5'] > 0 && 5,
+            data[i]['A21_6'] > 0 && 6,
+            data[i]['A21_7'] > 0 && 7,
+            data[i]['A21_8'] > 0 && 8,
+            data[i]['A21_9'] > 0 && 9,
+            data[i]['A21_10'] > 0 && 10,
+            data[i]['A21_11'] > 0 && 11,
+          ];
           datas.push(
             data[i]['KID_Pangkalan'],
             data[i]['NAMAPEMILIK'],
@@ -2237,13 +2350,13 @@ exports.getExportPangkalan = async function (req, res) {
             data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
             A14(dataA14),
             data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
-            data[i]['A29'] >= 1 ? A29(data[i]['A29']) : '',
+            data[i]['A29'] ? data[i]['A29'] : '',
             data[i]['A29B'],
             data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
-            '', //A18
+            A18(dataA18),
             data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
             data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
-            '', //A21
+            A21(dataA21),
             data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
             data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
           );
@@ -2262,45 +2375,33 @@ exports.getExportPangkalan = async function (req, res) {
               data[i]['A14_6'] > 0 && 6,
               data[i]['A14_7'] > 0 && 7,
             ];
-            datas.push(
-              data[i]['KID_Pangkalan'],
-              data[i]['NAMAPEMILIK'],
-              data[i]['A1'],
-              data[i]['A2'],
-              data[i]['A3'],
-              data[i]['KECAMATAN'],
-              data[i]['KELURAHAN'],
-              data[i]['A6'] >= 1 ? A6(data[i]['A6']) : '',
-              data[i]['A6C'],
-              data[i]['A6b'],
-              data[i]['A113'] >= 1 ? A113(data[i]['A113']) : '',
-              data[i]['A12'] >= 1 ? A12(data[i]['A12']) : '',
-              data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
-              A14(dataA14),
-              data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
-              data[i]['A29'] >= 1 ? A29(data[i]['A29']) : '',
-              data[i]['A29B'],
-              data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
-              '', //A18
-              data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
-              data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
-              '', //A21
-              data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
-              data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
-            );
-            isifile.push(datas);
-          }
-        } else {
-          if (data[i]['A2'] === province) {
-            var datas = [];
-            var dataA14 = [
-              data[i]['A14_1'] > 0 && 1,
-              data[i]['A14_2'] > 0 && 2,
-              data[i]['A14_3'] > 0 && 3,
-              data[i]['A14_4'] > 0 && 4,
-              data[i]['A14_5'] > 0 && 5,
-              data[i]['A14_6'] > 0 && 6,
-              data[i]['A14_7'] > 0 && 7,
+            var dataA18 = [
+              data[i]['A18_1'] > 0 && 1,
+              data[i]['A18_2'] > 0 && 2,
+              data[i]['A18_3'] > 0 && 3,
+              data[i]['A18_4'] > 0 && 4,
+              data[i]['A18_5'] > 0 && 5,
+              data[i]['A18_6'] > 0 && 6,
+              data[i]['A18_7'] > 0 && 7,
+              data[i]['A18_8'] > 0 && 8,
+              data[i]['A18_9'] > 0 && 9,
+              data[i]['A18_10'] > 0 && 10,
+              data[i]['A18_11'] > 0 && 11,
+              data[i]['A18_12'] > 0 && 12,
+              data[i]['A18_13'] > 0 && 13,
+            ];
+            var dataA21 = [
+              data[i]['A21_1'] > 0 && 1,
+              data[i]['A21_2'] > 0 && 2,
+              data[i]['A21_3'] > 0 && 3,
+              data[i]['A21_4'] > 0 && 4,
+              data[i]['A21_5'] > 0 && 5,
+              data[i]['A21_6'] > 0 && 6,
+              data[i]['A21_7'] > 0 && 7,
+              data[i]['A21_8'] > 0 && 8,
+              data[i]['A21_9'] > 0 && 9,
+              data[i]['A21_10'] > 0 && 10,
+              data[i]['A21_11'] > 0 && 11,
             ];
             datas.push(
               data[i]['KID_Pangkalan'],
@@ -2318,13 +2419,81 @@ exports.getExportPangkalan = async function (req, res) {
               data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
               A14(dataA14),
               data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
-              data[i]['A29'] >= 1 ? A29(data[i]['A29']) : '',
+              data[i]['A29'] ? data[i]['A29'] : '',
               data[i]['A29B'],
               data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
-              '', //A18
+              A18(dataA18),
               data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
               data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
-              '', //A21
+              A21(dataA21),
+              data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
+              data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
+            );
+            isifile.push(datas);
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            var datas = [];
+            var dataA14 = [
+              data[i]['A14_1'] > 0 && 1,
+              data[i]['A14_2'] > 0 && 2,
+              data[i]['A14_3'] > 0 && 3,
+              data[i]['A14_4'] > 0 && 4,
+              data[i]['A14_5'] > 0 && 5,
+              data[i]['A14_6'] > 0 && 6,
+              data[i]['A14_7'] > 0 && 7,
+            ];
+            var dataA18 = [
+              data[i]['A18_1'] > 0 && 1,
+              data[i]['A18_2'] > 0 && 2,
+              data[i]['A18_3'] > 0 && 3,
+              data[i]['A18_4'] > 0 && 4,
+              data[i]['A18_5'] > 0 && 5,
+              data[i]['A18_6'] > 0 && 6,
+              data[i]['A18_7'] > 0 && 7,
+              data[i]['A18_8'] > 0 && 8,
+              data[i]['A18_9'] > 0 && 9,
+              data[i]['A18_10'] > 0 && 10,
+              data[i]['A18_11'] > 0 && 11,
+              data[i]['A18_12'] > 0 && 12,
+              data[i]['A18_13'] > 0 && 13,
+            ];
+            var dataA21 = [
+              data[i]['A21_1'] > 0 && 1,
+              data[i]['A21_2'] > 0 && 2,
+              data[i]['A21_3'] > 0 && 3,
+              data[i]['A21_4'] > 0 && 4,
+              data[i]['A21_5'] > 0 && 5,
+              data[i]['A21_6'] > 0 && 6,
+              data[i]['A21_7'] > 0 && 7,
+              data[i]['A21_8'] > 0 && 8,
+              data[i]['A21_9'] > 0 && 9,
+              data[i]['A21_10'] > 0 && 10,
+              data[i]['A21_11'] > 0 && 11,
+            ];
+            datas.push(
+              data[i]['KID_Pangkalan'],
+              data[i]['NAMAPEMILIK'],
+              data[i]['A1'],
+              data[i]['A2'],
+              data[i]['A3'],
+              data[i]['KECAMATAN'],
+              data[i]['KELURAHAN'],
+              data[i]['A6'] >= 1 ? A6(data[i]['A6']) : '',
+              data[i]['A6C'],
+              data[i]['A6b'],
+              data[i]['A113'] >= 1 ? A113(data[i]['A113']) : '',
+              data[i]['A12'] >= 1 ? A12(data[i]['A12']) : '',
+              data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
+              A14(dataA14),
+              data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
+              data[i]['A29'] ? data[i]['A29'] : '',
+              data[i]['A29B'],
+              data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
+              A18(dataA18),
+              data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
+              data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
+              A21(dataA21),
               data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
               data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
             );
@@ -2344,45 +2513,33 @@ exports.getExportPangkalan = async function (req, res) {
               data[i]['A14_6'] > 0 && 6,
               data[i]['A14_7'] > 0 && 7,
             ];
-            datas.push(
-              data[i]['KID_Pangkalan'],
-              data[i]['NAMAPEMILIK'],
-              data[i]['A1'],
-              data[i]['A2'],
-              data[i]['A3'],
-              data[i]['KECAMATAN'],
-              data[i]['KELURAHAN'],
-              data[i]['A6'] >= 1 ? A6(data[i]['A6']) : '',
-              data[i]['A6C'],
-              data[i]['A6b'],
-              data[i]['A113'] >= 1 ? A113(data[i]['A113']) : '',
-              data[i]['A12'] >= 1 ? A12(data[i]['A12']) : '',
-              data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
-              A14(dataA14),
-              data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
-              data[i]['A29'] >= 1 ? A29(data[i]['A29']) : '',
-              data[i]['A29B'],
-              data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
-              '', //A18
-              data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
-              data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
-              '', //A21
-              data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
-              data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
-            );
-            isifile.push(datas);
-          }
-        } else {
-          if (data[i]['A2'] === province) {
-            var datas = [];
-            var dataA14 = [
-              data[i]['A14_1'] > 0 && 1,
-              data[i]['A14_2'] > 0 && 2,
-              data[i]['A14_3'] > 0 && 3,
-              data[i]['A14_4'] > 0 && 4,
-              data[i]['A14_5'] > 0 && 5,
-              data[i]['A14_6'] > 0 && 6,
-              data[i]['A14_7'] > 0 && 7,
+            var dataA18 = [
+              data[i]['A18_1'] > 0 && 1,
+              data[i]['A18_2'] > 0 && 2,
+              data[i]['A18_3'] > 0 && 3,
+              data[i]['A18_4'] > 0 && 4,
+              data[i]['A18_5'] > 0 && 5,
+              data[i]['A18_6'] > 0 && 6,
+              data[i]['A18_7'] > 0 && 7,
+              data[i]['A18_8'] > 0 && 8,
+              data[i]['A18_9'] > 0 && 9,
+              data[i]['A18_10'] > 0 && 10,
+              data[i]['A18_11'] > 0 && 11,
+              data[i]['A18_12'] > 0 && 12,
+              data[i]['A18_13'] > 0 && 13,
+            ];
+            var dataA21 = [
+              data[i]['A21_1'] > 0 && 1,
+              data[i]['A21_2'] > 0 && 2,
+              data[i]['A21_3'] > 0 && 3,
+              data[i]['A21_4'] > 0 && 4,
+              data[i]['A21_5'] > 0 && 5,
+              data[i]['A21_6'] > 0 && 6,
+              data[i]['A21_7'] > 0 && 7,
+              data[i]['A21_8'] > 0 && 8,
+              data[i]['A21_9'] > 0 && 9,
+              data[i]['A21_10'] > 0 && 10,
+              data[i]['A21_11'] > 0 && 11,
             ];
             datas.push(
               data[i]['KID_Pangkalan'],
@@ -2400,13 +2557,81 @@ exports.getExportPangkalan = async function (req, res) {
               data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
               A14(dataA14),
               data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
-              data[i]['A29'] >= 1 ? A29(data[i]['A29']) : '',
+              data[i]['A29'] ? data[i]['A29'] : '',
               data[i]['A29B'],
               data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
-              '', //A18
+              A18(dataA18),
               data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
               data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
-              '', //A21
+              A21(dataA21),
+              data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
+              data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
+            );
+            isifile.push(datas);
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            var datas = [];
+            var dataA14 = [
+              data[i]['A14_1'] > 0 && 1,
+              data[i]['A14_2'] > 0 && 2,
+              data[i]['A14_3'] > 0 && 3,
+              data[i]['A14_4'] > 0 && 4,
+              data[i]['A14_5'] > 0 && 5,
+              data[i]['A14_6'] > 0 && 6,
+              data[i]['A14_7'] > 0 && 7,
+            ];
+            var dataA18 = [
+              data[i]['A18_1'] > 0 && 1,
+              data[i]['A18_2'] > 0 && 2,
+              data[i]['A18_3'] > 0 && 3,
+              data[i]['A18_4'] > 0 && 4,
+              data[i]['A18_5'] > 0 && 5,
+              data[i]['A18_6'] > 0 && 6,
+              data[i]['A18_7'] > 0 && 7,
+              data[i]['A18_8'] > 0 && 8,
+              data[i]['A18_9'] > 0 && 9,
+              data[i]['A18_10'] > 0 && 10,
+              data[i]['A18_11'] > 0 && 11,
+              data[i]['A18_12'] > 0 && 12,
+              data[i]['A18_13'] > 0 && 13,
+            ];
+            var dataA21 = [
+              data[i]['A21_1'] > 0 && 1,
+              data[i]['A21_2'] > 0 && 2,
+              data[i]['A21_3'] > 0 && 3,
+              data[i]['A21_4'] > 0 && 4,
+              data[i]['A21_5'] > 0 && 5,
+              data[i]['A21_6'] > 0 && 6,
+              data[i]['A21_7'] > 0 && 7,
+              data[i]['A21_8'] > 0 && 8,
+              data[i]['A21_9'] > 0 && 9,
+              data[i]['A21_10'] > 0 && 10,
+              data[i]['A21_11'] > 0 && 11,
+            ];
+            datas.push(
+              data[i]['KID_Pangkalan'],
+              data[i]['NAMAPEMILIK'],
+              data[i]['A1'],
+              data[i]['A2'],
+              data[i]['A3'],
+              data[i]['KECAMATAN'],
+              data[i]['KELURAHAN'],
+              data[i]['A6'] >= 1 ? A6(data[i]['A6']) : '',
+              data[i]['A6C'],
+              data[i]['A6b'],
+              data[i]['A113'] >= 1 ? A113(data[i]['A113']) : '',
+              data[i]['A12'] >= 1 ? A12(data[i]['A12']) : '',
+              data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
+              A14(dataA14),
+              data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
+              data[i]['A29'] ? data[i]['A29'] : '',
+              data[i]['A29B'],
+              data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
+              A18(dataA18),
+              data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
+              data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
+              A21(dataA21),
               data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
               data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
             );
@@ -2424,6 +2649,34 @@ exports.getExportPangkalan = async function (req, res) {
           data[i]['A14_6'] > 0 && 6,
           data[i]['A14_7'] > 0 && 7,
         ];
+        var dataA18 = [
+          data[i]['A18_1'] > 0 && 1,
+          data[i]['A18_2'] > 0 && 2,
+          data[i]['A18_3'] > 0 && 3,
+          data[i]['A18_4'] > 0 && 4,
+          data[i]['A18_5'] > 0 && 5,
+          data[i]['A18_6'] > 0 && 6,
+          data[i]['A18_7'] > 0 && 7,
+          data[i]['A18_8'] > 0 && 8,
+          data[i]['A18_9'] > 0 && 9,
+          data[i]['A18_10'] > 0 && 10,
+          data[i]['A18_11'] > 0 && 11,
+          data[i]['A18_12'] > 0 && 12,
+          data[i]['A18_13'] > 0 && 13,
+        ];
+        var dataA21 = [
+          data[i]['A21_1'] > 0 && 1,
+          data[i]['A21_2'] > 0 && 2,
+          data[i]['A21_3'] > 0 && 3,
+          data[i]['A21_4'] > 0 && 4,
+          data[i]['A21_5'] > 0 && 5,
+          data[i]['A21_6'] > 0 && 6,
+          data[i]['A21_7'] > 0 && 7,
+          data[i]['A21_8'] > 0 && 8,
+          data[i]['A21_9'] > 0 && 9,
+          data[i]['A21_10'] > 0 && 10,
+          data[i]['A21_11'] > 0 && 11,
+        ];
         datas.push(
           data[i]['KID_Pangkalan'],
           data[i]['NAMAPEMILIK'],
@@ -2440,13 +2693,13 @@ exports.getExportPangkalan = async function (req, res) {
           data[i]['A13'] >= 1 ? A13(data[i]['A13']) : '',
           A14(dataA14),
           data[i]['A28'] >= 1 ? A28(data[i]['A28']) : '',
-          data[i]['A29'] >= 1 ? A29(data[i]['A29']) : '',
+          data[i]['A29'] ? data[i]['A29'] : '',
           data[i]['A29B'],
           data[i]['A31'] >= 1 ? A31(data[i]['A31']) : '',
-          '', //A18
+          A18(dataA18),
           data[i]['A33'] >= 1 ? A33(data[i]['A33']) : '',
           data[i]['A20'] >= 1 ? A20(data[i]['A20']) : '',
-          '', //A21
+          A21(dataA21),
           data[i]['A35'] >= 1 ? A35(data[i]['A35']) : '',
           data[i]['A36'] >= 1 ? A36(data[i]['A36']) : ''
         );
@@ -2498,7 +2751,7 @@ exports.getExportPangkalan = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success export data pangkalan',
-            data: `https://dashboard.kadence.co.id/fileexcel/${newfilename}`,
+            data: `http://localhost:3333/fileexcel/${newfilename}`,
           });
         }
       }
