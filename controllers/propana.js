@@ -1566,6 +1566,34 @@ exports.getDataListPangkalan = async function (req, res) {
             data[i]['A14_6'] > 0 && 6,
             data[i]['A14_7'] > 0 && 7,
           ];
+          var A18 = [
+            data[i]['A18_1'] > 0 && 1,
+            data[i]['A18_2'] > 0 && 2,
+            data[i]['A18_3'] > 0 && 3,
+            data[i]['A18_4'] > 0 && 4,
+            data[i]['A18_5'] > 0 && 5,
+            data[i]['A18_6'] > 0 && 6,
+            data[i]['A18_7'] > 0 && 7,
+            data[i]['A18_8'] > 0 && 8,
+            data[i]['A18_9'] > 0 && 9,
+            data[i]['A18_10'] > 0 && 10,
+            data[i]['A18_11'] > 0 && 11,
+            data[i]['A18_12'] > 0 && 12,
+            data[i]['A18_13'] > 0 && 13
+          ];
+          var A21 = [
+            data[i]['A21_1'] > 0 && 1,
+            data[i]['A21_2'] > 0 && 2,
+            data[i]['A21_3'] > 0 && 3,
+            data[i]['A21_4'] > 0 && 4,
+            data[i]['A21_5'] > 0 && 5,
+            data[i]['A21_6'] > 0 && 6,
+            data[i]['A21_7'] > 0 && 7,
+            data[i]['A21_8'] > 0 && 8,
+            data[i]['A21_9'] > 0 && 9,
+            data[i]['A21_10'] > 0 && 10,
+            data[i]['A21_11'] > 0 && 11
+          ];
           result.push({
             id: data[i]['KID_Pangkalan'],
             region: data[i]['A1'],
@@ -1587,10 +1615,10 @@ exports.getDataListPangkalan = async function (req, res) {
             A29: data[i]['A29'],
             A29B: data[i]['A29B'],
             A31: data[i]['A31'],
-            A18: '',
+            A18: A18,
             A33: data[i]['A33'],
             A20: data[i]['A20'],
-            A21: '',
+            A21: A21,
             A35: data[i]['A35'],
             A36: data[i]['A36'],
           });
@@ -1647,6 +1675,34 @@ exports.getDataListPangkalan = async function (req, res) {
               data[i]['A14_6'] > 0 && 6,
               data[i]['A14_7'] > 0 && 7,
             ];
+            var A18 = [
+              data[i]['A18_1'] > 0 && 1,
+              data[i]['A18_2'] > 0 && 2,
+              data[i]['A18_3'] > 0 && 3,
+              data[i]['A18_4'] > 0 && 4,
+              data[i]['A18_5'] > 0 && 5,
+              data[i]['A18_6'] > 0 && 6,
+              data[i]['A18_7'] > 0 && 7,
+              data[i]['A18_8'] > 0 && 8,
+              data[i]['A18_9'] > 0 && 9,
+              data[i]['A18_10'] > 0 && 10,
+              data[i]['A18_11'] > 0 && 11,
+              data[i]['A18_12'] > 0 && 12,
+              data[i]['A18_13'] > 0 && 13
+            ];
+            var A21 = [
+              data[i]['A21_1'] > 0 && 1,
+              data[i]['A21_2'] > 0 && 2,
+              data[i]['A21_3'] > 0 && 3,
+              data[i]['A21_4'] > 0 && 4,
+              data[i]['A21_5'] > 0 && 5,
+              data[i]['A21_6'] > 0 && 6,
+              data[i]['A21_7'] > 0 && 7,
+              data[i]['A21_8'] > 0 && 8,
+              data[i]['A21_9'] > 0 && 9,
+              data[i]['A21_10'] > 0 && 10,
+              data[i]['A21_11'] > 0 && 11
+            ];
             result.push({
               id: data[i]['KID_Pangkalan'],
               region: data[i]['A1'],
@@ -1668,10 +1724,10 @@ exports.getDataListPangkalan = async function (req, res) {
               A29: data[i]['A29'],
               A29B: data[i]['A29B'],
               A31: data[i]['A31'],
-              A18: '',
+              A18: A18,
               A33: data[i]['A33'],
               A20: data[i]['A20'],
-              A21: '',
+              A21: A21,
               A35: data[i]['A35'],
               A36: data[i]['A36'],
             });
@@ -1689,45 +1745,33 @@ exports.getDataListPangkalan = async function (req, res) {
               data[i]['A14_6'] > 0 && 6,
               data[i]['A14_7'] > 0 && 7,
             ];
-            result.push({
-              id: data[i]['KID_Pangkalan'],
-              region: data[i]['A1'],
-              province: data[i]['A2'],
-              city: data[i]['A3'],
-              key: data[i]['KID_KEPO'],
-              pangkalan: data[i]['NAMAPEMILIK'],
-              kecamatan: data[i]['KECAMATAN'],
-              kelurahan: data[i]['KELURAHAN'],
-              A6: data[i]['A6'],
-              A6C: data[i]['A6C'],
-              A6b: data[i]['A6b'],
-              A113: data[i]['A113'],
-              A12: data[i]['A12'],
-              A13: data[i]['A13'],
-              A13: data[i]['A13'],
-              A14: A14,
-              A28: data[i]['A28'],
-              A29: data[i]['A29'],
-              A29B: data[i]['A29B'],
-              A31: data[i]['A31'],
-              A18: '',
-              A33: data[i]['A33'],
-              A20: data[i]['A20'],
-              A21: '',
-              A35: data[i]['A35'],
-              A36: data[i]['A36'],
-            });
-          }
-        } else {
-          if (data[i]['A2'] === province) {
-            var A14 = [
-              data[i]['A14_1'] > 0 && 1,
-              data[i]['A14_2'] > 0 && 2,
-              data[i]['A14_3'] > 0 && 3,
-              data[i]['A14_4'] > 0 && 4,
-              data[i]['A14_5'] > 0 && 5,
-              data[i]['A14_6'] > 0 && 6,
-              data[i]['A14_7'] > 0 && 7,
+            var A18 = [
+              data[i]['A18_1'] > 0 && 1,
+              data[i]['A18_2'] > 0 && 2,
+              data[i]['A18_3'] > 0 && 3,
+              data[i]['A18_4'] > 0 && 4,
+              data[i]['A18_5'] > 0 && 5,
+              data[i]['A18_6'] > 0 && 6,
+              data[i]['A18_7'] > 0 && 7,
+              data[i]['A18_8'] > 0 && 8,
+              data[i]['A18_9'] > 0 && 9,
+              data[i]['A18_10'] > 0 && 10,
+              data[i]['A18_11'] > 0 && 11,
+              data[i]['A18_12'] > 0 && 12,
+              data[i]['A18_13'] > 0 && 13
+            ];
+            var A21 = [
+              data[i]['A21_1'] > 0 && 1,
+              data[i]['A21_2'] > 0 && 2,
+              data[i]['A21_3'] > 0 && 3,
+              data[i]['A21_4'] > 0 && 4,
+              data[i]['A21_5'] > 0 && 5,
+              data[i]['A21_6'] > 0 && 6,
+              data[i]['A21_7'] > 0 && 7,
+              data[i]['A21_8'] > 0 && 8,
+              data[i]['A21_9'] > 0 && 9,
+              data[i]['A21_10'] > 0 && 10,
+              data[i]['A21_11'] > 0 && 11
             ];
             result.push({
               id: data[i]['KID_Pangkalan'],
@@ -1750,10 +1794,78 @@ exports.getDataListPangkalan = async function (req, res) {
               A29: data[i]['A29'],
               A29B: data[i]['A29B'],
               A31: data[i]['A31'],
-              A18: '',
+              A18: A18,
               A33: data[i]['A33'],
               A20: data[i]['A20'],
-              A21: '',
+              A21: A21,
+              A35: data[i]['A35'],
+              A36: data[i]['A36'],
+            });
+          }
+        } else {
+          if (data[i]['A2'] === province) {
+            var A14 = [
+              data[i]['A14_1'] > 0 && 1,
+              data[i]['A14_2'] > 0 && 2,
+              data[i]['A14_3'] > 0 && 3,
+              data[i]['A14_4'] > 0 && 4,
+              data[i]['A14_5'] > 0 && 5,
+              data[i]['A14_6'] > 0 && 6,
+              data[i]['A14_7'] > 0 && 7,
+            ];
+            var A18 = [
+              data[i]['A18_1'] > 0 && 1,
+              data[i]['A18_2'] > 0 && 2,
+              data[i]['A18_3'] > 0 && 3,
+              data[i]['A18_4'] > 0 && 4,
+              data[i]['A18_5'] > 0 && 5,
+              data[i]['A18_6'] > 0 && 6,
+              data[i]['A18_7'] > 0 && 7,
+              data[i]['A18_8'] > 0 && 8,
+              data[i]['A18_9'] > 0 && 9,
+              data[i]['A18_10'] > 0 && 10,
+              data[i]['A18_11'] > 0 && 11,
+              data[i]['A18_12'] > 0 && 12,
+              data[i]['A18_13'] > 0 && 13
+            ];
+            var A21 = [
+              data[i]['A21_1'] > 0 && 1,
+              data[i]['A21_2'] > 0 && 2,
+              data[i]['A21_3'] > 0 && 3,
+              data[i]['A21_4'] > 0 && 4,
+              data[i]['A21_5'] > 0 && 5,
+              data[i]['A21_6'] > 0 && 6,
+              data[i]['A21_7'] > 0 && 7,
+              data[i]['A21_8'] > 0 && 8,
+              data[i]['A21_9'] > 0 && 9,
+              data[i]['A21_10'] > 0 && 10,
+              data[i]['A21_11'] > 0 && 11
+            ];
+            result.push({
+              id: data[i]['KID_Pangkalan'],
+              region: data[i]['A1'],
+              province: data[i]['A2'],
+              city: data[i]['A3'],
+              key: data[i]['KID_KEPO'],
+              pangkalan: data[i]['NAMAPEMILIK'],
+              kecamatan: data[i]['KECAMATAN'],
+              kelurahan: data[i]['KELURAHAN'],
+              A6: data[i]['A6'],
+              A6C: data[i]['A6C'],
+              A6b: data[i]['A6b'],
+              A113: data[i]['A113'],
+              A12: data[i]['A12'],
+              A13: data[i]['A13'],
+              A13: data[i]['A13'],
+              A14: A14,
+              A28: data[i]['A28'],
+              A29: data[i]['A29'],
+              A29B: data[i]['A29B'],
+              A31: data[i]['A31'],
+              A18: A18,
+              A33: data[i]['A33'],
+              A20: data[i]['A20'],
+              A21: A21,
               A35: data[i]['A35'],
               A36: data[i]['A36'],
             });
