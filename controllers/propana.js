@@ -247,34 +247,150 @@ exports.getStatusVisitAchievement = async function (req, res) {
     for (let i = 0; i < data.length; i++) {
       if (region !== '0' && province === '0') {
         if (data[i]['A1'] === region) {
-          result[data[i]['A6'] - 1].value = result[data[i]['A6'] - 1].value + 1;
+          if (
+            data[i]['A6'] === 1 &&
+            (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+          ) {
+            result[0].value = result[0].value + 1;
+          }
+          if (data[i]['A6'] === 2) {
+            result[1].value = result[1].value + 1;
+          }
+          if (data[i]['A6'] === 3) {
+            result[2].value = result[2].value + 1;
+          }
+          if (data[i]['A6'] === 4) {
+            result[3].value = result[3].value + 1;
+          }
+          if (data[i]['A6'] === 5) {
+            result[4].value = result[4].value + 1;
+          }
+          if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+            result[5].value = result[5].value + 1;
+          }
         }
       } else if (region !== '0' && province !== '0') {
         if (city !== '0') {
           if (data[i]['A3'] === city) {
-            result[data[i]['A6'] - 1].value =
-              result[data[i]['A6'] - 1].value + 1;
+            if (
+              data[i]['A6'] === 1 &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[0].value = result[0].value + 1;
+            }
+            if (data[i]['A6'] === 2) {
+              result[1].value = result[1].value + 1;
+            }
+            if (data[i]['A6'] === 3) {
+              result[2].value = result[2].value + 1;
+            }
+            if (data[i]['A6'] === 4) {
+              result[3].value = result[3].value + 1;
+            }
+            if (data[i]['A6'] === 5) {
+              result[4].value = result[4].value + 1;
+            }
+            if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+              result[5].value = result[5].value + 1;
+            }
           }
         } else {
           if (data[i]['A2'] === province) {
-            result[data[i]['A6'] - 1].value =
-              result[data[i]['A6'] - 1].value + 1;
+            if (
+              data[i]['A6'] === 1 &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[0].value = result[0].value + 1;
+            }
+            if (data[i]['A6'] === 2) {
+              result[1].value = result[1].value + 1;
+            }
+            if (data[i]['A6'] === 3) {
+              result[2].value = result[2].value + 1;
+            }
+            if (data[i]['A6'] === 4) {
+              result[3].value = result[3].value + 1;
+            }
+            if (data[i]['A6'] === 5) {
+              result[4].value = result[4].value + 1;
+            }
+            if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+              result[5].value = result[5].value + 1;
+            }
           }
         }
       } else if (region === '0' && province !== '0') {
         if (city !== '0') {
           if (data[i]['A3'] === city) {
-            result[data[i]['A6'] - 1].value =
-              result[data[i]['A6'] - 1].value + 1;
+            if (
+              data[i]['A6'] === 1 &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[0].value = result[0].value + 1;
+            }
+            if (data[i]['A6'] === 2) {
+              result[1].value = result[1].value + 1;
+            }
+            if (data[i]['A6'] === 3) {
+              result[2].value = result[2].value + 1;
+            }
+            if (data[i]['A6'] === 4) {
+              result[3].value = result[3].value + 1;
+            }
+            if (data[i]['A6'] === 5) {
+              result[4].value = result[4].value + 1;
+            }
+            if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+              result[5].value = result[5].value + 1;
+            }
           }
         } else {
           if (data[i]['A2'] === province) {
-            result[data[i]['A6'] - 1].value =
-              result[data[i]['A6'] - 1].value + 1;
+            if (
+              data[i]['A6'] === 1 &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[0].value = result[0].value + 1;
+            }
+            if (data[i]['A6'] === 2) {
+              result[1].value = result[1].value + 1;
+            }
+            if (data[i]['A6'] === 3) {
+              result[2].value = result[2].value + 1;
+            }
+            if (data[i]['A6'] === 4) {
+              result[3].value = result[3].value + 1;
+            }
+            if (data[i]['A6'] === 5) {
+              result[4].value = result[4].value + 1;
+            }
+            if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+              result[5].value = result[5].value + 1;
+            }
           }
         }
       } else {
-        result[data[i]['A6'] - 1].value = result[data[i]['A6'] - 1].value + 1;
+        if (
+          data[i]['A6'] === 1 &&
+          (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+        ) {
+          result[0].value = result[0].value + 1;
+        }
+        if (data[i]['A6'] === 2) {
+          result[1].value = result[1].value + 1;
+        }
+        if (data[i]['A6'] === 3) {
+          result[2].value = result[2].value + 1;
+        }
+        if (data[i]['A6'] === 4) {
+          result[3].value = result[3].value + 1;
+        }
+        if (data[i]['A6'] === 5) {
+          result[4].value = result[4].value + 1;
+        }
+        if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+          result[5].value = result[5].value + 1;
+        }
       }
     }
 
@@ -310,39 +426,155 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
     for (let i = 0; i < data.length; i++) {
       if (region !== '0' && province === '0') {
         if (data[i]['A1'] === region) {
-          result[data[i]['A6'] - 1].count = result[data[i]['A6'] - 1].count + 1;
+          if (
+            data[i]['A6'] === 1 &&
+            (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+          ) {
+            result[0].count = result[0].count + 1;
+          }
+          if (data[i]['A6'] === 2) {
+            result[1].count = result[1].count + 1;
+          }
+          if (data[i]['A6'] === 3) {
+            result[2].value = result[2].count + 1;
+          }
+          if (data[i]['A6'] === 4) {
+            result[3].count = result[3].count + 1;
+          }
+          if (data[i]['A6'] === 5) {
+            result[4].count = result[4].count + 1;
+          }
+          if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+            result[5].count = result[5].count + 1;
+          }
           total++;
         }
       } else if (region !== '0' && province !== '0') {
         if (city !== '0') {
           if (data[i]['A3'] === city) {
-            result[data[i]['A6'] - 1].count =
-              result[data[i]['A6'] - 1].count + 1;
+            if (
+              data[i]['A6'] === 1 &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[0].count = result[0].count + 1;
+            }
+            if (data[i]['A6'] === 2) {
+              result[1].count = result[1].count + 1;
+            }
+            if (data[i]['A6'] === 3) {
+              result[2].value = result[2].count + 1;
+            }
+            if (data[i]['A6'] === 4) {
+              result[3].count = result[3].count + 1;
+            }
+            if (data[i]['A6'] === 5) {
+              result[4].count = result[4].count + 1;
+            }
+            if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+              result[5].count = result[5].count + 1;
+            }
             total++;
           }
         } else {
           if (data[i]['A2'] === province) {
-            result[data[i]['A6'] - 1].count =
-              result[data[i]['A6'] - 1].count + 1;
+            if (
+              data[i]['A6'] === 1 &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[0].count = result[0].count + 1;
+            }
+            if (data[i]['A6'] === 2) {
+              result[1].count = result[1].count + 1;
+            }
+            if (data[i]['A6'] === 3) {
+              result[2].value = result[2].count + 1;
+            }
+            if (data[i]['A6'] === 4) {
+              result[3].count = result[3].count + 1;
+            }
+            if (data[i]['A6'] === 5) {
+              result[4].count = result[4].count + 1;
+            }
+            if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+              result[5].count = result[5].count + 1;
+            }
             total++;
           }
         }
       } else if (region === '0' && province !== '0') {
         if (city !== '0') {
           if (data[i]['A3'] === city) {
-            result[data[i]['A6'] - 1].count =
-              result[data[i]['A6'] - 1].count + 1;
+            if (
+              data[i]['A6'] === 1 &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[0].count = result[0].count + 1;
+            }
+            if (data[i]['A6'] === 2) {
+              result[1].count = result[1].count + 1;
+            }
+            if (data[i]['A6'] === 3) {
+              result[2].value = result[2].count + 1;
+            }
+            if (data[i]['A6'] === 4) {
+              result[3].count = result[3].count + 1;
+            }
+            if (data[i]['A6'] === 5) {
+              result[4].count = result[4].count + 1;
+            }
+            if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+              result[5].count = result[5].count + 1;
+            }
             total++;
           }
         } else {
           if (data[i]['A2'] === province) {
-            result[data[i]['A6'] - 1].count =
-              result[data[i]['A6'] - 1].count + 1;
+            if (
+              data[i]['A6'] === 1 &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[0].count = result[0].count + 1;
+            }
+            if (data[i]['A6'] === 2) {
+              result[1].count = result[1].count + 1;
+            }
+            if (data[i]['A6'] === 3) {
+              result[2].value = result[2].count + 1;
+            }
+            if (data[i]['A6'] === 4) {
+              result[3].count = result[3].count + 1;
+            }
+            if (data[i]['A6'] === 5) {
+              result[4].count = result[4].count + 1;
+            }
+            if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+              result[5].count = result[5].count + 1;
+            }
             total++;
           }
         }
       } else {
-        result[data[i]['A6'] - 1].count = result[data[i]['A6'] - 1].count + 1;
+        if (
+          data[i]['A6'] === 1 &&
+          (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+        ) {
+          result[0].count = result[0].count + 1;
+        }
+        if (data[i]['A6'] === 2) {
+          result[1].count = result[1].count + 1;
+        }
+        if (data[i]['A6'] === 3) {
+          result[2].value = result[2].count + 1;
+        }
+        if (data[i]['A6'] === 4) {
+          result[3].count = result[3].count + 1;
+        }
+        if (data[i]['A6'] === 5) {
+          result[4].count = result[4].count + 1;
+        }
+        if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+          result[5].count = result[5].count + 1;
+        }
         total++;
       }
     }
