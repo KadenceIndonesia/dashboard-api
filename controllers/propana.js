@@ -2136,9 +2136,9 @@ exports.getSortBoardingTransaction = async function (req, res) {
           if (findCity === -1) {
             result.push({
               label: data[i]['A3'],
-              count: 0,
+              count: data[i]['A33'] === 1 ? 1 : 0,
               base: data[i]['A12'] === 2 ? 1 : 0,
-              value: data[i]['A33'] === 1 ? 1 : 0,
+              value: 0,
             });
           } else {
             if (data[i]['A12'] === 2) {
@@ -2156,9 +2156,9 @@ exports.getSortBoardingTransaction = async function (req, res) {
             if (findCity === -1) {
               result.push({
                 label: data[i]['A3'],
-                count: 0,
+                count: data[i]['A33'] === 1 ? 1 : 0,
                 base: data[i]['A12'] === 2 ? 1 : 0,
-                value: data[i]['A33'] === 1 ? 1 : 0,
+                value: 0,
               });
             } else {
               if (data[i]['A12'] === 2) {
@@ -2175,9 +2175,9 @@ exports.getSortBoardingTransaction = async function (req, res) {
             if (findCity === -1) {
               result.push({
                 label: data[i]['A3'],
-                count: 0,
+                count: data[i]['A33'] === 1 ? 1 : 0,
                 base: data[i]['A12'] === 2 ? 1 : 0,
-                value: data[i]['A33'] === 1 ? 1 : 0,
+                value: 0,
               });
             } else {
               if (data[i]['A12'] === 2) {
@@ -2196,9 +2196,9 @@ exports.getSortBoardingTransaction = async function (req, res) {
             if (findCity === -1) {
               result.push({
                 label: data[i]['A3'],
-                count: 0,
+                count: data[i]['A33'] === 1 ? 1 : 0,
                 base: data[i]['A12'] === 2 ? 1 : 0,
-                value: data[i]['A33'] === 1 ? 1 : 0,
+                value: 0,
               });
             } else {
               if (data[i]['A12'] === 2) {
@@ -2215,9 +2215,9 @@ exports.getSortBoardingTransaction = async function (req, res) {
             if (findCity === -1) {
               result.push({
                 label: data[i]['A3'],
-                count: 0,
+                count: data[i]['A33'] === 1 ? 1 : 0,
                 base: data[i]['A12'] === 2 ? 1 : 0,
-                value: data[i]['A33'] === 1 ? 1 : 0,
+                value: 0,
               });
             } else {
               if (data[i]['A12'] === 2) {
@@ -2234,9 +2234,9 @@ exports.getSortBoardingTransaction = async function (req, res) {
         if (findCity === -1) {
           result.push({
             label: data[i]['A3'],
-            count: 0,
+            count: data[i]['A33'] === 1 ? 1 : 0,
             base: data[i]['A12'] === 2 ? 1 : 0,
-            value: data[i]['A33'] === 1 ? 1 : 0,
+            value: 0,
           });
         } else {
           if (data[i]['A12'] === 2) {
