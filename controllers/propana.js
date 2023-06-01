@@ -1367,15 +1367,6 @@ exports.getVisitByCity = async function (req, res) {
       }
     }
 
-    // if (province !== '0') {
-    //   var _getAdminstrationCityAll = await getAdminstrationCityByProvince(
-    //     pid,
-    //     province
-    //   );
-    // } else {
-    //   var _getAdminstrationCityAll = await getAdminstrationCityAll(pid);
-    // }
-
     for (let i = 0; i < _getAdminstrationCityAll.length; i++) {
       result.push({
         code: _getAdminstrationCityAll[i].idCity,
@@ -2738,6 +2729,262 @@ exports.getExportPangkalan = async function (req, res) {
 
     var formatdate = moment().format('YYYY_MM_DD_HH_mm_ss');
     var newfilename = `${pid}_${formatdate}.xlsx`;
+    var createfile = header.concat(isifile);
+    const progress = xlsx.build([{ name: 'Data', data: createfile }]);
+    fs.writeFile(
+      `public/fileexcel/${newfilename}`,
+      progress,
+      function (errwritefile) {
+        if (errwritefile) {
+          console.log('error');
+        } else {
+          console.log('tidak error');
+          res.status(200).json({
+            statusCode: 200,
+            message: 'Success export data pangkalan',
+            data: `https://dashboard.kadence.co.id/fileexcel/${newfilename}`,
+          });
+        }
+      }
+    );
+    // res.status(200).json({
+    //   statusCode: 200,
+    //   message: 'Success get touchpoint score parent',
+    //   data: isifile,
+    // });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getExportCity = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+    var data = await excelData(pid);
+    var isifile = [];
+
+    var result = [];
+    if (region === '0') {
+      if (province === '0') {
+        var _getAdminstrationCityAll = await getAdminstrationCityAll(pid);
+      } else {
+        if (city === '0') {
+          var _getAdminstrationCityAll = await getAdminstrationCityByProvince(
+            pid,
+            province
+          );
+        } else {
+          var _getAdminstrationCityAll = await getAdminstrationCityByName(
+            pid,
+            city
+          );
+        }
+      }
+    } else {
+      if (province === '0') {
+        var _getAdminstrationProvinceByRegion =
+          await getAdminstrationProvinceByRegion(pid, region);
+        var dataProvince = _getAdminstrationProvinceByRegion.map(
+          (data) => data.provinceName
+        );
+        var _getAdminstrationCityAll =
+          await getAdminstrationCityByArrayProvince(pid, dataProvince);
+      } else {
+        if (city === '0') {
+          var _getAdminstrationCityAll = await getAdminstrationCityByProvince(
+            pid,
+            province
+          );
+        } else {
+          var _getAdminstrationCityAll = await getAdminstrationCityByName(
+            pid,
+            city
+          );
+        }
+      }
+    }
+
+    for (let i = 0; i < _getAdminstrationCityAll.length; i++) {
+      result.push({
+        code: _getAdminstrationCityAll[i].idCity,
+        province: _getAdminstrationCityAll[i].areaName,
+        cityName: _getAdminstrationCityAll[i].cityName,
+        dataList: _getAdminstrationCityAll[i].dataList,
+        visit: 0,
+        visitPercentage: 0,
+        pangkalanAktif: 0,
+        tutupPermanen: 0,
+        tidakDitemukan: 0,
+        pindahAlamat: 0,
+        tutupSaatKunjungan: 0,
+        pangkalanAktif2: 0, // belum masuk
+        notBoardingWithDevice: 0,
+        notBoardingNoDevice: 0,
+        boardingNoTransaction: 0,
+        boardingTransaction: 0,
+        successBoarding: 0,
+        failedEmail: 0,
+        failedDontWantOnBoard: 0,
+        failedOthers: 0,
+        boardingSuccessTransaction: 0,
+        boardingFailedTransaction: 0,
+        successTransaction: 0,
+        failedTransaction: 0,
+      });
+    }
+
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      var findData = await findObj(result, 'cityName', data[i]['A3']);
+      if (findData !== -1) {
+        result[findData].visit = result[findData].visit + 1;
+
+        //status kunjungan pangkalan
+        if (data[i]['A6'] === 1) {
+          result[findData].pangkalanAktif = result[findData].pangkalanAktif + 1;
+        }
+        if (data[i]['A6'] === 2) {
+          result[findData].tutupPermanen = result[findData].tutupPermanen + 1;
+        }
+        if (data[i]['A6'] === 3) {
+          result[findData].tidakDitemukan = result[findData].tidakDitemukan + 1;
+        }
+        if (data[i]['A6'] === 4) {
+          result[findData].pindahAlamat = result[findData].pindahAlamat + 1;
+        }
+        if (data[i]['A6'] === 5) {
+          result[findData].tutupSaatKunjungan =
+            result[findData].tutupSaatKunjungan + 1;
+        }
+
+        // status boarding pangkalan
+        if (data[i]['A113'] === 1) {
+          result[findData].notBoardingWithDevice =
+            result[findData].notBoardingWithDevice + 1;
+        }
+        if (data[i]['A113'] === 2) {
+          result[findData].notBoardingNoDevice =
+            result[findData].notBoardingNoDevice + 1;
+        }
+        if (data[i]['A12'] === 2) {
+          result[findData].boardingNoTransaction =
+            result[findData].boardingNoTransaction + 1;
+        }
+        if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+          result[findData].boardingTransaction =
+            result[findData].boardingTransaction + 1;
+        }
+
+        // belum on boarding
+        if (data[i]['A31'] === 1) {
+          result[findData].successBoarding =
+            result[findData].successBoarding + 1;
+        }
+        if (data[i]['A31'] === 2) {
+          result[findData].failedEmail = result[findData].failedEmail + 1;
+        }
+        if (data[i]['A31'] === 3) {
+          result[findData].failedDontWantOnBoard =
+            result[findData].failedDontWantOnBoard + 1;
+        }
+        if (data[i]['A31'] === 4) {
+          result[findData].failedOthers = result[findData].failedOthers + 1;
+        }
+
+        // transaction
+        if (data[i]['A50'] === 1) {
+          result[findData].boardingSuccessTransaction =
+            result[findData].boardingSuccessTransaction + 1;
+        }
+        if (data[i]['A50'] === 2 || data[i]['A50'] === 3) {
+          result[findData].boardingFailedTransaction =
+            result[findData].boardingFailedTransaction + 1;
+        }
+        if (data[i]['A33'] === 1) {
+          result[findData].successTransaction =
+            result[findData].successTransaction + 1;
+        }
+        if (data[i]['A33'] === 2 || data[i]['A33'] === 3) {
+          result[findData].failedTransaction =
+            result[findData].failedTransaction + 1;
+        }
+      }
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      if (result[i].visit > 0) {
+        result[i].visitPercentage =
+          (result[i].visit / result[i].dataList) * 100;
+      }
+    }
+    bubbleSort(result, 'visitPercentage');
+
+    for (let i = 0; i < result.length; i++) {
+      isifile.push([
+        result[i].province,
+        result[i].cityName,
+        result[i].dataList,
+        `${result[i].visitPercentage.toFixed(2)}%`,
+        `${countPercent(result[i].pangkalanAktif, result[i].dataList)}%`,
+        `${countPercent(result[i].tutupPermanen, result[i].dataList)}%`,
+        `${countPercent(result[i].tidakDitemukan, result[i].dataList)}%`,
+        `${countPercent(result[i].pindahAlamat, result[i].dataList)}%`,
+        `${countPercent(result[i].tutupSaatKunjungan, result[i].dataList)}%`,
+        `${countPercent(result[i].pangkalanAktif2, result[i].dataList)}%`,
+        `${countPercent(result[i].notBoardingWithDevice, result[i].dataList)}%`,
+        `${countPercent(result[i].notBoardingNoDevice, result[i].dataList)}%`,
+        `${countPercent(result[i].boardingNoTransaction, result[i].dataList)}%`,
+        `${countPercent(result[i].boardingTransaction, result[i].dataList)}%`,
+        `${countPercent(result[i].successBoarding, result[i].dataList)}%`,
+        `${countPercent(result[i].failedEmail, result[i].dataList)}%`,
+        `${countPercent(result[i].failedDontWantOnBoard, result[i].dataList)}%`,
+        `${countPercent(result[i].failedOthers, result[i].dataList)}%`,
+        `${countPercent(result[i].successTransaction, result[i].dataList)}%`,
+        `${countPercent(
+          result[i].boardingSuccessTransaction,
+          result[i].dataList
+        )}%`,
+        `${countPercent(
+          result[i].boardingFailedTransaction,
+          result[i].dataList
+        )}%`,
+        `${countPercent(result[i].failedTransaction, result[i].dataList)}%`,
+      ]);
+    }
+
+    var header = [
+      [
+        'Provinsi',
+        'Wilayah Penugasan',
+        'Jumlah Data List',
+        'Jumlah Kunjungan',
+        'Pangkalan Aktif Bertemu Pemilik',
+        'Tutup Permanen',
+        'Tidak ditemukan',
+        'Pindah Alamat',
+        'Sedang tutup saat kunjungan',
+        'Pangkalan Aktif Tidak Ketemu Pemilik',
+        'Belum On Boarding & Memiliki Device',
+        'Belum On Boarding dan Tidak Memiliki Device',
+        'On boarding belum transaksi',
+        'On boarding transaksi',
+        'Berhasil dibantu on boarding',
+        'Tidak berhasil - email salah',
+        'Tidak berhasil - Pemilik tidak ingin on boarding',
+        'Tidak berhasil - lainnya',
+        'Berhasil transaksi',
+        'tidak berhasil transaksi',
+        'Berhasil transaksi',
+        'tidak berhasil transaksi',
+      ],
+    ];
+
+    var formatdate = moment().format('YYYY_MM_DD_HH_mm_ss');
+    var newfilename = `${pid}_${formatdate}_data_province.xlsx`;
     var createfile = header.concat(isifile);
     const progress = xlsx.build([{ name: 'Data', data: createfile }]);
     fs.writeFile(
