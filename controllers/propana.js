@@ -184,42 +184,75 @@ exports.getVisitAchievement = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
+    const wave = parseInt(req.query.wave);
 
     var result = 0;
     var data = await excelData(pid);
     for (let i = 0; i < data.length; i++) {
-      if (region !== '0' && province === '0') {
-        if (data[i]['A1'] === region) {
-          result++;
-        }
-      } else if (region !== '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            result++;
-          }
-        } else {
-          if (data[i]['A2'] === province) {
-            result++;
-          }
-        }
-      } else if (region === '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            result++;
-          }
-        } else {
-          if (data[i]['A2'] === province) {
+      if (wave !== 0) {
+        if (wave === data[i]['WAVE']) {
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              result++;
+            }
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                result++;
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                result++;
+              }
+            }
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                result++;
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                result++;
+              }
+            }
+          } else {
             result++;
           }
         }
       } else {
-        result++;
+        if (region !== '0' && province === '0') {
+          if (data[i]['A1'] === region) {
+            result++;
+          }
+        } else if (region !== '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              result++;
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              result++;
+            }
+          }
+        } else if (region === '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              result++;
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              result++;
+            }
+          }
+        } else {
+          result++;
+        }
       }
     }
 
     res.status(200).json({
       statusCode: 200,
-      message: 'Success get Administration provinces',
+      message: 'Success get Total Visit',
       data: result,
     });
   } catch (error) {
@@ -233,6 +266,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
+    const wave = parseInt(req.query.wave);
 
     var result = [];
     for (let i = 0; i < A6Code.length; i++) {
@@ -251,22 +285,64 @@ exports.getStatusVisitAchievement = async function (req, res) {
             data[i]['A6'] === 1 &&
             (data[i]['A7'] === 1 || data[i]['A7'] === 2)
           ) {
-            result[0].value = result[0].value + 1;
+            if (wave !== 0) {
+              result[0].value =
+                data[i]['WAVE'] === wave
+                  ? result[0].value + 1
+                  : result[0].value;
+            } else {
+              result[0].value = result[0].value + 1;
+            }
           }
           if (data[i]['A6'] === 2) {
-            result[1].value = result[1].value + 1;
+            if (wave !== 0) {
+              result[1].value =
+                data[i]['WAVE'] === wave
+                  ? result[1].value + 1
+                  : result[1].value;
+            } else {
+              result[1].value = result[1].value + 1;
+            }
           }
           if (data[i]['A6'] === 3) {
-            result[2].value = result[2].value + 1;
+            if (wave !== 0) {
+              result[2].value =
+                data[i]['WAVE'] === wave
+                  ? result[2].value + 1
+                  : result[2].value;
+            } else {
+              result[2].value = result[2].value + 1;
+            }
           }
           if (data[i]['A6'] === 4) {
-            result[3].value = result[3].value + 1;
+            if (wave !== 0) {
+              result[3].value =
+                data[i]['WAVE'] === wave
+                  ? result[3].value + 1
+                  : result[3].value;
+            } else {
+              result[3].value = result[3].value + 1;
+            }
           }
           if (data[i]['A6'] === 5) {
-            result[4].value = result[4].value + 1;
+            if (wave !== 0) {
+              result[4].value =
+                data[i]['WAVE'] === wave
+                  ? result[4].value + 1
+                  : result[4].value;
+            } else {
+              result[4].value = result[4].value + 1;
+            }
           }
           if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-            result[5].value = result[5].value + 1;
+            if (wave !== 0) {
+              result[5].value =
+                data[i]['WAVE'] === wave
+                  ? result[5].value + 1
+                  : result[5].value;
+            } else {
+              result[5].value = result[5].value + 1;
+            }
           }
         }
       } else if (region !== '0' && province !== '0') {
@@ -276,22 +352,64 @@ exports.getStatusVisitAchievement = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              result[0].value = result[0].value + 1;
+              if (wave !== 0) {
+                result[0].value =
+                  data[i]['WAVE'] === wave
+                    ? result[0].value + 1
+                    : result[0].value;
+              } else {
+                result[0].value = result[0].value + 1;
+              }
             }
             if (data[i]['A6'] === 2) {
-              result[1].value = result[1].value + 1;
+              if (wave !== 0) {
+                result[1].value =
+                  data[i]['WAVE'] === wave
+                    ? result[1].value + 1
+                    : result[1].value;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
             }
             if (data[i]['A6'] === 3) {
-              result[2].value = result[2].value + 1;
+              if (wave !== 0) {
+                result[2].value =
+                  data[i]['WAVE'] === wave
+                    ? result[2].value + 1
+                    : result[2].value;
+              } else {
+                result[2].value = result[2].value + 1;
+              }
             }
             if (data[i]['A6'] === 4) {
-              result[3].value = result[3].value + 1;
+              if (wave !== 0) {
+                result[3].value =
+                  data[i]['WAVE'] === wave
+                    ? result[3].value + 1
+                    : result[3].value;
+              } else {
+                result[3].value = result[3].value + 1;
+              }
             }
             if (data[i]['A6'] === 5) {
-              result[4].value = result[4].value + 1;
+              if (wave !== 0) {
+                result[4].value =
+                  data[i]['WAVE'] === wave
+                    ? result[4].value + 1
+                    : result[4].value;
+              } else {
+                result[4].value = result[4].value + 1;
+              }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              result[5].value = result[5].value + 1;
+              if (wave !== 0) {
+                result[5].value =
+                  data[i]['WAVE'] === wave
+                    ? result[5].value + 1
+                    : result[5].value;
+              } else {
+                result[5].value = result[5].value + 1;
+              }
             }
           }
         } else {
@@ -300,22 +418,64 @@ exports.getStatusVisitAchievement = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              result[0].value = result[0].value + 1;
+              if (wave !== 0) {
+                result[0].value =
+                  data[i]['WAVE'] === wave
+                    ? result[0].value + 1
+                    : result[0].value;
+              } else {
+                result[0].value = result[0].value + 1;
+              }
             }
             if (data[i]['A6'] === 2) {
-              result[1].value = result[1].value + 1;
+              if (wave !== 0) {
+                result[1].value =
+                  data[i]['WAVE'] === wave
+                    ? result[1].value + 1
+                    : result[1].value;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
             }
             if (data[i]['A6'] === 3) {
-              result[2].value = result[2].value + 1;
+              if (wave !== 0) {
+                result[2].value =
+                  data[i]['WAVE'] === wave
+                    ? result[2].value + 1
+                    : result[2].value;
+              } else {
+                result[2].value = result[2].value + 1;
+              }
             }
             if (data[i]['A6'] === 4) {
-              result[3].value = result[3].value + 1;
+              if (wave !== 0) {
+                result[3].value =
+                  data[i]['WAVE'] === wave
+                    ? result[3].value + 1
+                    : result[3].value;
+              } else {
+                result[3].value = result[3].value + 1;
+              }
             }
             if (data[i]['A6'] === 5) {
-              result[4].value = result[4].value + 1;
+              if (wave !== 0) {
+                result[4].value =
+                  data[i]['WAVE'] === wave
+                    ? result[4].value + 1
+                    : result[4].value;
+              } else {
+                result[4].value = result[4].value + 1;
+              }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              result[5].value = result[5].value + 1;
+              if (wave !== 0) {
+                result[5].value =
+                  data[i]['WAVE'] === wave
+                    ? result[5].value + 1
+                    : result[5].value;
+              } else {
+                result[5].value = result[5].value + 1;
+              }
             }
           }
         }
@@ -326,22 +486,64 @@ exports.getStatusVisitAchievement = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              result[0].value = result[0].value + 1;
+              if (wave !== 0) {
+                result[0].value =
+                  data[i]['WAVE'] === wave
+                    ? result[0].value + 1
+                    : result[0].value;
+              } else {
+                result[0].value = result[0].value + 1;
+              }
             }
             if (data[i]['A6'] === 2) {
-              result[1].value = result[1].value + 1;
+              if (wave !== 0) {
+                result[1].value =
+                  data[i]['WAVE'] === wave
+                    ? result[1].value + 1
+                    : result[1].value;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
             }
             if (data[i]['A6'] === 3) {
-              result[2].value = result[2].value + 1;
+              if (wave !== 0) {
+                result[2].value =
+                  data[i]['WAVE'] === wave
+                    ? result[2].value + 1
+                    : result[2].value;
+              } else {
+                result[2].value = result[2].value + 1;
+              }
             }
             if (data[i]['A6'] === 4) {
-              result[3].value = result[3].value + 1;
+              if (wave !== 0) {
+                result[3].value =
+                  data[i]['WAVE'] === wave
+                    ? result[3].value + 1
+                    : result[3].value;
+              } else {
+                result[3].value = result[3].value + 1;
+              }
             }
             if (data[i]['A6'] === 5) {
-              result[4].value = result[4].value + 1;
+              if (wave !== 0) {
+                result[4].value =
+                  data[i]['WAVE'] === wave
+                    ? result[4].value + 1
+                    : result[4].value;
+              } else {
+                result[4].value = result[4].value + 1;
+              }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              result[5].value = result[5].value + 1;
+              if (wave !== 0) {
+                result[5].value =
+                  data[i]['WAVE'] === wave
+                    ? result[5].value + 1
+                    : result[5].value;
+              } else {
+                result[5].value = result[5].value + 1;
+              }
             }
           }
         } else {
@@ -374,22 +576,52 @@ exports.getStatusVisitAchievement = async function (req, res) {
           data[i]['A6'] === 1 &&
           (data[i]['A7'] === 1 || data[i]['A7'] === 2)
         ) {
-          result[0].value = result[0].value + 1;
+          if (wave !== 0) {
+            result[0].value =
+              data[i]['WAVE'] === wave ? result[0].value + 1 : result[0].value;
+          } else {
+            result[0].value = result[0].value + 1;
+          }
         }
         if (data[i]['A6'] === 2) {
-          result[1].value = result[1].value + 1;
+          if (wave !== 0) {
+            result[1].value =
+              data[i]['WAVE'] === wave ? result[1].value + 1 : result[1].value;
+          } else {
+            result[1].value = result[1].value + 1;
+          }
         }
         if (data[i]['A6'] === 3) {
-          result[2].value = result[2].value + 1;
+          if (wave !== 0) {
+            result[2].value =
+              data[i]['WAVE'] === wave ? result[2].value + 1 : result[2].value;
+          } else {
+            result[2].value = result[2].value + 1;
+          }
         }
         if (data[i]['A6'] === 4) {
-          result[3].value = result[3].value + 1;
+          if (wave !== 0) {
+            result[3].value =
+              data[i]['WAVE'] === wave ? result[3].value + 1 : result[3].value;
+          } else {
+            result[3].value = result[3].value + 1;
+          }
         }
         if (data[i]['A6'] === 5) {
-          result[4].value = result[4].value + 1;
+          if (wave !== 0) {
+            result[4].value =
+              data[i]['WAVE'] === wave ? result[4].value + 1 : result[4].value;
+          } else {
+            result[4].value = result[4].value + 1;
+          }
         }
         if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-          result[5].value = result[5].value + 1;
+          if (wave !== 0) {
+            result[5].value =
+              data[i]['WAVE'] === wave ? result[5].value + 1 : result[5].value;
+          } else {
+            result[5].value = result[5].value + 1;
+          }
         }
       }
     }
@@ -410,6 +642,7 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
+    const wave = parseInt(req.query.wave);
 
     var result = [];
     var total = 0;
@@ -430,22 +663,46 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
             data[i]['A6'] === 1 &&
             (data[i]['A7'] === 1 || data[i]['A7'] === 2)
           ) {
-            result[0].count = result[0].count + 1;
+            if (wave !== 0) {
+              data[i]['WAVE'] === wave && result[0].count++;
+            } else {
+              result[0].count = result[0].count + 1;
+            }
           }
           if (data[i]['A6'] === 2) {
-            result[1].count = result[1].count + 1;
+            if (wave !== 0) {
+              data[i]['WAVE'] === wave && result[1].count++;
+            } else {
+              result[1].count = result[1].count + 1;
+            }
           }
           if (data[i]['A6'] === 3) {
-            result[2].value = result[2].count + 1;
+            if (wave !== 0) {
+              data[i]['WAVE'] === wave && result[2].count++;
+            } else {
+              result[2].count = result[2].count + 1;
+            }
           }
           if (data[i]['A6'] === 4) {
-            result[3].count = result[3].count + 1;
+            if (wave !== 0) {
+              data[i]['WAVE'] === wave && result[3].count++;
+            } else {
+              result[3].count = result[3].count + 1;
+            }
           }
           if (data[i]['A6'] === 5) {
-            result[4].count = result[4].count + 1;
+            if (wave !== 0) {
+              data[i]['WAVE'] === wave && result[4].count++;
+            } else {
+              result[4].count = result[4].count + 1;
+            }
           }
           if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-            result[5].count = result[5].count + 1;
+            if (wave !== 0) {
+              data[i]['WAVE'] === wave && result[5].count++;
+            } else {
+              result[5].count = result[5].count + 1;
+            }
           }
           total++;
         }
@@ -456,22 +713,46 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              result[0].count = result[0].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[0].count++;
+              } else {
+                result[0].count = result[0].count + 1;
+              }
             }
             if (data[i]['A6'] === 2) {
-              result[1].count = result[1].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[1].count++;
+              } else {
+                result[1].count = result[1].count + 1;
+              }
             }
             if (data[i]['A6'] === 3) {
-              result[2].value = result[2].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[2].count++;
+              } else {
+                result[2].count = result[2].count + 1;
+              }
             }
             if (data[i]['A6'] === 4) {
-              result[3].count = result[3].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[3].count++;
+              } else {
+                result[3].count = result[3].count + 1;
+              }
             }
             if (data[i]['A6'] === 5) {
-              result[4].count = result[4].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[4].count++;
+              } else {
+                result[4].count = result[4].count + 1;
+              }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              result[5].count = result[5].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[5].count++;
+              } else {
+                result[5].count = result[5].count + 1;
+              }
             }
             total++;
           }
@@ -481,22 +762,46 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              result[0].count = result[0].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[0].count++;
+              } else {
+                result[0].count = result[0].count + 1;
+              }
             }
             if (data[i]['A6'] === 2) {
-              result[1].count = result[1].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[1].count++;
+              } else {
+                result[1].count = result[1].count + 1;
+              }
             }
             if (data[i]['A6'] === 3) {
-              result[2].value = result[2].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[2].count++;
+              } else {
+                result[2].count = result[2].count + 1;
+              }
             }
             if (data[i]['A6'] === 4) {
-              result[3].count = result[3].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[3].count++;
+              } else {
+                result[3].count = result[3].count + 1;
+              }
             }
             if (data[i]['A6'] === 5) {
-              result[4].count = result[4].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[4].count++;
+              } else {
+                result[4].count = result[4].count + 1;
+              }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              result[5].count = result[5].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[5].count++;
+              } else {
+                result[5].count = result[5].count + 1;
+              }
             }
             total++;
           }
@@ -508,22 +813,46 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              result[0].count = result[0].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[0].count++;
+              } else {
+                result[0].count = result[0].count + 1;
+              }
             }
             if (data[i]['A6'] === 2) {
-              result[1].count = result[1].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[1].count++;
+              } else {
+                result[1].count = result[1].count + 1;
+              }
             }
             if (data[i]['A6'] === 3) {
-              result[2].value = result[2].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[2].count++;
+              } else {
+                result[2].count = result[2].count + 1;
+              }
             }
             if (data[i]['A6'] === 4) {
-              result[3].count = result[3].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[3].count++;
+              } else {
+                result[3].count = result[3].count + 1;
+              }
             }
             if (data[i]['A6'] === 5) {
-              result[4].count = result[4].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[4].count++;
+              } else {
+                result[4].count = result[4].count + 1;
+              }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              result[5].count = result[5].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[5].count++;
+              } else {
+                result[5].count = result[5].count + 1;
+              }
             }
             total++;
           }
@@ -533,22 +862,46 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              result[0].count = result[0].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[0].count++;
+              } else {
+                result[0].count = result[0].count + 1;
+              }
             }
             if (data[i]['A6'] === 2) {
-              result[1].count = result[1].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[1].count++;
+              } else {
+                result[1].count = result[1].count + 1;
+              }
             }
             if (data[i]['A6'] === 3) {
-              result[2].value = result[2].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[2].count++;
+              } else {
+                result[2].count = result[2].count + 1;
+              }
             }
             if (data[i]['A6'] === 4) {
-              result[3].count = result[3].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[3].count++;
+              } else {
+                result[3].count = result[3].count + 1;
+              }
             }
             if (data[i]['A6'] === 5) {
-              result[4].count = result[4].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[4].count++;
+              } else {
+                result[4].count = result[4].count + 1;
+              }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              result[5].count = result[5].count + 1;
+              if (wave !== 0) {
+                data[i]['WAVE'] === wave && result[5].count++;
+              } else {
+                result[5].count = result[5].count + 1;
+              }
             }
             total++;
           }
@@ -558,22 +911,46 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
           data[i]['A6'] === 1 &&
           (data[i]['A7'] === 1 || data[i]['A7'] === 2)
         ) {
-          result[0].count = result[0].count + 1;
+          if (wave !== 0) {
+            data[i]['WAVE'] === wave && result[0].count++;
+          } else {
+            result[0].count = result[0].count + 1;
+          }
         }
         if (data[i]['A6'] === 2) {
-          result[1].count = result[1].count + 1;
+          if (wave !== 0) {
+            data[i]['WAVE'] === wave && result[1].count++;
+          } else {
+            result[1].count = result[1].count + 1;
+          }
         }
         if (data[i]['A6'] === 3) {
-          result[2].value = result[2].count + 1;
+          if (wave !== 0) {
+            data[i]['WAVE'] === wave && result[2].count++;
+          } else {
+            result[2].count = result[2].count + 1;
+          }
         }
         if (data[i]['A6'] === 4) {
-          result[3].count = result[3].count + 1;
+          if (wave !== 0) {
+            data[i]['WAVE'] === wave && result[3].count++;
+          } else {
+            result[3].count = result[3].count + 1;
+          }
         }
         if (data[i]['A6'] === 5) {
-          result[4].count = result[4].count + 1;
+          if (wave !== 0) {
+            data[i]['WAVE'] === wave && result[4].count++;
+          } else {
+            result[4].count = result[4].count + 1;
+          }
         }
         if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-          result[5].count = result[5].count + 1;
+          if (wave !== 0) {
+            data[i]['WAVE'] === wave && result[5].count++;
+          } else {
+            result[5].count = result[5].count + 1;
+          }
         }
         total++;
       }
@@ -600,6 +977,7 @@ exports.getPosterAchievement = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
+    const wave = parseInt(req.query.wave);
 
     var result = [
       {
@@ -617,38 +995,76 @@ exports.getPosterAchievement = async function (req, res) {
 
     for (let i = 0; i < data.length; i++) {
       if (data[i]['A35']) {
-        if (region !== '0' && province === '0') {
-          if (data[i]['A1'] === region) {
-            result[data[i]['A35'] - 1].value =
-              result[data[i]['A35'] - 1].value + 1;
-          }
-        } else if (region !== '0' && province !== '0') {
-          if (city !== '0') {
-            if (data[i]['A3'] === city) {
-              result[data[i]['A35'] - 1].value =
-                result[data[i]['A35'] - 1].value + 1;
-            }
-          } else {
-            if (data[i]['A2'] === province) {
-              result[data[i]['A35'] - 1].value =
-                result[data[i]['A35'] - 1].value + 1;
-            }
-          }
-        } else if (region === '0' && province !== '0') {
-          if (city !== '0') {
-            if (data[i]['A3'] === city) {
-              result[data[i]['A35'] - 1].value =
-                result[data[i]['A35'] - 1].value + 1;
-            }
-          } else {
-            if (data[i]['A2'] === province) {
+        if (wave !== 0) {
+          if (data[i]['WAVE'] === wave) {
+            if (region !== '0' && province === '0') {
+              if (data[i]['A1'] === region) {
+                result[data[i]['A35'] - 1].value =
+                  result[data[i]['A35'] - 1].value + 1;
+              }
+            } else if (region !== '0' && province !== '0') {
+              if (city !== '0') {
+                if (data[i]['A3'] === city) {
+                  result[data[i]['A35'] - 1].value =
+                    result[data[i]['A35'] - 1].value + 1;
+                }
+              } else {
+                if (data[i]['A2'] === province) {
+                  result[data[i]['A35'] - 1].value =
+                    result[data[i]['A35'] - 1].value + 1;
+                }
+              }
+            } else if (region === '0' && province !== '0') {
+              if (city !== '0') {
+                if (data[i]['A3'] === city) {
+                  result[data[i]['A35'] - 1].value =
+                    result[data[i]['A35'] - 1].value + 1;
+                }
+              } else {
+                if (data[i]['A2'] === province) {
+                  result[data[i]['A35'] - 1].value =
+                    result[data[i]['A35'] - 1].value + 1;
+                }
+              }
+            } else {
               result[data[i]['A35'] - 1].value =
                 result[data[i]['A35'] - 1].value + 1;
             }
           }
         } else {
-          result[data[i]['A35'] - 1].value =
-            result[data[i]['A35'] - 1].value + 1;
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              result[data[i]['A35'] - 1].value =
+                result[data[i]['A35'] - 1].value + 1;
+            }
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                result[data[i]['A35'] - 1].value =
+                  result[data[i]['A35'] - 1].value + 1;
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                result[data[i]['A35'] - 1].value =
+                  result[data[i]['A35'] - 1].value + 1;
+              }
+            }
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                result[data[i]['A35'] - 1].value =
+                  result[data[i]['A35'] - 1].value + 1;
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                result[data[i]['A35'] - 1].value =
+                  result[data[i]['A35'] - 1].value + 1;
+              }
+            }
+          } else {
+            result[data[i]['A35'] - 1].value =
+              result[data[i]['A35'] - 1].value + 1;
+          }
         }
       }
     }
@@ -669,6 +1085,7 @@ exports.getPosterViewAchievement = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
+    const wave = parseInt(req.query.wave);
 
     var result = [
       {
@@ -686,38 +1103,76 @@ exports.getPosterViewAchievement = async function (req, res) {
 
     for (let i = 0; i < data.length; i++) {
       if (data[i]['A36']) {
-        if (region !== '0' && province === '0') {
-          if (data[i]['A1'] === region) {
-            result[data[i]['A36'] - 1].value =
-              result[data[i]['A36'] - 1].value + 1;
-          }
-        } else if (region !== '0' && province !== '0') {
-          if (city !== '0') {
-            if (data[i]['A3'] === city) {
-              result[data[i]['A36'] - 1].value =
-                result[data[i]['A36'] - 1].value + 1;
-            }
-          } else {
-            if (data[i]['A2'] === province) {
-              result[data[i]['A36'] - 1].value =
-                result[data[i]['A36'] - 1].value + 1;
-            }
-          }
-        } else if (region === '0' && province !== '0') {
-          if (city !== '0') {
-            if (data[i]['A3'] === city) {
-              result[data[i]['A36'] - 1].value =
-                result[data[i]['A36'] - 1].value + 1;
-            }
-          } else {
-            if (data[i]['A2'] === province) {
+        if (wave !== 0) {
+          if (data[i]['wave'] === wave) {
+            if (region !== '0' && province === '0') {
+              if (data[i]['A1'] === region) {
+                result[data[i]['A36'] - 1].value =
+                  result[data[i]['A36'] - 1].value + 1;
+              }
+            } else if (region !== '0' && province !== '0') {
+              if (city !== '0') {
+                if (data[i]['A3'] === city) {
+                  result[data[i]['A36'] - 1].value =
+                    result[data[i]['A36'] - 1].value + 1;
+                }
+              } else {
+                if (data[i]['A2'] === province) {
+                  result[data[i]['A36'] - 1].value =
+                    result[data[i]['A36'] - 1].value + 1;
+                }
+              }
+            } else if (region === '0' && province !== '0') {
+              if (city !== '0') {
+                if (data[i]['A3'] === city) {
+                  result[data[i]['A36'] - 1].value =
+                    result[data[i]['A36'] - 1].value + 1;
+                }
+              } else {
+                if (data[i]['A2'] === province) {
+                  result[data[i]['A36'] - 1].value =
+                    result[data[i]['A36'] - 1].value + 1;
+                }
+              }
+            } else {
               result[data[i]['A36'] - 1].value =
                 result[data[i]['A36'] - 1].value + 1;
             }
           }
         } else {
-          result[data[i]['A36'] - 1].value =
-            result[data[i]['A36'] - 1].value + 1;
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              result[data[i]['A36'] - 1].value =
+                result[data[i]['A36'] - 1].value + 1;
+            }
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                result[data[i]['A36'] - 1].value =
+                  result[data[i]['A36'] - 1].value + 1;
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                result[data[i]['A36'] - 1].value =
+                  result[data[i]['A36'] - 1].value + 1;
+              }
+            }
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                result[data[i]['A36'] - 1].value =
+                  result[data[i]['A36'] - 1].value + 1;
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                result[data[i]['A36'] - 1].value =
+                  result[data[i]['A36'] - 1].value + 1;
+              }
+            }
+          } else {
+            result[data[i]['A36'] - 1].value =
+              result[data[i]['A36'] - 1].value + 1;
+          }
         }
       }
     }
@@ -739,6 +1194,7 @@ exports.getSortPoster = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
+    const wave = parseInt(req.query.wave);
 
     var _getCity = await getAdminstrationCityAll(pid);
 
@@ -747,87 +1203,108 @@ exports.getSortPoster = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (region !== '0' && province === '0') {
-        if (data[i]['A1'] === region) {
-          var findCity = await findObj(result, 'label', data[i]['A3']);
-          if (findCity === -1) {
-            result.push({
-              label: data[i]['A3'],
-              value: 0,
-              base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
-              count: data[i]['A35'] === 1 ? 1 : 0,
-            });
+      if (wave !== 0) {
+        if (data[i]['WAVE'] === wave) {
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  value: 0,
+                  base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                  count: data[i]['A35'] === 1 ? 1 : 0,
+                });
+              } else {
+                if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A35'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                var findCity = await findObj(result, 'label', data[i]['A3']);
+                if (findCity === -1) {
+                  result.push({
+                    label: data[i]['A3'],
+                    value: 0,
+                    base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                    count: data[i]['A35'] === 1 ? 1 : 0,
+                  });
+                } else {
+                  if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                    result[findCity].base = result[findCity].base + 1;
+                  }
+                  if (data[i]['A35'] === 1) {
+                    result[findCity].count = result[findCity].count + 1;
+                  }
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                var findCity = await findObj(result, 'label', data[i]['A3']);
+                if (findCity === -1) {
+                  result.push({
+                    label: data[i]['A3'],
+                    value: 0,
+                    base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                    count: data[i]['A35'] === 1 ? 1 : 0,
+                  });
+                } else {
+                  if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                    result[findCity].base = result[findCity].base + 1;
+                  }
+                  if (data[i]['A35'] === 1) {
+                    result[findCity].count = result[findCity].count + 1;
+                  }
+                }
+              }
+            }
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                var findCity = await findObj(result, 'label', data[i]['A3']);
+                if (findCity === -1) {
+                  result.push({
+                    label: data[i]['A3'],
+                    value: 0,
+                    base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                    count: data[i]['A35'] === 1 ? 1 : 0,
+                  });
+                } else {
+                  if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                    result[findCity].base = result[findCity].base + 1;
+                  }
+                  if (data[i]['A35'] === 1) {
+                    result[findCity].count = result[findCity].count + 1;
+                  }
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                var findCity = await findObj(result, 'label', data[i]['A3']);
+                if (findCity === -1) {
+                  result.push({
+                    label: data[i]['A3'],
+                    value: 0,
+                    base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                    count: data[i]['A35'] === 1 ? 1 : 0,
+                  });
+                } else {
+                  if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                    result[findCity].base = result[findCity].base + 1;
+                  }
+                  if (data[i]['A35'] === 1) {
+                    result[findCity].count = result[findCity].count + 1;
+                  }
+                }
+              }
+            }
           } else {
-            if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
-              result[findCity].base = result[findCity].base + 1;
-            }
-            if (data[i]['A35'] === 1) {
-              result[findCity].count = result[findCity].count + 1;
-            }
-          }
-        }
-      } else if (region !== '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            var findCity = await findObj(result, 'label', data[i]['A3']);
-            if (findCity === -1) {
-              result.push({
-                label: data[i]['A3'],
-                value: 0,
-                base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
-                count: data[i]['A35'] === 1 ? 1 : 0,
-              });
-            } else {
-              if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
-                result[findCity].base = result[findCity].base + 1;
-              }
-              if (data[i]['A35'] === 1) {
-                result[findCity].count = result[findCity].count + 1;
-              }
-            }
-          }
-        } else {
-          if (data[i]['A2'] === province) {
-            var findCity = await findObj(result, 'label', data[i]['A3']);
-            if (findCity === -1) {
-              result.push({
-                label: data[i]['A3'],
-                value: 0,
-                base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
-                count: data[i]['A35'] === 1 ? 1 : 0,
-              });
-            } else {
-              if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
-                result[findCity].base = result[findCity].base + 1;
-              }
-              if (data[i]['A35'] === 1) {
-                result[findCity].count = result[findCity].count + 1;
-              }
-            }
-          }
-        }
-      } else if (region === '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            var findCity = await findObj(result, 'label', data[i]['A3']);
-            if (findCity === -1) {
-              result.push({
-                label: data[i]['A3'],
-                value: 0,
-                base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
-                count: data[i]['A35'] === 1 ? 1 : 0,
-              });
-            } else {
-              if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
-                result[findCity].base = result[findCity].base + 1;
-              }
-              if (data[i]['A35'] === 1) {
-                result[findCity].count = result[findCity].count + 1;
-              }
-            }
-          }
-        } else {
-          if (data[i]['A2'] === province) {
             var findCity = await findObj(result, 'label', data[i]['A3']);
             if (findCity === -1) {
               result.push({
@@ -847,20 +1324,121 @@ exports.getSortPoster = async function (req, res) {
           }
         }
       } else {
-        var findCity = await findObj(result, 'label', data[i]['A3']);
-        if (findCity === -1) {
-          result.push({
-            label: data[i]['A3'],
-            value: 0,
-            base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
-            count: data[i]['A35'] === 1 ? 1 : 0,
-          });
-        } else {
-          if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
-            result[findCity].base = result[findCity].base + 1;
+        if (region !== '0' && province === '0') {
+          if (data[i]['A1'] === region) {
+            var findCity = await findObj(result, 'label', data[i]['A3']);
+            if (findCity === -1) {
+              result.push({
+                label: data[i]['A3'],
+                value: 0,
+                base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                count: data[i]['A35'] === 1 ? 1 : 0,
+              });
+            } else {
+              if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                result[findCity].base = result[findCity].base + 1;
+              }
+              if (data[i]['A35'] === 1) {
+                result[findCity].count = result[findCity].count + 1;
+              }
+            }
           }
-          if (data[i]['A35'] === 1) {
-            result[findCity].count = result[findCity].count + 1;
+        } else if (region !== '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  value: 0,
+                  base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                  count: data[i]['A35'] === 1 ? 1 : 0,
+                });
+              } else {
+                if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A35'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  value: 0,
+                  base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                  count: data[i]['A35'] === 1 ? 1 : 0,
+                });
+              } else {
+                if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A35'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          }
+        } else if (region === '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  value: 0,
+                  base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                  count: data[i]['A35'] === 1 ? 1 : 0,
+                });
+              } else {
+                if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A35'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  value: 0,
+                  base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+                  count: data[i]['A35'] === 1 ? 1 : 0,
+                });
+              } else {
+                if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A35'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          }
+        } else {
+          var findCity = await findObj(result, 'label', data[i]['A3']);
+          if (findCity === -1) {
+            result.push({
+              label: data[i]['A3'],
+              value: 0,
+              base: data[i]['A7'] === 1 || data[i]['A7'] === 2 ? 1 : 0,
+              count: data[i]['A35'] === 1 ? 1 : 0,
+            });
+          } else {
+            if (data[i]['A7'] === 1 || data[i]['A7'] === 2) {
+              result[findCity].base = result[findCity].base + 1;
+            }
+            if (data[i]['A35'] === 1) {
+              result[findCity].count = result[findCity].count + 1;
+            }
           }
         }
       }
@@ -905,6 +1483,7 @@ exports.getStatusOnBoardingPangkalan = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
+    const wave = parseInt(req.query.wave);
 
     var result = [];
     for (let i = 0; i < A12Code.length; i++) {
@@ -917,71 +1496,88 @@ exports.getStatusOnBoardingPangkalan = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (region !== '0' && province === '0') {
-        if (data[i]['A1'] === region) {
-          if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
-            result[0].value = result[0].value + 1;
-          }
-          if (data[i]['A113'] === 2) {
-            result[1].value = result[1].value + 1;
-          }
-          if (data[i]['A12'] === 2) {
-            result[2].value = result[2].value + 1;
-          }
-          if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
-            result[3].value = result[3].value + 1;
-          }
-        }
-      } else if (region !== '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
-              result[0].value = result[0].value + 1;
+      if (wave !== 0) {
+        if (data[i]['WAVE'] === wave) {
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+                result[0].value = result[0].value + 1;
+              }
+              if (data[i]['A113'] === 2) {
+                result[1].value = result[1].value + 1;
+              }
+              if (data[i]['A12'] === 2) {
+                result[2].value = result[2].value + 1;
+              }
+              if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+                result[3].value = result[3].value + 1;
+              }
             }
-            if (data[i]['A113'] === 2) {
-              result[1].value = result[1].value + 1;
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+                  result[0].value = result[0].value + 1;
+                }
+                if (data[i]['A113'] === 2) {
+                  result[1].value = result[1].value + 1;
+                }
+                if (data[i]['A12'] === 2) {
+                  result[2].value = result[2].value + 1;
+                }
+                if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+                  result[3].value = result[3].value + 1;
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+                  result[0].value = result[0].value + 1;
+                }
+                if (data[i]['A113'] === 2) {
+                  result[1].value = result[1].value + 1;
+                }
+                if (data[i]['A12'] === 2) {
+                  result[2].value = result[2].value + 1;
+                }
+                if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+                  result[3].value = result[3].value + 1;
+                }
+              }
             }
-            if (data[i]['A12'] === 2) {
-              result[2].value = result[2].value + 1;
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+                  result[0].value = result[0].value + 1;
+                }
+                if (data[i]['A113'] === 2) {
+                  result[1].value = result[1].value + 1;
+                }
+                if (data[i]['A12'] === 2) {
+                  result[2].value = result[2].value + 1;
+                }
+                if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+                  result[3].value = result[3].value + 1;
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+                  result[0].value = result[0].value + 1;
+                }
+                if (data[i]['A113'] === 2) {
+                  result[1].value = result[1].value + 1;
+                }
+                if (data[i]['A12'] === 2) {
+                  result[2].value = result[2].value + 1;
+                }
+                if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+                  result[3].value = result[3].value + 1;
+                }
+              }
             }
-            if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
-              result[3].value = result[3].value + 1;
-            }
-          }
-        } else {
-          if (data[i]['A2'] === province) {
-            if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
-              result[0].value = result[0].value + 1;
-            }
-            if (data[i]['A113'] === 2) {
-              result[1].value = result[1].value + 1;
-            }
-            if (data[i]['A12'] === 2) {
-              result[2].value = result[2].value + 1;
-            }
-            if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
-              result[3].value = result[3].value + 1;
-            }
-          }
-        }
-      } else if (region === '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
-              result[0].value = result[0].value + 1;
-            }
-            if (data[i]['A113'] === 2) {
-              result[1].value = result[1].value + 1;
-            }
-            if (data[i]['A12'] === 2) {
-              result[2].value = result[2].value + 1;
-            }
-            if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
-              result[3].value = result[3].value + 1;
-            }
-          }
-        } else {
-          if (data[i]['A2'] === province) {
+          } else {
             if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
               result[0].value = result[0].value + 1;
             }
@@ -997,17 +1593,98 @@ exports.getStatusOnBoardingPangkalan = async function (req, res) {
           }
         }
       } else {
-        if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
-          result[0].value = result[0].value + 1;
-        }
-        if (data[i]['A113'] === 2) {
-          result[1].value = result[1].value + 1;
-        }
-        if (data[i]['A12'] === 2) {
-          result[2].value = result[2].value + 1;
-        }
-        if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
-          result[3].value = result[3].value + 1;
+        if (region !== '0' && province === '0') {
+          if (data[i]['A1'] === region) {
+            if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+              result[0].value = result[0].value + 1;
+            }
+            if (data[i]['A113'] === 2) {
+              result[1].value = result[1].value + 1;
+            }
+            if (data[i]['A12'] === 2) {
+              result[2].value = result[2].value + 1;
+            }
+            if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+              result[3].value = result[3].value + 1;
+            }
+          }
+        } else if (region !== '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+                result[0].value = result[0].value + 1;
+              }
+              if (data[i]['A113'] === 2) {
+                result[1].value = result[1].value + 1;
+              }
+              if (data[i]['A12'] === 2) {
+                result[2].value = result[2].value + 1;
+              }
+              if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+                result[3].value = result[3].value + 1;
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+                result[0].value = result[0].value + 1;
+              }
+              if (data[i]['A113'] === 2) {
+                result[1].value = result[1].value + 1;
+              }
+              if (data[i]['A12'] === 2) {
+                result[2].value = result[2].value + 1;
+              }
+              if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+                result[3].value = result[3].value + 1;
+              }
+            }
+          }
+        } else if (region === '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+                result[0].value = result[0].value + 1;
+              }
+              if (data[i]['A113'] === 2) {
+                result[1].value = result[1].value + 1;
+              }
+              if (data[i]['A12'] === 2) {
+                result[2].value = result[2].value + 1;
+              }
+              if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+                result[3].value = result[3].value + 1;
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+                result[0].value = result[0].value + 1;
+              }
+              if (data[i]['A113'] === 2) {
+                result[1].value = result[1].value + 1;
+              }
+              if (data[i]['A12'] === 2) {
+                result[2].value = result[2].value + 1;
+              }
+              if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+                result[3].value = result[3].value + 1;
+              }
+            }
+          }
+        } else {
+          if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+            result[0].value = result[0].value + 1;
+          }
+          if (data[i]['A113'] === 2) {
+            result[1].value = result[1].value + 1;
+          }
+          if (data[i]['A12'] === 2) {
+            result[2].value = result[2].value + 1;
+          }
+          if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+            result[3].value = result[3].value + 1;
+          }
         }
       }
     }
@@ -1028,6 +1705,7 @@ exports.getHelpBoardingPangkalan = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
+    const wave = parseInt(req.query.wave);
 
     var result = [];
     for (let i = 0; i < helBoardingCode.length; i++) {
@@ -1040,43 +1718,53 @@ exports.getHelpBoardingPangkalan = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (region !== '0' && province === '0') {
-        if (data[i]['A1'] === region) {
-          if (data[i]['A31'] === 1) {
-            result[0].value = result[0].value + 1;
+      if (wave !== 0) {
+        if (data[i]['WAVE'] === wave) {
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              if (data[i]['A31'] === 1) {
+                result[0].value = result[0].value + 1;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
+            }
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                if (data[i]['A31'] === 1) {
+                  result[0].value = result[0].value + 1;
+                } else {
+                  result[1].value = result[1].value + 1;
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                if (data[i]['A31'] === 1) {
+                  result[0].value = result[0].value + 1;
+                } else {
+                  result[1].value = result[1].value + 1;
+                }
+              }
+            }
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                if (data[i]['A31'] === 1) {
+                  result[0].value = result[0].value + 1;
+                } else {
+                  result[1].value = result[1].value + 1;
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                if (data[i]['A31'] === 1) {
+                  result[0].value = result[0].value + 1;
+                } else {
+                  result[1].value = result[1].value + 1;
+                }
+              }
+            }
           } else {
-            result[1].value = result[1].value + 1;
-          }
-        }
-      } else if (region !== '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            if (data[i]['A31'] === 1) {
-              result[0].value = result[0].value + 1;
-            } else {
-              result[1].value = result[1].value + 1;
-            }
-          }
-        } else {
-          if (data[i]['A2'] === province) {
-            if (data[i]['A31'] === 1) {
-              result[0].value = result[0].value + 1;
-            } else {
-              result[1].value = result[1].value + 1;
-            }
-          }
-        }
-      } else if (region === '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            if (data[i]['A31'] === 1) {
-              result[0].value = result[0].value + 1;
-            } else {
-              result[1].value = result[1].value + 1;
-            }
-          }
-        } else {
-          if (data[i]['A2'] === province) {
             if (data[i]['A31'] === 1) {
               result[0].value = result[0].value + 1;
             } else {
@@ -1085,10 +1773,56 @@ exports.getHelpBoardingPangkalan = async function (req, res) {
           }
         }
       } else {
-        if (data[i]['A31'] === 1) {
-          result[0].value = result[0].value + 1;
+        if (region !== '0' && province === '0') {
+          if (data[i]['A1'] === region) {
+            if (data[i]['A31'] === 1) {
+              result[0].value = result[0].value + 1;
+            } else {
+              result[1].value = result[1].value + 1;
+            }
+          }
+        } else if (region !== '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              if (data[i]['A31'] === 1) {
+                result[0].value = result[0].value + 1;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              if (data[i]['A31'] === 1) {
+                result[0].value = result[0].value + 1;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
+            }
+          }
+        } else if (region === '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              if (data[i]['A31'] === 1) {
+                result[0].value = result[0].value + 1;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              if (data[i]['A31'] === 1) {
+                result[0].value = result[0].value + 1;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
+            }
+          }
         } else {
-          result[1].value = result[1].value + 1;
+          if (data[i]['A31'] === 1) {
+            result[0].value = result[0].value + 1;
+          } else {
+            result[1].value = result[1].value + 1;
+          }
         }
       }
     }
@@ -1110,6 +1844,7 @@ exports.getSortBoarding = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
+    const wave = parseInt(req.query.wave);
 
     var _getCity = await getAdminstrationCityAll(pid);
 
@@ -1118,87 +1853,108 @@ exports.getSortBoarding = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (region !== '0' && province === '0') {
-        if (data[i]['A1'] === region) {
-          var findCity = await findObj(result, 'label', data[i]['A3']);
-          if (findCity === -1) {
-            result.push({
-              label: data[i]['A3'],
-              count: data[i]['A31'] === 1 ? 1 : 0,
-              value: 0,
-              base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
-            });
+      if (wave !== 0) {
+        if (data[i]['WAVE'] === wave) {
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  count: data[i]['A31'] === 1 ? 1 : 0,
+                  value: 0,
+                  base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
+                });
+              } else {
+                if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A31'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                var findCity = await findObj(result, 'label', data[i]['A3']);
+                if (findCity === -1) {
+                  result.push({
+                    label: data[i]['A3'],
+                    count: data[i]['A31'] === 1 ? 1 : 0,
+                    value: 0,
+                    base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
+                  });
+                } else {
+                  if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                    result[findCity].base = result[findCity].base + 1;
+                  }
+                  if (data[i]['A31'] === 1) {
+                    result[findCity].count = result[findCity].count + 1;
+                  }
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                var findCity = await findObj(result, 'label', data[i]['A3']);
+                if (findCity === -1) {
+                  result.push({
+                    label: data[i]['A3'],
+                    count: data[i]['A31'] === 1 ? 1 : 0,
+                    value: 0,
+                    base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
+                  });
+                } else {
+                  if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                    result[findCity].base = result[findCity].base + 1;
+                  }
+                  if (data[i]['A31'] === 1) {
+                    result[findCity].count = result[findCity].count + 1;
+                  }
+                }
+              }
+            }
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                var findCity = await findObj(result, 'label', data[i]['A3']);
+                if (findCity === -1) {
+                  result.push({
+                    label: data[i]['A3'],
+                    count: data[i]['A31'] === 1 ? 1 : 0,
+                    value: 0,
+                    base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
+                  });
+                } else {
+                  if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                    result[findCity].base = result[findCity].base + 1;
+                  }
+                  if (data[i]['A31'] === 1) {
+                    result[findCity].count = result[findCity].count + 1;
+                  }
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                var findCity = await findObj(result, 'label', data[i]['A3']);
+                if (findCity === -1) {
+                  result.push({
+                    label: data[i]['A3'],
+                    count: data[i]['A31'] === 1 ? 1 : 0,
+                    value: 0,
+                    base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
+                  });
+                } else {
+                  if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                    result[findCity].base = result[findCity].base + 1;
+                  }
+                  if (data[i]['A31'] === 1) {
+                    result[findCity].count = result[findCity].count + 1;
+                  }
+                }
+              }
+            }
           } else {
-            if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
-              result[findCity].base = result[findCity].base + 1;
-            }
-            if (data[i]['A31'] === 1) {
-              result[findCity].count = result[findCity].count + 1;
-            }
-          }
-        }
-      } else if (region !== '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            var findCity = await findObj(result, 'label', data[i]['A3']);
-            if (findCity === -1) {
-              result.push({
-                label: data[i]['A3'],
-                count: data[i]['A31'] === 1 ? 1 : 0,
-                value: 0,
-                base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
-              });
-            } else {
-              if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
-                result[findCity].base = result[findCity].base + 1;
-              }
-              if (data[i]['A31'] === 1) {
-                result[findCity].count = result[findCity].count + 1;
-              }
-            }
-          }
-        } else {
-          if (data[i]['A2'] === province) {
-            var findCity = await findObj(result, 'label', data[i]['A3']);
-            if (findCity === -1) {
-              result.push({
-                label: data[i]['A3'],
-                count: data[i]['A31'] === 1 ? 1 : 0,
-                value: 0,
-                base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
-              });
-            } else {
-              if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
-                result[findCity].base = result[findCity].base + 1;
-              }
-              if (data[i]['A31'] === 1) {
-                result[findCity].count = result[findCity].count + 1;
-              }
-            }
-          }
-        }
-      } else if (region === '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            var findCity = await findObj(result, 'label', data[i]['A3']);
-            if (findCity === -1) {
-              result.push({
-                label: data[i]['A3'],
-                count: data[i]['A31'] === 1 ? 1 : 0,
-                value: 0,
-                base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
-              });
-            } else {
-              if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
-                result[findCity].base = result[findCity].base + 1;
-              }
-              if (data[i]['A31'] === 1) {
-                result[findCity].count = result[findCity].count + 1;
-              }
-            }
-          }
-        } else {
-          if (data[i]['A2'] === province) {
             var findCity = await findObj(result, 'label', data[i]['A3']);
             if (findCity === -1) {
               result.push({
@@ -1218,20 +1974,121 @@ exports.getSortBoarding = async function (req, res) {
           }
         }
       } else {
-        var findCity = await findObj(result, 'label', data[i]['A3']);
-        if (findCity === -1) {
-          result.push({
-            label: data[i]['A3'],
-            count: data[i]['A31'] === 1 ? 1 : 0,
-            value: 0,
-            base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
-          });
-        } else {
-          if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
-            result[findCity].base = result[findCity].base + 1;
+        if (region !== '0' && province === '0') {
+          if (data[i]['A1'] === region) {
+            var findCity = await findObj(result, 'label', data[i]['A3']);
+            if (findCity === -1) {
+              result.push({
+                label: data[i]['A3'],
+                count: data[i]['A31'] === 1 ? 1 : 0,
+                value: 0,
+                base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
+              });
+            } else {
+              if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                result[findCity].base = result[findCity].base + 1;
+              }
+              if (data[i]['A31'] === 1) {
+                result[findCity].count = result[findCity].count + 1;
+              }
+            }
           }
-          if (data[i]['A31'] === 1) {
-            result[findCity].count = result[findCity].count + 1;
+        } else if (region !== '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  count: data[i]['A31'] === 1 ? 1 : 0,
+                  value: 0,
+                  base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
+                });
+              } else {
+                if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A31'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  count: data[i]['A31'] === 1 ? 1 : 0,
+                  value: 0,
+                  base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
+                });
+              } else {
+                if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A31'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          }
+        } else if (region === '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  count: data[i]['A31'] === 1 ? 1 : 0,
+                  value: 0,
+                  base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
+                });
+              } else {
+                if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A31'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  count: data[i]['A31'] === 1 ? 1 : 0,
+                  value: 0,
+                  base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
+                });
+              } else {
+                if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A31'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          }
+        } else {
+          var findCity = await findObj(result, 'label', data[i]['A3']);
+          if (findCity === -1) {
+            result.push({
+              label: data[i]['A3'],
+              count: data[i]['A31'] === 1 ? 1 : 0,
+              value: 0,
+              base: data[i]['A113'] === 1 && data[i]['A12'] === 1 ? 1 : 0,
+            });
+          } else {
+            if (data[i]['A113'] === 1 && data[i]['A12'] === 1) {
+              result[findCity].base = result[findCity].base + 1;
+            }
+            if (data[i]['A31'] === 1) {
+              result[findCity].count = result[findCity].count + 1;
+            }
           }
         }
       }
@@ -1325,6 +2182,7 @@ exports.getVisitByCity = async function (req, res) {
     const province = req.query.province;
     const city = req.query.city;
     const region = req.query.region;
+    const wave = parseInt(req.query.wave);
 
     var result = [];
     if (region === '0') {
@@ -1380,7 +2238,7 @@ exports.getVisitByCity = async function (req, res) {
         tidakDitemukan: 0,
         pindahAlamat: 0,
         tutupSaatKunjungan: 0,
-        pangkalanAktif2: 0, // belum masuk
+        pangkalanAktif2: 0,
         notBoardingWithDevice: 0,
         notBoardingNoDevice: 0,
         boardingNoTransaction: 0,
@@ -1399,78 +2257,172 @@ exports.getVisitByCity = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      var findData = await findObj(result, 'cityName', data[i]['A3']);
-      if (findData !== -1) {
-        result[findData].visit = result[findData].visit + 1;
+      if (wave !== 0) {
+        if (data[i]['WAVE'] === wave) {
+          var findData = await findObj(result, 'cityName', data[i]['A3']);
+          if (findData !== -1) {
+            result[findData].visit = result[findData].visit + 1;
+            //status kunjungan pangkalan
+            if (
+              data[i]['A6'] === 1 &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[findData].pangkalanAktif =
+                result[findData].pangkalanAktif + 1;
+            }
+            if (data[i]['A6'] === 2) {
+              result[findData].tutupPermanen =
+                result[findData].tutupPermanen + 1;
+            }
+            if (data[i]['A6'] === 3) {
+              result[findData].tidakDitemukan =
+                result[findData].tidakDitemukan + 1;
+            }
+            if (data[i]['A6'] === 4) {
+              result[findData].pindahAlamat = result[findData].pindahAlamat + 1;
+            }
+            if (data[i]['A6'] === 5) {
+              result[findData].tutupSaatKunjungan =
+                result[findData].tutupSaatKunjungan + 1;
+            }
+            if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+              result[findData].pangkalanAktif2 =
+                result[findData].pangkalanAktif2 + 1;
+            }
+            // status boarding pangkalan
+            if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+              result[findData].notBoardingWithDevice =
+                result[findData].notBoardingWithDevice + 1;
+            }
+            if (data[i]['A113'] === 2) {
+              result[findData].notBoardingNoDevice =
+                result[findData].notBoardingNoDevice + 1;
+            }
+            if (data[i]['A12'] === 2) {
+              result[findData].boardingNoTransaction =
+                result[findData].boardingNoTransaction + 1;
+            }
+            if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+              result[findData].boardingTransaction =
+                result[findData].boardingTransaction + 1;
+            }
 
-        //status kunjungan pangkalan
-        if (data[i]['A6'] === 1) {
-          result[findData].pangkalanAktif = result[findData].pangkalanAktif + 1;
-        }
-        if (data[i]['A6'] === 2) {
-          result[findData].tutupPermanen = result[findData].tutupPermanen + 1;
-        }
-        if (data[i]['A6'] === 3) {
-          result[findData].tidakDitemukan = result[findData].tidakDitemukan + 1;
-        }
-        if (data[i]['A6'] === 4) {
-          result[findData].pindahAlamat = result[findData].pindahAlamat + 1;
-        }
-        if (data[i]['A6'] === 5) {
-          result[findData].tutupSaatKunjungan =
-            result[findData].tutupSaatKunjungan + 1;
-        }
+            // belum on boarding
+            if (data[i]['A31'] === 1) {
+              result[findData].successBoarding =
+                result[findData].successBoarding + 1;
+            }
+            if (data[i]['A31'] === 2) {
+              result[findData].failedEmail = result[findData].failedEmail + 1;
+            }
+            if (data[i]['A31'] === 3) {
+              result[findData].failedDontWantOnBoard =
+                result[findData].failedDontWantOnBoard + 1;
+            }
+            if (data[i]['A31'] === 4) {
+              result[findData].failedOthers = result[findData].failedOthers + 1;
+            }
 
-        // status boarding pangkalan
-        if (data[i]['A113'] === 1) {
-          result[findData].notBoardingWithDevice =
-            result[findData].notBoardingWithDevice + 1;
+            // transaction
+            if (data[i]['A50'] === 1) {
+              result[findData].boardingSuccessTransaction =
+                result[findData].boardingSuccessTransaction + 1;
+            }
+            if (data[i]['A50'] === 2 || data[i]['A50'] === 3) {
+              result[findData].boardingFailedTransaction =
+                result[findData].boardingFailedTransaction + 1;
+            }
+            if (data[i]['A33'] === 1) {
+              result[findData].successTransaction =
+                result[findData].successTransaction + 1;
+            }
+            if (data[i]['A33'] === 2 || data[i]['A33'] === 3) {
+              result[findData].failedTransaction =
+                result[findData].failedTransaction + 1;
+            }
+          }
         }
-        if (data[i]['A113'] === 2) {
-          result[findData].notBoardingNoDevice =
-            result[findData].notBoardingNoDevice + 1;
-        }
-        if (data[i]['A12'] === 2) {
-          result[findData].boardingNoTransaction =
-            result[findData].boardingNoTransaction + 1;
-        }
-        if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
-          result[findData].boardingTransaction =
-            result[findData].boardingTransaction + 1;
-        }
+      } else {
+        var findData = await findObj(result, 'cityName', data[i]['A3']);
+        if (findData !== -1) {
+          result[findData].visit = result[findData].visit + 1;
+          //status kunjungan pangkalan
+          if (
+            data[i]['A6'] === 1 &&
+            (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+          ) {
+            result[findData].pangkalanAktif =
+              result[findData].pangkalanAktif + 1;
+          }
+          if (data[i]['A6'] === 2) {
+            result[findData].tutupPermanen = result[findData].tutupPermanen + 1;
+          }
+          if (data[i]['A6'] === 3) {
+            result[findData].tidakDitemukan =
+              result[findData].tidakDitemukan + 1;
+          }
+          if (data[i]['A6'] === 4) {
+            result[findData].pindahAlamat = result[findData].pindahAlamat + 1;
+          }
+          if (data[i]['A6'] === 5) {
+            result[findData].tutupSaatKunjungan =
+              result[findData].tutupSaatKunjungan + 1;
+          }
+          if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+            result[findData].pangkalanAktif2 =
+              result[findData].pangkalanAktif2 + 1;
+          }
+          // status boarding pangkalan
+          if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+            result[findData].notBoardingWithDevice =
+              result[findData].notBoardingWithDevice + 1;
+          }
+          if (data[i]['A113'] === 2) {
+            result[findData].notBoardingNoDevice =
+              result[findData].notBoardingNoDevice + 1;
+          }
+          if (data[i]['A12'] === 2) {
+            result[findData].boardingNoTransaction =
+              result[findData].boardingNoTransaction + 1;
+          }
+          if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+            result[findData].boardingTransaction =
+              result[findData].boardingTransaction + 1;
+          }
 
-        // belum on boarding
-        if (data[i]['A31'] === 1) {
-          result[findData].successBoarding =
-            result[findData].successBoarding + 1;
-        }
-        if (data[i]['A31'] === 2) {
-          result[findData].failedEmail = result[findData].failedEmail + 1;
-        }
-        if (data[i]['A31'] === 3) {
-          result[findData].failedDontWantOnBoard =
-            result[findData].failedDontWantOnBoard + 1;
-        }
-        if (data[i]['A31'] === 4) {
-          result[findData].failedOthers = result[findData].failedOthers + 1;
-        }
+          // belum on boarding
+          if (data[i]['A31'] === 1) {
+            result[findData].successBoarding =
+              result[findData].successBoarding + 1;
+          }
+          if (data[i]['A31'] === 2) {
+            result[findData].failedEmail = result[findData].failedEmail + 1;
+          }
+          if (data[i]['A31'] === 3) {
+            result[findData].failedDontWantOnBoard =
+              result[findData].failedDontWantOnBoard + 1;
+          }
+          if (data[i]['A31'] === 4) {
+            result[findData].failedOthers = result[findData].failedOthers + 1;
+          }
 
-        // transaction
-        if (data[i]['A50'] === 1) {
-          result[findData].boardingSuccessTransaction =
-            result[findData].boardingSuccessTransaction + 1;
-        }
-        if (data[i]['A50'] === 2 || data[i]['A50'] === 3) {
-          result[findData].boardingFailedTransaction =
-            result[findData].boardingFailedTransaction + 1;
-        }
-        if (data[i]['A33'] === 1) {
-          result[findData].successTransaction =
-            result[findData].successTransaction + 1;
-        }
-        if (data[i]['A33'] === 2 || data[i]['A33'] === 3) {
-          result[findData].failedTransaction =
-            result[findData].failedTransaction + 1;
+          // transaction
+          if (data[i]['A50'] === 1) {
+            result[findData].boardingSuccessTransaction =
+              result[findData].boardingSuccessTransaction + 1;
+          }
+          if (data[i]['A50'] === 2 || data[i]['A50'] === 3) {
+            result[findData].boardingFailedTransaction =
+              result[findData].boardingFailedTransaction + 1;
+          }
+          if (data[i]['A33'] === 1) {
+            result[findData].successTransaction =
+              result[findData].successTransaction + 1;
+          }
+          if (data[i]['A33'] === 2 || data[i]['A33'] === 3) {
+            result[findData].failedTransaction =
+              result[findData].failedTransaction + 1;
+          }
         }
       }
     }
@@ -2031,6 +2983,7 @@ exports.getOnBoardingNoTransaction = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
+    const wave = parseInt(req.query.wave);
 
     var result = [];
     for (let i = 0; i < boardingNoTransactionCode.length; i++) {
@@ -2043,43 +2996,53 @@ exports.getOnBoardingNoTransaction = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (region !== '0' && province === '0') {
-        if (data[i]['A1'] === region) {
-          if (data[i]['A33'] === 1) {
-            result[0].value = result[0].value + 1;
+      if (wave !== 0) {
+        if (data[i]['WAVE'] === wave) {
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              if (data[i]['A33'] === 1) {
+                result[0].value = result[0].value + 1;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
+            }
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                if (data[i]['A33'] === 1) {
+                  result[0].value = result[0].value + 1;
+                } else {
+                  result[1].value = result[1].value + 1;
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                if (data[i]['A33'] === 1) {
+                  result[0].value = result[0].value + 1;
+                } else {
+                  result[1].value = result[1].value + 1;
+                }
+              }
+            }
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                if (data[i]['A33'] === 1) {
+                  result[0].value = result[0].value + 1;
+                } else {
+                  result[1].value = result[1].value + 1;
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                if (data[i]['A33'] === 1) {
+                  result[0].value = result[0].value + 1;
+                } else {
+                  result[1].value = result[1].value + 1;
+                }
+              }
+            }
           } else {
-            result[1].value = result[1].value + 1;
-          }
-        }
-      } else if (region !== '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            if (data[i]['A33'] === 1) {
-              result[0].value = result[0].value + 1;
-            } else {
-              result[1].value = result[1].value + 1;
-            }
-          }
-        } else {
-          if (data[i]['A2'] === province) {
-            if (data[i]['A33'] === 1) {
-              result[0].value = result[0].value + 1;
-            } else {
-              result[1].value = result[1].value + 1;
-            }
-          }
-        }
-      } else if (region === '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            if (data[i]['A33'] === 1) {
-              result[0].value = result[0].value + 1;
-            } else {
-              result[1].value = result[1].value + 1;
-            }
-          }
-        } else {
-          if (data[i]['A2'] === province) {
             if (data[i]['A33'] === 1) {
               result[0].value = result[0].value + 1;
             } else {
@@ -2088,10 +3051,56 @@ exports.getOnBoardingNoTransaction = async function (req, res) {
           }
         }
       } else {
-        if (data[i]['A33'] === 1) {
-          result[0].value = result[0].value + 1;
+        if (region !== '0' && province === '0') {
+          if (data[i]['A1'] === region) {
+            if (data[i]['A33'] === 1) {
+              result[0].value = result[0].value + 1;
+            } else {
+              result[1].value = result[1].value + 1;
+            }
+          }
+        } else if (region !== '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              if (data[i]['A33'] === 1) {
+                result[0].value = result[0].value + 1;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              if (data[i]['A33'] === 1) {
+                result[0].value = result[0].value + 1;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
+            }
+          }
+        } else if (region === '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              if (data[i]['A33'] === 1) {
+                result[0].value = result[0].value + 1;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              if (data[i]['A33'] === 1) {
+                result[0].value = result[0].value + 1;
+              } else {
+                result[1].value = result[1].value + 1;
+              }
+            }
+          }
         } else {
-          result[1].value = result[1].value + 1;
+          if (data[i]['A33'] === 1) {
+            result[0].value = result[0].value + 1;
+          } else {
+            result[1].value = result[1].value + 1;
+          }
         }
       }
     }
@@ -2113,6 +3122,7 @@ exports.getSortBoardingTransaction = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
+    const wave = parseInt(req.query.wave);
 
     var _getCity = await getAdminstrationCityAll(pid);
 
@@ -2121,87 +3131,108 @@ exports.getSortBoardingTransaction = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (region !== '0' && province === '0') {
-        if (data[i]['A1'] === region) {
-          var findCity = await findObj(result, 'label', data[i]['A3']);
-          if (findCity === -1) {
-            result.push({
-              label: data[i]['A3'],
-              count: data[i]['A33'] === 1 ? 1 : 0,
-              base: data[i]['A12'] === 2 ? 1 : 0,
-              value: 0,
-            });
+      if (wave !== 0) {
+        if (data[i]['WAVE'] === wave) {
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  count: data[i]['A33'] === 1 ? 1 : 0,
+                  base: data[i]['A12'] === 2 ? 1 : 0,
+                  value: 0,
+                });
+              } else {
+                if (data[i]['A12'] === 2) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A33'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                var findCity = await findObj(result, 'label', data[i]['A3']);
+                if (findCity === -1) {
+                  result.push({
+                    label: data[i]['A3'],
+                    count: data[i]['A33'] === 1 ? 1 : 0,
+                    base: data[i]['A12'] === 2 ? 1 : 0,
+                    value: 0,
+                  });
+                } else {
+                  if (data[i]['A12'] === 2) {
+                    result[findCity].base = result[findCity].base + 1;
+                  }
+                  if (data[i]['A33'] === 1) {
+                    result[findCity].count = result[findCity].count + 1;
+                  }
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                var findCity = await findObj(result, 'label', data[i]['A3']);
+                if (findCity === -1) {
+                  result.push({
+                    label: data[i]['A3'],
+                    count: data[i]['A33'] === 1 ? 1 : 0,
+                    base: data[i]['A12'] === 2 ? 1 : 0,
+                    value: 0,
+                  });
+                } else {
+                  if (data[i]['A12'] === 2) {
+                    result[findCity].base = result[findCity].base + 1;
+                  }
+                  if (data[i]['A33'] === 1) {
+                    result[findCity].count = result[findCity].count + 1;
+                  }
+                }
+              }
+            }
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                var findCity = await findObj(result, 'label', data[i]['A3']);
+                if (findCity === -1) {
+                  result.push({
+                    label: data[i]['A3'],
+                    count: data[i]['A33'] === 1 ? 1 : 0,
+                    base: data[i]['A12'] === 2 ? 1 : 0,
+                    value: 0,
+                  });
+                } else {
+                  if (data[i]['A12'] === 2) {
+                    result[findCity].base = result[findCity].base + 1;
+                  }
+                  if (data[i]['A33'] === 1) {
+                    result[findCity].count = result[findCity].count + 1;
+                  }
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                var findCity = await findObj(result, 'label', data[i]['A3']);
+                if (findCity === -1) {
+                  result.push({
+                    label: data[i]['A3'],
+                    count: data[i]['A33'] === 1 ? 1 : 0,
+                    base: data[i]['A12'] === 2 ? 1 : 0,
+                    value: 0,
+                  });
+                } else {
+                  if (data[i]['A12'] === 2) {
+                    result[findCity].base = result[findCity].base + 1;
+                  }
+                  if (data[i]['A33'] === 1) {
+                    result[findCity].count = result[findCity].count + 1;
+                  }
+                }
+              }
+            }
           } else {
-            if (data[i]['A12'] === 2) {
-              result[findCity].base = result[findCity].base + 1;
-            }
-            if (data[i]['A33'] === 1) {
-              result[findCity].count = result[findCity].count + 1;
-            }
-          }
-        }
-      } else if (region !== '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            var findCity = await findObj(result, 'label', data[i]['A3']);
-            if (findCity === -1) {
-              result.push({
-                label: data[i]['A3'],
-                count: data[i]['A33'] === 1 ? 1 : 0,
-                base: data[i]['A12'] === 2 ? 1 : 0,
-                value: 0,
-              });
-            } else {
-              if (data[i]['A12'] === 2) {
-                result[findCity].base = result[findCity].base + 1;
-              }
-              if (data[i]['A33'] === 1) {
-                result[findCity].count = result[findCity].count + 1;
-              }
-            }
-          }
-        } else {
-          if (data[i]['A2'] === province) {
-            var findCity = await findObj(result, 'label', data[i]['A3']);
-            if (findCity === -1) {
-              result.push({
-                label: data[i]['A3'],
-                count: data[i]['A33'] === 1 ? 1 : 0,
-                base: data[i]['A12'] === 2 ? 1 : 0,
-                value: 0,
-              });
-            } else {
-              if (data[i]['A12'] === 2) {
-                result[findCity].base = result[findCity].base + 1;
-              }
-              if (data[i]['A33'] === 1) {
-                result[findCity].count = result[findCity].count + 1;
-              }
-            }
-          }
-        }
-      } else if (region === '0' && province !== '0') {
-        if (city !== '0') {
-          if (data[i]['A3'] === city) {
-            var findCity = await findObj(result, 'label', data[i]['A3']);
-            if (findCity === -1) {
-              result.push({
-                label: data[i]['A3'],
-                count: data[i]['A33'] === 1 ? 1 : 0,
-                base: data[i]['A12'] === 2 ? 1 : 0,
-                value: 0,
-              });
-            } else {
-              if (data[i]['A12'] === 2) {
-                result[findCity].base = result[findCity].base + 1;
-              }
-              if (data[i]['A33'] === 1) {
-                result[findCity].count = result[findCity].count + 1;
-              }
-            }
-          }
-        } else {
-          if (data[i]['A2'] === province) {
             var findCity = await findObj(result, 'label', data[i]['A3']);
             if (findCity === -1) {
               result.push({
@@ -2221,20 +3252,121 @@ exports.getSortBoardingTransaction = async function (req, res) {
           }
         }
       } else {
-        var findCity = await findObj(result, 'label', data[i]['A3']);
-        if (findCity === -1) {
-          result.push({
-            label: data[i]['A3'],
-            count: data[i]['A33'] === 1 ? 1 : 0,
-            base: data[i]['A12'] === 2 ? 1 : 0,
-            value: 0,
-          });
-        } else {
-          if (data[i]['A12'] === 2) {
-            result[findCity].base = result[findCity].base + 1;
+        if (region !== '0' && province === '0') {
+          if (data[i]['A1'] === region) {
+            var findCity = await findObj(result, 'label', data[i]['A3']);
+            if (findCity === -1) {
+              result.push({
+                label: data[i]['A3'],
+                count: data[i]['A33'] === 1 ? 1 : 0,
+                base: data[i]['A12'] === 2 ? 1 : 0,
+                value: 0,
+              });
+            } else {
+              if (data[i]['A12'] === 2) {
+                result[findCity].base = result[findCity].base + 1;
+              }
+              if (data[i]['A33'] === 1) {
+                result[findCity].count = result[findCity].count + 1;
+              }
+            }
           }
-          if (data[i]['A33'] === 1) {
-            result[findCity].count = result[findCity].count + 1;
+        } else if (region !== '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  count: data[i]['A33'] === 1 ? 1 : 0,
+                  base: data[i]['A12'] === 2 ? 1 : 0,
+                  value: 0,
+                });
+              } else {
+                if (data[i]['A12'] === 2) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A33'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  count: data[i]['A33'] === 1 ? 1 : 0,
+                  base: data[i]['A12'] === 2 ? 1 : 0,
+                  value: 0,
+                });
+              } else {
+                if (data[i]['A12'] === 2) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A33'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          }
+        } else if (region === '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  count: data[i]['A33'] === 1 ? 1 : 0,
+                  base: data[i]['A12'] === 2 ? 1 : 0,
+                  value: 0,
+                });
+              } else {
+                if (data[i]['A12'] === 2) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A33'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              var findCity = await findObj(result, 'label', data[i]['A3']);
+              if (findCity === -1) {
+                result.push({
+                  label: data[i]['A3'],
+                  count: data[i]['A33'] === 1 ? 1 : 0,
+                  base: data[i]['A12'] === 2 ? 1 : 0,
+                  value: 0,
+                });
+              } else {
+                if (data[i]['A12'] === 2) {
+                  result[findCity].base = result[findCity].base + 1;
+                }
+                if (data[i]['A33'] === 1) {
+                  result[findCity].count = result[findCity].count + 1;
+                }
+              }
+            }
+          }
+        } else {
+          var findCity = await findObj(result, 'label', data[i]['A3']);
+          if (findCity === -1) {
+            result.push({
+              label: data[i]['A3'],
+              count: data[i]['A33'] === 1 ? 1 : 0,
+              base: data[i]['A12'] === 2 ? 1 : 0,
+              value: 0,
+            });
+          } else {
+            if (data[i]['A12'] === 2) {
+              result[findCity].base = result[findCity].base + 1;
+            }
+            if (data[i]['A33'] === 1) {
+              result[findCity].count = result[findCity].count + 1;
+            }
           }
         }
       }
@@ -2763,6 +3895,7 @@ exports.getExportCity = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
+    const wave = parseInt(req.query.wave);
     var data = await excelData(pid);
     var isifile = [];
 
@@ -2820,7 +3953,7 @@ exports.getExportCity = async function (req, res) {
         tidakDitemukan: 0,
         pindahAlamat: 0,
         tutupSaatKunjungan: 0,
-        pangkalanAktif2: 0, // belum masuk
+        pangkalanAktif2: 0,
         notBoardingWithDevice: 0,
         notBoardingNoDevice: 0,
         boardingNoTransaction: 0,
@@ -2839,78 +3972,176 @@ exports.getExportCity = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      var findData = await findObj(result, 'cityName', data[i]['A3']);
-      if (findData !== -1) {
-        result[findData].visit = result[findData].visit + 1;
+      if (wave !== 0) {
+        if (data[i]['WAVE'] === wave) {
+          var findData = await findObj(result, 'cityName', data[i]['A3']);
+          if (findData !== -1) {
+            result[findData].visit = result[findData].visit + 1;
 
-        //status kunjungan pangkalan
-        if (data[i]['A6'] === 1) {
-          result[findData].pangkalanAktif = result[findData].pangkalanAktif + 1;
-        }
-        if (data[i]['A6'] === 2) {
-          result[findData].tutupPermanen = result[findData].tutupPermanen + 1;
-        }
-        if (data[i]['A6'] === 3) {
-          result[findData].tidakDitemukan = result[findData].tidakDitemukan + 1;
-        }
-        if (data[i]['A6'] === 4) {
-          result[findData].pindahAlamat = result[findData].pindahAlamat + 1;
-        }
-        if (data[i]['A6'] === 5) {
-          result[findData].tutupSaatKunjungan =
-            result[findData].tutupSaatKunjungan + 1;
-        }
+            //status kunjungan pangkalan
+            if (
+              data[i]['A6'] === 1 &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[findData].pangkalanAktif =
+                result[findData].pangkalanAktif + 1;
+            }
+            if (data[i]['A6'] === 2) {
+              result[findData].tutupPermanen =
+                result[findData].tutupPermanen + 1;
+            }
+            if (data[i]['A6'] === 3) {
+              result[findData].tidakDitemukan =
+                result[findData].tidakDitemukan + 1;
+            }
+            if (data[i]['A6'] === 4) {
+              result[findData].pindahAlamat = result[findData].pindahAlamat + 1;
+            }
+            if (data[i]['A6'] === 5) {
+              result[findData].tutupSaatKunjungan =
+                result[findData].tutupSaatKunjungan + 1;
+            }
+            if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+              result[findData].pangkalanAktif2 =
+                result[findData].pangkalanAktif2 + 1;
+            }
 
-        // status boarding pangkalan
-        if (data[i]['A113'] === 1) {
-          result[findData].notBoardingWithDevice =
-            result[findData].notBoardingWithDevice + 1;
-        }
-        if (data[i]['A113'] === 2) {
-          result[findData].notBoardingNoDevice =
-            result[findData].notBoardingNoDevice + 1;
-        }
-        if (data[i]['A12'] === 2) {
-          result[findData].boardingNoTransaction =
-            result[findData].boardingNoTransaction + 1;
-        }
-        if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
-          result[findData].boardingTransaction =
-            result[findData].boardingTransaction + 1;
-        }
+            // status boarding pangkalan
+            if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+              result[findData].notBoardingWithDevice =
+                result[findData].notBoardingWithDevice + 1;
+            }
+            if (data[i]['A113'] === 2) {
+              result[findData].notBoardingNoDevice =
+                result[findData].notBoardingNoDevice + 1;
+            }
+            if (data[i]['A12'] === 2) {
+              result[findData].boardingNoTransaction =
+                result[findData].boardingNoTransaction + 1;
+            }
+            if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+              result[findData].boardingTransaction =
+                result[findData].boardingTransaction + 1;
+            }
 
-        // belum on boarding
-        if (data[i]['A31'] === 1) {
-          result[findData].successBoarding =
-            result[findData].successBoarding + 1;
-        }
-        if (data[i]['A31'] === 2) {
-          result[findData].failedEmail = result[findData].failedEmail + 1;
-        }
-        if (data[i]['A31'] === 3) {
-          result[findData].failedDontWantOnBoard =
-            result[findData].failedDontWantOnBoard + 1;
-        }
-        if (data[i]['A31'] === 4) {
-          result[findData].failedOthers = result[findData].failedOthers + 1;
-        }
+            // belum on boarding
+            if (data[i]['A31'] === 1) {
+              result[findData].successBoarding =
+                result[findData].successBoarding + 1;
+            }
+            if (data[i]['A31'] === 2) {
+              result[findData].failedEmail = result[findData].failedEmail + 1;
+            }
+            if (data[i]['A31'] === 3) {
+              result[findData].failedDontWantOnBoard =
+                result[findData].failedDontWantOnBoard + 1;
+            }
+            if (data[i]['A31'] === 4) {
+              result[findData].failedOthers = result[findData].failedOthers + 1;
+            }
 
-        // transaction
-        if (data[i]['A50'] === 1) {
-          result[findData].boardingSuccessTransaction =
-            result[findData].boardingSuccessTransaction + 1;
+            // transaction
+            if (data[i]['A50'] === 1) {
+              result[findData].boardingSuccessTransaction =
+                result[findData].boardingSuccessTransaction + 1;
+            }
+            if (data[i]['A50'] === 2 || data[i]['A50'] === 3) {
+              result[findData].boardingFailedTransaction =
+                result[findData].boardingFailedTransaction + 1;
+            }
+            if (data[i]['A33'] === 1) {
+              result[findData].successTransaction =
+                result[findData].successTransaction + 1;
+            }
+            if (data[i]['A33'] === 2 || data[i]['A33'] === 3) {
+              result[findData].failedTransaction =
+                result[findData].failedTransaction + 1;
+            }
+          }
         }
-        if (data[i]['A50'] === 2 || data[i]['A50'] === 3) {
-          result[findData].boardingFailedTransaction =
-            result[findData].boardingFailedTransaction + 1;
-        }
-        if (data[i]['A33'] === 1) {
-          result[findData].successTransaction =
-            result[findData].successTransaction + 1;
-        }
-        if (data[i]['A33'] === 2 || data[i]['A33'] === 3) {
-          result[findData].failedTransaction =
-            result[findData].failedTransaction + 1;
+      } else {
+        var findData = await findObj(result, 'cityName', data[i]['A3']);
+        if (findData !== -1) {
+          result[findData].visit = result[findData].visit + 1;
+
+          //status kunjungan pangkalan
+          if (
+            data[i]['A6'] === 1 &&
+            (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+          ) {
+            result[findData].pangkalanAktif =
+              result[findData].pangkalanAktif + 1;
+          }
+          if (data[i]['A6'] === 2) {
+            result[findData].tutupPermanen = result[findData].tutupPermanen + 1;
+          }
+          if (data[i]['A6'] === 3) {
+            result[findData].tidakDitemukan =
+              result[findData].tidakDitemukan + 1;
+          }
+          if (data[i]['A6'] === 4) {
+            result[findData].pindahAlamat = result[findData].pindahAlamat + 1;
+          }
+          if (data[i]['A6'] === 5) {
+            result[findData].tutupSaatKunjungan =
+              result[findData].tutupSaatKunjungan + 1;
+          }
+          if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+            result[findData].pangkalanAktif2 =
+              result[findData].pangkalanAktif2 + 1;
+          }
+
+          // status boarding pangkalan
+          if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+            result[findData].notBoardingWithDevice =
+              result[findData].notBoardingWithDevice + 1;
+          }
+          if (data[i]['A113'] === 2) {
+            result[findData].notBoardingNoDevice =
+              result[findData].notBoardingNoDevice + 1;
+          }
+          if (data[i]['A12'] === 2) {
+            result[findData].boardingNoTransaction =
+              result[findData].boardingNoTransaction + 1;
+          }
+          if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+            result[findData].boardingTransaction =
+              result[findData].boardingTransaction + 1;
+          }
+
+          // belum on boarding
+          if (data[i]['A31'] === 1) {
+            result[findData].successBoarding =
+              result[findData].successBoarding + 1;
+          }
+          if (data[i]['A31'] === 2) {
+            result[findData].failedEmail = result[findData].failedEmail + 1;
+          }
+          if (data[i]['A31'] === 3) {
+            result[findData].failedDontWantOnBoard =
+              result[findData].failedDontWantOnBoard + 1;
+          }
+          if (data[i]['A31'] === 4) {
+            result[findData].failedOthers = result[findData].failedOthers + 1;
+          }
+
+          // transaction
+          if (data[i]['A50'] === 1) {
+            result[findData].boardingSuccessTransaction =
+              result[findData].boardingSuccessTransaction + 1;
+          }
+          if (data[i]['A50'] === 2 || data[i]['A50'] === 3) {
+            result[findData].boardingFailedTransaction =
+              result[findData].boardingFailedTransaction + 1;
+          }
+          if (data[i]['A33'] === 1) {
+            result[findData].successTransaction =
+              result[findData].successTransaction + 1;
+          }
+          if (data[i]['A33'] === 2 || data[i]['A33'] === 3) {
+            result[findData].failedTransaction =
+              result[findData].failedTransaction + 1;
+          }
         }
       }
     }
@@ -2976,10 +4207,10 @@ exports.getExportCity = async function (req, res) {
         'Tidak berhasil - email salah',
         'Tidak berhasil - Pemilik tidak ingin on boarding',
         'Tidak berhasil - lainnya',
-        'Berhasil transaksi',
-        'tidak berhasil transaksi',
-        'Berhasil transaksi',
-        'tidak berhasil transaksi',
+        'Berhasil transaksi (Belum boarding, berhasil dibantu boarding)',
+        'tidak berhasil transaksi (Belum boarding, berhasil dibantu boarding)',
+        'Berhasil transaksi (Pangkalan yang belum transaksi)',
+        'tidak berhasil transaksi (Pangkalan yang belum transaksi)',
       ],
     ];
 
@@ -2998,7 +4229,7 @@ exports.getExportCity = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success export data pangkalan',
-            data: `https://dashboard.kadence.co.id/fileexcel/${newfilename}`,
+            data: `http://localhost:3333/fileexcel/${newfilename}`,
           });
         }
       }
