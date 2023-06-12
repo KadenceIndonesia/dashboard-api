@@ -5,6 +5,7 @@ const regionSchema = mongoose.Schema({
   idRegion: Number,
   idProject: String,
   regionName: String,
+  target: Number
 });
 
 module.exports = mongoose.model('Region', regionSchema);

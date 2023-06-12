@@ -7,7 +7,8 @@ const provinceSchema = mongoose.Schema({
   regionName: String,
   idProject: String,
   provinceName: String,
-  target: Number
+  target: Number,
+  mapCode: String
 });
 
 module.exports = mongoose.model('Province', provinceSchema);

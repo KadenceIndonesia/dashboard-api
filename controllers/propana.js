@@ -2132,10 +2132,68 @@ exports.getSortBoarding = async function (req, res) {
 exports.getVisitByRegion = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const region = req.query.region;
     const province = req.query.province;
 
     var result = [];
-    if (parseInt(province) !== 0) {
+    var total = 0;
+
+    if (region !== '0') {
+      var _getAdminstrationRegion = await getAdminstrationRegionByName(
+        pid,
+        region
+      );
+    } else {
+      var _getAdminstrationRegion = await getAdminstrationRegion(pid);
+    }
+
+    for (let i = 0; i < _getAdminstrationRegion.length; i++) {
+      result.push({
+        code: _getAdminstrationRegion[i].idRegion,
+        label: _getAdminstrationRegion[i].regionName,
+        target: _getAdminstrationRegion[i].target,
+        count: 0,
+        value: 0,
+      });
+    }
+
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      var findData = await findObj(result, 'label', data[i]['A1']);
+      if (findData !== -1) {
+        result[findData].count = result[findData].count + 1;
+        total++;
+      }
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      result[i].value = countPercent(result[i].count, result[i].target);
+    }
+    bubbleSort(result, 'value');
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Administration provinces',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getVisitByProvince = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const province = req.query.province;
+    const region = req.query.region;
+
+    var result = [];
+    if (region !== '0' && province === '0') {
+      var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
+        pid,
+        region
+      );
+    } else if (province !== '0') {
       var _getAdminstrationProvince = await getAdminstrationProvinceById(
         pid,
         province
@@ -2150,22 +2208,25 @@ exports.getVisitByRegion = async function (req, res) {
         target: _getAdminstrationProvince[i].target,
         count: 0,
         value: 0,
+        mapCode: _getAdminstrationProvince[i].mapCode,
       });
     }
 
     var data = await excelData(pid);
+    var total = 0;
 
     for (let i = 0; i < data.length; i++) {
       var findData = await findObj(result, 'label', data[i]['A2']);
       if (findData !== -1) {
-        result[findData].value = result[findData].value + 1;
+        result[findData].count = result[findData].count + 1;
+        total++;
       }
     }
 
-    // for (let i = 0; i < result.length; i++) {
-    //   result[i].value = result[i].count / result[i].target;
-    // }
-
+    for (let i = 0; i < result.length; i++) {
+      result[i].value = countPercent(result[i].count, result[i].target);
+    }
+    bubbleSort(result, 'value');
     res.status(200).json({
       statusCode: 200,
       message: 'Success get Administration provinces',
@@ -4239,6 +4300,471 @@ exports.getExportCity = async function (req, res) {
     //   message: 'Success get touchpoint score parent',
     //   data: isifile,
     // });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getProgressNotBoarding = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+    const wave = parseInt(req.query.wave);
+
+    var result = [];
+    var week = [];
+    var weekslice = [];
+
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      if (week.indexOf(data[i]['WEEK']) === -1) {
+        week.push(data[i]['WEEK']);
+      }
+    }
+
+    weekslice = week.slice(-4);
+
+    for (let i = 0; i < weekslice.length; i++) {
+      result.push({
+        week: weekslice[i],
+        total: 0,
+        data: [
+          { label: 'Tidak Mau', count: 0, value: 0 },
+          { label: 'Masalah Email', count: 0, value: 0 },
+          { label: 'Masalah Jaringan', count: 0, value: 0 },
+          { label: 'Handphone Tidak Memadai', count: 0, value: 0 },
+          { label: 'Ke-tidak-praktisan', count: 0, value: 0 },
+        ],
+      });
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      var findWeek = weekslice.indexOf(data[i]['WEEK']);
+      if (findWeek !== -1) {
+        if (wave !== 0) {
+          if (data[i]['WAVE'] === wave) {
+            if (region !== '0' && province === '0') {
+              if (data[i]['A1'] === region) {
+                if (data[i]['A12'] === 1) {
+                  for (let x = 1; x <= 15; x++) {
+                    if (data[i][`A31b_${x}`] !== 0) {
+                      result[findWeek].total++;
+                      if (x === 1) {
+                        result[findWeek].data[0].count++;
+                      } else if (x > 1 && x <= 5) {
+                        result[findWeek].data[1].count++;
+                      } else if (x > 5 && x <= 7) {
+                        result[findWeek].data[2].count++;
+                      } else if (x > 7 && x <= 10) {
+                        result[findWeek].data[3].count++;
+                      } else {
+                        result[findWeek].data[4].count++;
+                      }
+                    }
+                  }
+                }
+              }
+            } else if (region !== '0' && province !== '0') {
+              if (city !== '0') {
+                if (data[i]['A3'] === city) {
+                  if (data[i]['A12'] === 1) {
+                    for (let x = 1; x <= 15; x++) {
+                      if (data[i][`A31b_${x}`] !== 0) {
+                        result[findWeek].total++;
+                        if (x === 1) {
+                          result[findWeek].data[0].count++;
+                        } else if (x > 1 && x <= 5) {
+                          result[findWeek].data[1].count++;
+                        } else if (x > 5 && x <= 7) {
+                          result[findWeek].data[2].count++;
+                        } else if (x > 7 && x <= 10) {
+                          result[findWeek].data[3].count++;
+                        } else {
+                          result[findWeek].data[4].count++;
+                        }
+                      }
+                    }
+                  }
+                }
+              } else {
+                if (data[i]['A2'] === province) {
+                  if (data[i]['A12'] === 1) {
+                    for (let x = 1; x <= 15; x++) {
+                      if (data[i][`A31b_${x}`] !== 0) {
+                        result[findWeek].total++;
+                        if (x === 1) {
+                          result[findWeek].data[0].count++;
+                        } else if (x > 1 && x <= 5) {
+                          result[findWeek].data[1].count++;
+                        } else if (x > 5 && x <= 7) {
+                          result[findWeek].data[2].count++;
+                        } else if (x > 7 && x <= 10) {
+                          result[findWeek].data[3].count++;
+                        } else {
+                          result[findWeek].data[4].count++;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            } else if (region === '0' && province !== '0') {
+              if (city !== '0') {
+                if (data[i]['A3'] === city) {
+                  if (data[i]['A12'] === 1) {
+                    for (let x = 1; x <= 15; x++) {
+                      if (data[i][`A31b_${x}`] !== 0) {
+                        result[findWeek].total++;
+                        if (x === 1) {
+                          result[findWeek].data[0].count++;
+                        } else if (x > 1 && x <= 5) {
+                          result[findWeek].data[1].count++;
+                        } else if (x > 5 && x <= 7) {
+                          result[findWeek].data[2].count++;
+                        } else if (x > 7 && x <= 10) {
+                          result[findWeek].data[3].count++;
+                        } else {
+                          result[findWeek].data[4].count++;
+                        }
+                      }
+                    }
+                  }
+                }
+              } else {
+                if (data[i]['A12'] === 1) {
+                  for (let x = 1; x <= 15; x++) {
+                    if (data[i][`A31b_${x}`] !== 0) {
+                      result[findWeek].total++;
+                      if (x === 1) {
+                        result[findWeek].data[0].count++;
+                      } else if (x > 1 && x <= 5) {
+                        result[findWeek].data[1].count++;
+                      } else if (x > 5 && x <= 7) {
+                        result[findWeek].data[2].count++;
+                      } else if (x > 7 && x <= 10) {
+                        result[findWeek].data[3].count++;
+                      } else {
+                        result[findWeek].data[4].count++;
+                      }
+                    }
+                  }
+                }
+              }
+            } else {
+              if (data[i]['A12'] === 1) {
+                for (let x = 1; x <= 15; x++) {
+                  if (data[i][`A31b_${x}`] !== 0) {
+                    result[findWeek].total++;
+                    if (x === 1) {
+                      result[findWeek].data[0].count++;
+                    } else if (x > 1 && x <= 5) {
+                      result[findWeek].data[1].count++;
+                    } else if (x > 5 && x <= 7) {
+                      result[findWeek].data[2].count++;
+                    } else if (x > 7 && x <= 10) {
+                      result[findWeek].data[3].count++;
+                    } else {
+                      result[findWeek].data[4].count++;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        } else {
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              if (data[i]['A12'] === 1) {
+                for (let x = 1; x <= 15; x++) {
+                  if (data[i][`A31b_${x}`] !== 0) {
+                    result[findWeek].total++;
+                    if (x === 1) {
+                      result[findWeek].data[0].count++;
+                    } else if (x > 1 && x <= 5) {
+                      result[findWeek].data[1].count++;
+                    } else if (x > 5 && x <= 7) {
+                      result[findWeek].data[2].count++;
+                    } else if (x > 7 && x <= 10) {
+                      result[findWeek].data[3].count++;
+                    } else {
+                      result[findWeek].data[4].count++;
+                    }
+                  }
+                }
+              }
+            }
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                if (data[i]['A12'] === 1) {
+                  for (let x = 1; x <= 15; x++) {
+                    if (data[i][`A31b_${x}`] !== 0) {
+                      result[findWeek].total++;
+                      if (x === 1) {
+                        result[findWeek].data[0].count++;
+                      } else if (x > 1 && x <= 5) {
+                        result[findWeek].data[1].count++;
+                      } else if (x > 5 && x <= 7) {
+                        result[findWeek].data[2].count++;
+                      } else if (x > 7 && x <= 10) {
+                        result[findWeek].data[3].count++;
+                      } else {
+                        result[findWeek].data[4].count++;
+                      }
+                    }
+                  }
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                if (data[i]['A12'] === 1) {
+                  for (let x = 1; x <= 15; x++) {
+                    if (data[i][`A31b_${x}`] !== 0) {
+                      result[findWeek].total++;
+                      if (x === 1) {
+                        result[findWeek].data[0].count++;
+                      } else if (x > 1 && x <= 5) {
+                        result[findWeek].data[1].count++;
+                      } else if (x > 5 && x <= 7) {
+                        result[findWeek].data[2].count++;
+                      } else if (x > 7 && x <= 10) {
+                        result[findWeek].data[3].count++;
+                      } else {
+                        result[findWeek].data[4].count++;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                if (data[i]['A12'] === 1) {
+                  for (let x = 1; x <= 15; x++) {
+                    if (data[i][`A31b_${x}`] !== 0) {
+                      result[findWeek].total++;
+                      if (x === 1) {
+                        result[findWeek].data[0].count++;
+                      } else if (x > 1 && x <= 5) {
+                        result[findWeek].data[1].count++;
+                      } else if (x > 5 && x <= 7) {
+                        result[findWeek].data[2].count++;
+                      } else if (x > 7 && x <= 10) {
+                        result[findWeek].data[3].count++;
+                      } else {
+                        result[findWeek].data[4].count++;
+                      }
+                    }
+                  }
+                }
+              }
+            } else {
+              if (data[i]['A12'] === 1) {
+                for (let x = 1; x <= 15; x++) {
+                  if (data[i][`A31b_${x}`] !== 0) {
+                    result[findWeek].total++;
+                    if (x === 1) {
+                      result[findWeek].data[0].count++;
+                    } else if (x > 1 && x <= 5) {
+                      result[findWeek].data[1].count++;
+                    } else if (x > 5 && x <= 7) {
+                      result[findWeek].data[2].count++;
+                    } else if (x > 7 && x <= 10) {
+                      result[findWeek].data[3].count++;
+                    } else {
+                      result[findWeek].data[4].count++;
+                    }
+                  }
+                }
+              }
+            }
+          } else {
+            if (data[i]['A12'] === 1) {
+              for (let x = 1; x <= 15; x++) {
+                if (data[i][`A31b_${x}`] !== 0) {
+                  result[findWeek].total++;
+                  if (x === 1) {
+                    result[findWeek].data[0].count++;
+                  } else if (x > 1 && x <= 5) {
+                    result[findWeek].data[1].count++;
+                  } else if (x > 5 && x <= 7) {
+                    result[findWeek].data[2].count++;
+                  } else if (x > 7 && x <= 10) {
+                    result[findWeek].data[3].count++;
+                  } else {
+                    result[findWeek].data[4].count++;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      for (let x = 0; x < result[i].data.length; x++) {
+        result[i].data[x].value = countPercent(
+          result[i].data[x].count,
+          result[i].total
+        );
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Sort Poster',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getProgressOnBoardingTransaction = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+    const wave = parseInt(req.query.wave);
+
+    var result = [];
+    var week = [];
+    var weekslice = [];
+
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      if (week.indexOf(data[i]['WEEK']) === -1) {
+        week.push(data[i]['WEEK']);
+      }
+    }
+
+    weekslice = week.slice(-4);
+
+    for (let i = 0; i < weekslice.length; i++) {
+      result.push({
+        week: weekslice[i],
+        total: 0,
+        data: [
+          { label: 'SINYAL/ JARINGAN KURANG BAIK', count: 0, value: 0 },
+          { label: 'TAMPILAN WEBSITE YANG MEMBINGUNGKAN', count: 0, value: 0 },
+          { label: 'TIDAK MENGERTI MENGGUNAKAN WEBSITE', count: 0, value: 0 },
+          { label: 'BELUM SEMPAT/ BELUM BUTUH', count: 0, value: 0 },
+          { label: 'KE-TIDAK-PRAKTISAN', count: 0, value: 0 },
+          { label: 'PEMBELI/ STOK GAS YANG SEDIKIT', count: 0, value: 0 },
+          { label: 'MASALAH EMAIL', count: 0, value: 0 },
+          { label: 'MASALAH KTP/ KK', count: 0, value: 0 },
+          { label: 'LAINNYA', count: 0, value: 0 },
+        ],
+      });
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      var findWeek = weekslice.indexOf(data[i]['WEEK']);
+      if (findWeek !== -1) {
+        if (wave !== 0) {
+          if (data[i]['WAVE'] === wave) {
+            if (region !== '0' && province === '0') {
+              if (data[i]['A1'] === region) {
+                //
+              }
+            } else if (region !== '0' && province !== '0') {
+              if (city !== '0') {
+                if (data[i]['A3'] === city) {
+                  //
+                }
+              } else {
+                if (data[i]['A2'] === province) {
+                  //
+                }
+              }
+            } else if (region === '0' && province !== '0') {
+              if (city !== '0') {
+                if (data[i]['A3'] === city) {
+                  //
+                }
+              } else {
+                //
+              }
+            } else {
+              //
+            }
+          }
+        } else {
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              //
+            }
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                //
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                //
+              }
+            }
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                //
+              }
+            } else {
+              //
+            }
+          } else {
+            if (data[i]['A12'] === 2) {
+              for (let x = 1; x <= 27; x++) {
+                if (data[i][`A18_${x}`] !== 0) {
+                  result[findWeek].total++;
+                  if (x >= 1 && x <= 4) {
+                    result[findWeek].data[0].count++;
+                  } else if (x > 4 && x <= 6) {
+                    result[findWeek].data[1].count++;
+                  } else if (x > 6 && x <= 9) {
+                    result[findWeek].data[2].count++;
+                  } else if (x > 9 && x <= 11) {
+                    result[findWeek].data[3].count++;
+                  } else if (x > 11 && x <= 13) {
+                    result[findWeek].data[4].count++;
+                  } else if (x > 13 && x <= 16) {
+                    result[findWeek].data[5].count++;
+                  } else if (x > 16 && x <= 19) {
+                    result[findWeek].data[6].count++;
+                  } else if (x > 19 && x <= 24) {
+                    result[findWeek].data[7].count++;
+                  } else {
+                    result[findWeek].data[8].count++;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      for (let x = 0; x < result[i].data.length; x++) {
+        result[i].data[x].value = countPercent(
+          result[i].data[x].count,
+          result[i].total
+        );
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Sort Poster',
+      data: result,
+    });
   } catch (error) {
     res.status(400).send(error);
   }

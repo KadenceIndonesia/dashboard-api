@@ -6,6 +6,7 @@ Router.get('/:pid/achievement/visit', propanaController.getVisitAchievement);
 Router.get('/:pid/achievement/status-visit', propanaController.getStatusVisitAchievement); //done
 Router.get('/:pid/achievement/status-visit-percent', propanaController.getStatusVisitAchievementPercent); //done
 Router.get('/:pid/achievement/visit-region', propanaController.getVisitByRegion);
+Router.get('/:pid/achievement/visit-province', propanaController.getVisitByProvince);
 Router.get('/:pid/achievement/visit-city', propanaController.getVisitByCity);
 Router.get('/:pid/achievement/status-boarding-pangkalan', propanaController.getStatusOnBoardingPangkalan); //done wave
 Router.get('/:pid/achievement/help-boarding', propanaController.getHelpBoardingPangkalan); //done wave
@@ -31,6 +32,9 @@ Router.get('/:pid/pangkalan/detail/:key', propanaController.getDetailPangkalan);
 Router.get('/:pid/pangkalan/export', propanaController.getExportPangkalan);
 Router.get('/:pid/city/export', propanaController.getExportCity);
 
+//progress
+Router.get('/:pid/progress/not-boarding', propanaController.getProgressNotBoarding);
+Router.get('/:pid/progress/on-boarding-transaction', propanaController.getProgressOnBoardingTransaction);
 
 
 module.exports = Router;

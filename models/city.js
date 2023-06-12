@@ -9,7 +9,8 @@ const citySchema = mongoose.Schema({
   cityName: String,
   target: Number,
   dataList: Number,
-  list: Number
+  list: Number,
+  others: Number
 });
 
 module.exports = mongoose.model('City', citySchema);

@@ -405,7 +405,6 @@ exports.dataByBreak = async function (req, res) {
   var getattributebypid = await getAttributesByPid(pid, qidx);
   var rawdata = [];
   var labelAttr;
-  console.log("dataByBreak");
 
   const filterBreak1 = (i) => {
     if (code1 != "all") {
