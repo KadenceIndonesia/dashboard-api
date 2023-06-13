@@ -8,6 +8,7 @@ Router.get('/:pid/achievement/status-visit-percent', propanaController.getStatus
 Router.get('/:pid/achievement/visit-region', propanaController.getVisitByRegion);
 Router.get('/:pid/achievement/visit-province', propanaController.getVisitByProvince);
 Router.get('/:pid/achievement/visit-city', propanaController.getVisitByCity);
+Router.get('/:pid/achievement/status-pangkalan', propanaController.getStatusPangkalan);
 Router.get('/:pid/achievement/status-boarding-pangkalan', propanaController.getStatusOnBoardingPangkalan); //done wave
 Router.get('/:pid/achievement/help-boarding', propanaController.getHelpBoardingPangkalan); //done wave
 Router.get('/:pid/sort/boarding/:type', propanaController.getSortBoarding); //done wave

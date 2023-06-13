@@ -636,6 +636,293 @@ exports.getStatusVisitAchievement = async function (req, res) {
   }
 };
 
+exports.getStatusPangkalan = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+    const wave = parseInt(req.query.wave);
+
+    var result = [
+      {
+        label: 'Pangkalan aktif',
+        count: 0,
+        value: 0,
+      },
+      {
+        label: 'Tidak berkunjung (arahan SBM)',
+        count: 0,
+        value: 0,
+      },
+      {
+        label: 'Lainnya',
+        count: 0,
+        value: 0,
+      },
+    ];
+    var total = 0;
+
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      if (wave !== 0) {
+        if (data[i]['WAVE'] === wave) {
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              total++;
+              if (
+                data[i]['A6'] === 1 &&
+                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+              ) {
+                result[0].count++;
+              }
+              if (
+                (data[i]['A6'] === 2 ||
+                  data[i]['A6'] === 3 ||
+                  data[i]['A6'] === 4 ||
+                  data[i]['A6'] === 5) &&
+                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+              ) {
+                result[1].count++;
+              }
+            }
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                total++;
+                if (
+                  data[i]['A6'] === 1 &&
+                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+                ) {
+                  result[0].count++;
+                }
+                if (
+                  (data[i]['A6'] === 2 ||
+                    data[i]['A6'] === 3 ||
+                    data[i]['A6'] === 4 ||
+                    data[i]['A6'] === 5) &&
+                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+                ) {
+                  result[1].count++;
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                total++;
+                if (
+                  data[i]['A6'] === 1 &&
+                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+                ) {
+                  result[0].count++;
+                }
+                if (
+                  (data[i]['A6'] === 2 ||
+                    data[i]['A6'] === 3 ||
+                    data[i]['A6'] === 4 ||
+                    data[i]['A6'] === 5) &&
+                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+                ) {
+                  result[1].count++;
+                }
+              }
+            }
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                total++;
+                if (
+                  data[i]['A6'] === 1 &&
+                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+                ) {
+                  result[0].count++;
+                }
+                if (
+                  (data[i]['A6'] === 2 ||
+                    data[i]['A6'] === 3 ||
+                    data[i]['A6'] === 4 ||
+                    data[i]['A6'] === 5) &&
+                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+                ) {
+                  result[1].count++;
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                total++;
+                if (
+                  data[i]['A6'] === 1 &&
+                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+                ) {
+                  result[0].count++;
+                }
+                if (
+                  (data[i]['A6'] === 2 ||
+                    data[i]['A6'] === 3 ||
+                    data[i]['A6'] === 4 ||
+                    data[i]['A6'] === 5) &&
+                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+                ) {
+                  result[1].count++;
+                }
+              }
+            }
+          } else {
+            total++;
+            if (
+              data[i]['A6'] === 1 &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[0].count++;
+            }
+            if (
+              (data[i]['A6'] === 2 ||
+                data[i]['A6'] === 3 ||
+                data[i]['A6'] === 4 ||
+                data[i]['A6'] === 5) &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[1].count++;
+            }
+          }
+        }
+      } else {
+        if (region !== '0' && province === '0') {
+          if (data[i]['A1'] === region) {
+            total++;
+            if (
+              data[i]['A6'] === 1 &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[0].count++;
+            }
+            if (
+              (data[i]['A6'] === 2 ||
+                data[i]['A6'] === 3 ||
+                data[i]['A6'] === 4 ||
+                data[i]['A6'] === 5) &&
+              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+            ) {
+              result[1].count++;
+            }
+          }
+        } else if (region !== '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              total++;
+              if (
+                data[i]['A6'] === 1 &&
+                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+              ) {
+                result[0].count++;
+              }
+              if (
+                (data[i]['A6'] === 2 ||
+                  data[i]['A6'] === 3 ||
+                  data[i]['A6'] === 4 ||
+                  data[i]['A6'] === 5) &&
+                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+              ) {
+                result[1].count++;
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              total++;
+              if (
+                data[i]['A6'] === 1 &&
+                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+              ) {
+                result[0].count++;
+              }
+              if (
+                (data[i]['A6'] === 2 ||
+                  data[i]['A6'] === 3 ||
+                  data[i]['A6'] === 4 ||
+                  data[i]['A6'] === 5) &&
+                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+              ) {
+                result[1].count++;
+              }
+            }
+          }
+        } else if (region === '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              total++;
+              if (
+                data[i]['A6'] === 1 &&
+                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+              ) {
+                result[0].count++;
+              }
+              if (
+                (data[i]['A6'] === 2 ||
+                  data[i]['A6'] === 3 ||
+                  data[i]['A6'] === 4 ||
+                  data[i]['A6'] === 5) &&
+                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+              ) {
+                result[1].count++;
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              total++;
+              if (
+                data[i]['A6'] === 1 &&
+                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+              ) {
+                result[0].count++;
+              }
+              if (
+                (data[i]['A6'] === 2 ||
+                  data[i]['A6'] === 3 ||
+                  data[i]['A6'] === 4 ||
+                  data[i]['A6'] === 5) &&
+                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+              ) {
+                result[1].count++;
+              }
+            }
+          }
+        } else {
+          total++;
+          if (
+            data[i]['A6'] === 1 &&
+            (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+          ) {
+            result[0].count++;
+          }
+          if (
+            (data[i]['A6'] === 2 ||
+              data[i]['A6'] === 3 ||
+              data[i]['A6'] === 4 ||
+              data[i]['A6'] === 5) &&
+            (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+          ) {
+            result[1].count++;
+          }
+        }
+      }
+    }
+
+    result[2].count = total - result[0].count - result[1].count;
+
+    for (let i = 0; i < result.length; i++) {
+      result[i].value = countPercent(result[i].count, total);
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Sort Poster',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getStatusVisitAchievementPercent = async function (req, res) {
   try {
     const pid = req.params.pid;
