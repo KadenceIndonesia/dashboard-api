@@ -292,22 +292,25 @@ exports.getVisitAchievementByDate = async function (req, res) {
     const city = req.query.city;
     const wave = parseInt(req.query.wave);
 
-    var today = moment().format('DD MMM YYYY');
+    var today = moment().format('D MMM YYYY');
     var result = {
       date: [],
       value: [0, 0, 0, 0],
     };
-    for (let i = 3; i >= 0; i--) {
-      var days = moment().subtract(i, 'days').format('DD MMM YYYY');
-      result.date.push(days);
+    for (let i = 7; i >= 0; i--) {
+      if (i % 2 === 0) {
+        var day1 = moment().subtract(i, 'days').format('D MMM YYYY');
+        var day2 = moment()
+          .subtract(i + 1, 'days')
+          .format('D MMM YYYY');
+        result.date.push(`${day1},${day2}`);
+      }
     }
 
     var data = await excelData(pid);
     for (let i = 0; i < data.length; i++) {
       var _excelDatetoJS = excelDatetoJS(data[i]['CUT OFF DATE']);
-      var findArrayDate = result.date.indexOf(
-        moment(_excelDatetoJS).format('DD MMM YYYY')
-      );
+
       if (wave !== 0) {
         if (wave === data[i]['WAVE']) {
           if (region !== '0' && province === '0') {
@@ -412,9 +415,15 @@ exports.getVisitAchievementByDate = async function (req, res) {
             }
           }
         } else {
-          if (data[i]['S0'] === 1) {
+          for (let x = 0; x < result.date.length; x++) {
+            var splitDate = result.date[x].split(',');
+            var findArrayDate = splitDate.indexOf(
+              moment(_excelDatetoJS).format('D MMM YYYY')
+            );
             if (findArrayDate !== -1) {
-              result.value[findArrayDate] = result.value[findArrayDate] + 1;
+              if (data[i]['S0'] === 1) {
+                result.value[x] = result.value[x] + 1;
+              }
             }
           }
         }
@@ -2479,8 +2488,6 @@ exports.getVisitByRegion = async function (req, res) {
     for (let i = 0; i < result.length; i++) {
       result[i].value = countPercent(result[i].count, result[i].target);
     }
-
-    bubbleSort(result, 'value');
     res.status(200).json({
       statusCode: 200,
       message: 'Success get Administration provinces',
