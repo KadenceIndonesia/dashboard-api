@@ -193,59 +193,230 @@ exports.getVisitAchievement = async function (req, res) {
         if (wave === data[i]['WAVE']) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
-              result++;
+              if (data[i]['S0'] === 1) {
+                result++;
+              }
             }
           } else if (region !== '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                result++;
+                if (data[i]['S0'] === 1) {
+                  result++;
+                }
               }
             } else {
               if (data[i]['A2'] === province) {
-                result++;
+                if (data[i]['S0'] === 1) {
+                  result++;
+                }
               }
             }
           } else if (region === '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                result++;
+                if (data[i]['S0'] === 1) {
+                  result++;
+                }
               }
             } else {
               if (data[i]['A2'] === province) {
-                result++;
+                if (data[i]['S0'] === 1) {
+                  result++;
+                }
               }
             }
           } else {
-            result++;
+            if (data[i]['S0'] === 1) {
+              result++;
+            }
           }
         }
       } else {
         if (region !== '0' && province === '0') {
           if (data[i]['A1'] === region) {
-            result++;
+            if (data[i]['S0'] === 1) {
+              result++;
+            }
           }
         } else if (region !== '0' && province !== '0') {
           if (city !== '0') {
             if (data[i]['A3'] === city) {
-              result++;
+              if (data[i]['S0'] === 1) {
+                result++;
+              }
             }
           } else {
             if (data[i]['A2'] === province) {
-              result++;
+              if (data[i]['S0'] === 1) {
+                result++;
+              }
             }
           }
         } else if (region === '0' && province !== '0') {
           if (city !== '0') {
             if (data[i]['A3'] === city) {
-              result++;
+              if (data[i]['S0'] === 1) {
+                result++;
+              }
             }
           } else {
             if (data[i]['A2'] === province) {
-              result++;
+              if (data[i]['S0'] === 1) {
+                result++;
+              }
             }
           }
         } else {
-          result++;
+          if (data[i]['S0'] === 1) {
+            result++;
+          }
+        }
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Total Visit',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getVisitAchievementByDate = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+    const wave = parseInt(req.query.wave);
+
+    var today = moment().format('DD MMM YYYY');
+    var result = {
+      date: [],
+      value: [0, 0, 0, 0],
+    };
+    for (let i = 3; i >= 0; i--) {
+      var days = moment().subtract(i, 'days').format('DD MMM YYYY');
+      result.date.push(days);
+    }
+
+    var data = await excelData(pid);
+    for (let i = 0; i < data.length; i++) {
+      var _excelDatetoJS = excelDatetoJS(data[i]['CUT OFF DATE']);
+      var findArrayDate = result.date.indexOf(
+        moment(_excelDatetoJS).format('DD MMM YYYY')
+      );
+      if (wave !== 0) {
+        if (wave === data[i]['WAVE']) {
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              if (data[i]['S0'] === 1) {
+                if (findArrayDate !== -1) {
+                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                }
+              }
+            }
+          } else if (region !== '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                if (data[i]['S0'] === 1) {
+                  if (findArrayDate !== -1) {
+                    result.value[findArrayDate] =
+                      result.value[findArrayDate] + 1;
+                  }
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                if (data[i]['S0'] === 1) {
+                  if (findArrayDate !== -1) {
+                    result.value[findArrayDate] =
+                      result.value[findArrayDate] + 1;
+                  }
+                }
+              }
+            }
+          } else if (region === '0' && province !== '0') {
+            if (city !== '0') {
+              if (data[i]['A3'] === city) {
+                if (data[i]['S0'] === 1) {
+                  if (findArrayDate !== -1) {
+                    result.value[findArrayDate] =
+                      result.value[findArrayDate] + 1;
+                  }
+                }
+              }
+            } else {
+              if (data[i]['A2'] === province) {
+                if (data[i]['S0'] === 1) {
+                  if (findArrayDate !== -1) {
+                    result.value[findArrayDate] =
+                      result.value[findArrayDate] + 1;
+                  }
+                }
+              }
+            }
+          } else {
+            if (data[i]['S0'] === 1) {
+              if (findArrayDate !== -1) {
+                result.value[findArrayDate] = result.value[findArrayDate] + 1;
+              }
+            }
+          }
+        }
+      } else {
+        if (region !== '0' && province === '0') {
+          if (data[i]['A1'] === region) {
+            if (data[i]['S0'] === 1) {
+              if (findArrayDate !== -1) {
+                result.value[findArrayDate] = result.value[findArrayDate] + 1;
+              }
+            }
+          }
+        } else if (region !== '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              if (data[i]['S0'] === 1) {
+                if (findArrayDate !== -1) {
+                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                }
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              if (data[i]['S0'] === 1) {
+                if (findArrayDate !== -1) {
+                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                }
+              }
+            }
+          }
+        } else if (region === '0' && province !== '0') {
+          if (city !== '0') {
+            if (data[i]['A3'] === city) {
+              if (data[i]['S0'] === 1) {
+                if (findArrayDate !== -1) {
+                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                }
+              }
+            }
+          } else {
+            if (data[i]['A2'] === province) {
+              if (data[i]['S0'] === 1) {
+                if (findArrayDate !== -1) {
+                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                }
+              }
+            }
+          }
+        } else {
+          if (data[i]['S0'] === 1) {
+            if (findArrayDate !== -1) {
+              result.value[findArrayDate] = result.value[findArrayDate] + 1;
+            }
+          }
         }
       }
     }
@@ -646,17 +817,12 @@ exports.getStatusPangkalan = async function (req, res) {
 
     var result = [
       {
-        label: 'Pangkalan aktif',
+        label: 'Kunjungan Fisik',
         count: 0,
         value: 0,
       },
       {
-        label: 'Tidak berkunjung (arahan SBM)',
-        count: 0,
-        value: 0,
-      },
-      {
-        label: 'Lainnya',
+        label: 'Kunjungan Non-Fisik',
         count: 0,
         value: 0,
       },
@@ -670,244 +836,98 @@ exports.getStatusPangkalan = async function (req, res) {
         if (data[i]['WAVE'] === wave) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
-              total++;
-              if (
-                data[i]['A6'] === 1 &&
-                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-              ) {
-                result[0].count++;
-              }
-              if (
-                (data[i]['A6'] === 2 ||
-                  data[i]['A6'] === 3 ||
-                  data[i]['A6'] === 4 ||
-                  data[i]['A6'] === 5) &&
-                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-              ) {
-                result[1].count++;
+              if (data[i]['P0'] >= 1) {
+                total++;
+                result[data[i]['P0'] - 1].count++;
               }
             }
           } else if (region !== '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                total++;
-                if (
-                  data[i]['A6'] === 1 &&
-                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-                ) {
-                  result[0].count++;
-                }
-                if (
-                  (data[i]['A6'] === 2 ||
-                    data[i]['A6'] === 3 ||
-                    data[i]['A6'] === 4 ||
-                    data[i]['A6'] === 5) &&
-                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-                ) {
-                  result[1].count++;
+                if (data[i]['P0'] >= 1) {
+                  total++;
+                  result[data[i]['P0'] - 1].count++;
                 }
               }
             } else {
               if (data[i]['A2'] === province) {
-                total++;
-                if (
-                  data[i]['A6'] === 1 &&
-                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-                ) {
-                  result[0].count++;
-                }
-                if (
-                  (data[i]['A6'] === 2 ||
-                    data[i]['A6'] === 3 ||
-                    data[i]['A6'] === 4 ||
-                    data[i]['A6'] === 5) &&
-                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-                ) {
-                  result[1].count++;
+                if (data[i]['P0'] >= 1) {
+                  total++;
+                  result[data[i]['P0'] - 1].count++;
                 }
               }
             }
           } else if (region === '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                total++;
-                if (
-                  data[i]['A6'] === 1 &&
-                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-                ) {
-                  result[0].count++;
-                }
-                if (
-                  (data[i]['A6'] === 2 ||
-                    data[i]['A6'] === 3 ||
-                    data[i]['A6'] === 4 ||
-                    data[i]['A6'] === 5) &&
-                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-                ) {
-                  result[1].count++;
+                if (data[i]['P0'] >= 1) {
+                  total++;
+                  result[data[i]['P0'] - 1].count++;
                 }
               }
             } else {
               if (data[i]['A2'] === province) {
-                total++;
-                if (
-                  data[i]['A6'] === 1 &&
-                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-                ) {
-                  result[0].count++;
-                }
-                if (
-                  (data[i]['A6'] === 2 ||
-                    data[i]['A6'] === 3 ||
-                    data[i]['A6'] === 4 ||
-                    data[i]['A6'] === 5) &&
-                  (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-                ) {
-                  result[1].count++;
+                if (data[i]['P0'] >= 1) {
+                  total++;
+                  result[data[i]['P0'] - 1].count++;
                 }
               }
             }
           } else {
-            total++;
-            if (
-              data[i]['A6'] === 1 &&
-              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-            ) {
-              result[0].count++;
-            }
-            if (
-              (data[i]['A6'] === 2 ||
-                data[i]['A6'] === 3 ||
-                data[i]['A6'] === 4 ||
-                data[i]['A6'] === 5) &&
-              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-            ) {
-              result[1].count++;
+            if (data[i]['P0'] >= 1) {
+              total++;
+              result[data[i]['P0'] - 1].count++;
             }
           }
         }
       } else {
         if (region !== '0' && province === '0') {
           if (data[i]['A1'] === region) {
-            total++;
-            if (
-              data[i]['A6'] === 1 &&
-              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-            ) {
-              result[0].count++;
-            }
-            if (
-              (data[i]['A6'] === 2 ||
-                data[i]['A6'] === 3 ||
-                data[i]['A6'] === 4 ||
-                data[i]['A6'] === 5) &&
-              (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-            ) {
-              result[1].count++;
+            if (data[i]['P0'] >= 1) {
+              total++;
+              result[data[i]['P0'] - 1].count++;
             }
           }
         } else if (region !== '0' && province !== '0') {
           if (city !== '0') {
             if (data[i]['A3'] === city) {
-              total++;
-              if (
-                data[i]['A6'] === 1 &&
-                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-              ) {
-                result[0].count++;
-              }
-              if (
-                (data[i]['A6'] === 2 ||
-                  data[i]['A6'] === 3 ||
-                  data[i]['A6'] === 4 ||
-                  data[i]['A6'] === 5) &&
-                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-              ) {
-                result[1].count++;
+              if (data[i]['P0'] >= 1) {
+                total++;
+                result[data[i]['P0'] - 1].count++;
               }
             }
           } else {
             if (data[i]['A2'] === province) {
-              total++;
-              if (
-                data[i]['A6'] === 1 &&
-                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-              ) {
-                result[0].count++;
-              }
-              if (
-                (data[i]['A6'] === 2 ||
-                  data[i]['A6'] === 3 ||
-                  data[i]['A6'] === 4 ||
-                  data[i]['A6'] === 5) &&
-                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-              ) {
-                result[1].count++;
+              if (data[i]['P0'] >= 1) {
+                total++;
+                result[data[i]['P0'] - 1].count++;
               }
             }
           }
         } else if (region === '0' && province !== '0') {
           if (city !== '0') {
             if (data[i]['A3'] === city) {
-              total++;
-              if (
-                data[i]['A6'] === 1 &&
-                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-              ) {
-                result[0].count++;
-              }
-              if (
-                (data[i]['A6'] === 2 ||
-                  data[i]['A6'] === 3 ||
-                  data[i]['A6'] === 4 ||
-                  data[i]['A6'] === 5) &&
-                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-              ) {
-                result[1].count++;
+              if (data[i]['P0'] >= 1) {
+                total++;
+                result[data[i]['P0'] - 1].count++;
               }
             }
           } else {
             if (data[i]['A2'] === province) {
-              total++;
-              if (
-                data[i]['A6'] === 1 &&
-                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-              ) {
-                result[0].count++;
-              }
-              if (
-                (data[i]['A6'] === 2 ||
-                  data[i]['A6'] === 3 ||
-                  data[i]['A6'] === 4 ||
-                  data[i]['A6'] === 5) &&
-                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-              ) {
-                result[1].count++;
+              if (data[i]['P0'] >= 1) {
+                total++;
+                result[data[i]['P0'] - 1].count++;
               }
             }
           }
         } else {
-          total++;
-          if (
-            data[i]['A6'] === 1 &&
-            (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-          ) {
-            result[0].count++;
-          }
-          if (
-            (data[i]['A6'] === 2 ||
-              data[i]['A6'] === 3 ||
-              data[i]['A6'] === 4 ||
-              data[i]['A6'] === 5) &&
-            (data[i]['A7'] === 1 || data[i]['A7'] === 2)
-          ) {
-            result[1].count++;
+          if (data[i]['P0'] >= 1) {
+            total++;
+            result[data[i]['P0'] - 1].count++;
           }
         }
       }
     }
-
-    result[2].count = total - result[0].count - result[1].count;
 
     for (let i = 0; i < result.length; i++) {
       result[i].value = countPercent(result[i].count, total);
@@ -2420,7 +2440,7 @@ exports.getVisitByRegion = async function (req, res) {
   try {
     const pid = req.params.pid;
     const region = req.query.region;
-    const province = req.query.province;
+    // const province = req.query.province;
 
     var result = [];
     var total = 0;
@@ -2435,8 +2455,10 @@ exports.getVisitByRegion = async function (req, res) {
     }
 
     for (let i = 0; i < _getAdminstrationRegion.length; i++) {
+      var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
+      console.log(splitCode[1]);
       result.push({
-        code: _getAdminstrationRegion[i].idRegion,
+        code: splitCode[1],
         label: _getAdminstrationRegion[i].regionName,
         target: _getAdminstrationRegion[i].target,
         count: 0,
@@ -2447,7 +2469,7 @@ exports.getVisitByRegion = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      var findData = await findObj(result, 'label', data[i]['A1']);
+      var findData = await findObj(result, 'code', data[i]['A1']);
       if (findData !== -1) {
         result[findData].count = result[findData].count + 1;
         total++;
@@ -2457,6 +2479,7 @@ exports.getVisitByRegion = async function (req, res) {
     for (let i = 0; i < result.length; i++) {
       result[i].value = countPercent(result[i].count, result[i].target);
     }
+
     bubbleSort(result, 'value');
     res.status(200).json({
       statusCode: 200,
@@ -2950,6 +2973,7 @@ exports.getDataListPangkalan = async function (req, res) {
             pangkalan: data[i]['NAMAPEMILIK'],
             kecamatan: data[i]['KECAMATAN'],
             kelurahan: data[i]['KELURAHAN'],
+            P0: data[i]['P0'],
             A6: data[i]['A6'],
             A6C: data[i]['A6C'],
             A6b: data[i]['A6b'],
@@ -2982,6 +3006,34 @@ exports.getDataListPangkalan = async function (req, res) {
               data[i]['A14_6'] > 0 && 6,
               data[i]['A14_7'] > 0 && 7,
             ];
+            var A18 = [
+              data[i]['A18_1'] > 0 && 1,
+              data[i]['A18_2'] > 0 && 2,
+              data[i]['A18_3'] > 0 && 3,
+              data[i]['A18_4'] > 0 && 4,
+              data[i]['A18_5'] > 0 && 5,
+              data[i]['A18_6'] > 0 && 6,
+              data[i]['A18_7'] > 0 && 7,
+              data[i]['A18_8'] > 0 && 8,
+              data[i]['A18_9'] > 0 && 9,
+              data[i]['A18_10'] > 0 && 10,
+              data[i]['A18_11'] > 0 && 11,
+              data[i]['A18_12'] > 0 && 12,
+              data[i]['A18_13'] > 0 && 13,
+            ];
+            var A21 = [
+              data[i]['A21_1'] > 0 && 1,
+              data[i]['A21_2'] > 0 && 2,
+              data[i]['A21_3'] > 0 && 3,
+              data[i]['A21_4'] > 0 && 4,
+              data[i]['A21_5'] > 0 && 5,
+              data[i]['A21_6'] > 0 && 6,
+              data[i]['A21_7'] > 0 && 7,
+              data[i]['A21_8'] > 0 && 8,
+              data[i]['A21_9'] > 0 && 9,
+              data[i]['A21_10'] > 0 && 10,
+              data[i]['A21_11'] > 0 && 11,
+            ];
             result.push({
               id: data[i]['KID_Pangkalan'],
               region: data[i]['A1'],
@@ -2991,6 +3043,7 @@ exports.getDataListPangkalan = async function (req, res) {
               pangkalan: data[i]['NAMAPEMILIK'],
               kecamatan: data[i]['KECAMATAN'],
               kelurahan: data[i]['KELURAHAN'],
+              P0: data[i]['P0'],
               A6: data[i]['A6'],
               A6C: data[i]['A6C'],
               A6b: data[i]['A6b'],
@@ -3003,10 +3056,10 @@ exports.getDataListPangkalan = async function (req, res) {
               A29: data[i]['A29'],
               A29B: data[i]['A29B'],
               A31: data[i]['A31'],
-              A18: '',
+              A18: A18,
               A33: data[i]['A33'],
               A20: data[i]['A20'],
-              A21: '',
+              A21: A21,
               A35: data[i]['A35'],
               A36: data[i]['A36'],
             });
@@ -3059,6 +3112,7 @@ exports.getDataListPangkalan = async function (req, res) {
               pangkalan: data[i]['NAMAPEMILIK'],
               kecamatan: data[i]['KECAMATAN'],
               kelurahan: data[i]['KELURAHAN'],
+              P0: data[i]['P0'],
               A6: data[i]['A6'],
               A6C: data[i]['A6C'],
               A6b: data[i]['A6b'],
@@ -3129,6 +3183,7 @@ exports.getDataListPangkalan = async function (req, res) {
               pangkalan: data[i]['NAMAPEMILIK'],
               kecamatan: data[i]['KECAMATAN'],
               kelurahan: data[i]['KELURAHAN'],
+              P0: data[i]['P0'],
               A6: data[i]['A6'],
               A6C: data[i]['A6C'],
               A6b: data[i]['A6b'],
@@ -3197,6 +3252,7 @@ exports.getDataListPangkalan = async function (req, res) {
               pangkalan: data[i]['NAMAPEMILIK'],
               kecamatan: data[i]['KECAMATAN'],
               kelurahan: data[i]['KELURAHAN'],
+              P0: data[i]['P0'],
               A6: data[i]['A6'],
               A6C: data[i]['A6C'],
               A6b: data[i]['A6b'],
@@ -3265,6 +3321,7 @@ exports.getDataListPangkalan = async function (req, res) {
           pangkalan: data[i]['NAMAPEMILIK'],
           kecamatan: data[i]['KECAMATAN'],
           kelurahan: data[i]['KELURAHAN'],
+          P0: data[i]['P0'],
           A6: data[i]['A6'],
           A6C: data[i]['A6C'],
           A6b: data[i]['A6b'],
@@ -4939,15 +4996,14 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
         week: weekslice[i],
         total: 0,
         data: [
-          { label: 'SINYAL/ JARINGAN KURANG BAIK', count: 0, value: 0 },
-          { label: 'TAMPILAN WEBSITE YANG MEMBINGUNGKAN', count: 0, value: 0 },
-          { label: 'TIDAK MENGERTI MENGGUNAKAN WEBSITE', count: 0, value: 0 },
-          { label: 'BELUM SEMPAT/ BELUM BUTUH', count: 0, value: 0 },
+          { label: 'TIDAK ADA PELANGGAN SAAT KUNJUNGAN', count: 0, value: 0 },
+          { label: 'BELUM PAHAM & BELUM BUTUH', count: 0, value: 0 },
           { label: 'KE-TIDAK-PRAKTISAN', count: 0, value: 0 },
-          { label: 'PEMBELI/ STOK GAS YANG SEDIKIT', count: 0, value: 0 },
+          { label: 'SINYAL/ JARINGAN YANG KURANG BAIK', count: 0, value: 0 },
+          { label: 'MASALAH KTP', count: 0, value: 0 },
+          { label: 'HANDPHONE/DEVICE YANG TIDAK MEMADAI', count: 0, value: 0 },
           { label: 'MASALAH EMAIL', count: 0, value: 0 },
-          { label: 'MASALAH KTP/ KK', count: 0, value: 0 },
-          { label: 'LAINNYA', count: 0, value: 0 },
+          { label: 'STOK BARANG SEDIKIT/ TIDAK ADA', count: 0, value: 0 },
         ],
       });
     }
@@ -4959,76 +5015,339 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
           if (data[i]['WAVE'] === wave) {
             if (region !== '0' && province === '0') {
               if (data[i]['A1'] === region) {
-                //
+                if (data[i]['A12'] === 2) {
+                  for (let x = 1; x <= 27; x++) {
+                    if (data[i][`A33b_${x}`] !== 0) {
+                      result[findWeek].total++;
+                      if (x === 1) {
+                        result[findWeek].data[0].count++;
+                      } else if (x > 1 && x <= 3) {
+                        result[findWeek].data[1].count++;
+                      } else if (x > 3 && x <= 4) {
+                        result[findWeek].data[2].count++;
+                      } else if (x > 4 && x <= 6) {
+                        result[findWeek].data[3].count++;
+                      } else if (x > 6 && x <= 7) {
+                        result[findWeek].data[4].count++;
+                      } else if (x > 7 && x <= 9) {
+                        result[findWeek].data[5].count++;
+                      } else if (x > 9 && x <= 11) {
+                        result[findWeek].data[6].count++;
+                      } else if (x > 11) {
+                        result[findWeek].data[7].count++;
+                      } else {
+                      }
+                    }
+                  }
+                }
               }
             } else if (region !== '0' && province !== '0') {
               if (city !== '0') {
                 if (data[i]['A3'] === city) {
-                  //
+                  if (data[i]['A12'] === 2) {
+                    for (let x = 1; x <= 27; x++) {
+                      if (data[i][`A33b_${x}`] !== 0) {
+                        result[findWeek].total++;
+                        if (x === 1) {
+                          result[findWeek].data[0].count++;
+                        } else if (x > 1 && x <= 3) {
+                          result[findWeek].data[1].count++;
+                        } else if (x > 3 && x <= 4) {
+                          result[findWeek].data[2].count++;
+                        } else if (x > 4 && x <= 6) {
+                          result[findWeek].data[3].count++;
+                        } else if (x > 6 && x <= 7) {
+                          result[findWeek].data[4].count++;
+                        } else if (x > 7 && x <= 9) {
+                          result[findWeek].data[5].count++;
+                        } else if (x > 9 && x <= 11) {
+                          result[findWeek].data[6].count++;
+                        } else if (x > 11) {
+                          result[findWeek].data[7].count++;
+                        } else {
+                        }
+                      }
+                    }
+                  }
                 }
               } else {
                 if (data[i]['A2'] === province) {
-                  //
+                  if (data[i]['A12'] === 2) {
+                    for (let x = 1; x <= 27; x++) {
+                      if (data[i][`A33b_${x}`] !== 0) {
+                        result[findWeek].total++;
+                        if (x === 1) {
+                          result[findWeek].data[0].count++;
+                        } else if (x > 1 && x <= 3) {
+                          result[findWeek].data[1].count++;
+                        } else if (x > 3 && x <= 4) {
+                          result[findWeek].data[2].count++;
+                        } else if (x > 4 && x <= 6) {
+                          result[findWeek].data[3].count++;
+                        } else if (x > 6 && x <= 7) {
+                          result[findWeek].data[4].count++;
+                        } else if (x > 7 && x <= 9) {
+                          result[findWeek].data[5].count++;
+                        } else if (x > 9 && x <= 11) {
+                          result[findWeek].data[6].count++;
+                        } else if (x > 11) {
+                          result[findWeek].data[7].count++;
+                        } else {
+                        }
+                      }
+                    }
+                  }
                 }
               }
             } else if (region === '0' && province !== '0') {
               if (city !== '0') {
                 if (data[i]['A3'] === city) {
-                  //
+                  if (data[i]['A12'] === 2) {
+                    for (let x = 1; x <= 27; x++) {
+                      if (data[i][`A33b_${x}`] !== 0) {
+                        result[findWeek].total++;
+                        if (x === 1) {
+                          result[findWeek].data[0].count++;
+                        } else if (x > 1 && x <= 3) {
+                          result[findWeek].data[1].count++;
+                        } else if (x > 3 && x <= 4) {
+                          result[findWeek].data[2].count++;
+                        } else if (x > 4 && x <= 6) {
+                          result[findWeek].data[3].count++;
+                        } else if (x > 6 && x <= 7) {
+                          result[findWeek].data[4].count++;
+                        } else if (x > 7 && x <= 9) {
+                          result[findWeek].data[5].count++;
+                        } else if (x > 9 && x <= 11) {
+                          result[findWeek].data[6].count++;
+                        } else if (x > 11) {
+                          result[findWeek].data[7].count++;
+                        } else {
+                        }
+                      }
+                    }
+                  }
                 }
               } else {
-                //
+                if (data[i]['A12'] === 2) {
+                  for (let x = 1; x <= 27; x++) {
+                    if (data[i][`A33b_${x}`] !== 0) {
+                      result[findWeek].total++;
+                      if (x === 1) {
+                        result[findWeek].data[0].count++;
+                      } else if (x > 1 && x <= 3) {
+                        result[findWeek].data[1].count++;
+                      } else if (x > 3 && x <= 4) {
+                        result[findWeek].data[2].count++;
+                      } else if (x > 4 && x <= 6) {
+                        result[findWeek].data[3].count++;
+                      } else if (x > 6 && x <= 7) {
+                        result[findWeek].data[4].count++;
+                      } else if (x > 7 && x <= 9) {
+                        result[findWeek].data[5].count++;
+                      } else if (x > 9 && x <= 11) {
+                        result[findWeek].data[6].count++;
+                      } else if (x > 11) {
+                        result[findWeek].data[7].count++;
+                      } else {
+                      }
+                    }
+                  }
+                }
               }
             } else {
-              //
+              if (data[i]['A12'] === 2) {
+                for (let x = 1; x <= 27; x++) {
+                  if (data[i][`A33b_${x}`] !== 0) {
+                    result[findWeek].total++;
+                    if (x === 1) {
+                      result[findWeek].data[0].count++;
+                    } else if (x > 1 && x <= 3) {
+                      result[findWeek].data[1].count++;
+                    } else if (x > 3 && x <= 4) {
+                      result[findWeek].data[2].count++;
+                    } else if (x > 4 && x <= 6) {
+                      result[findWeek].data[3].count++;
+                    } else if (x > 6 && x <= 7) {
+                      result[findWeek].data[4].count++;
+                    } else if (x > 7 && x <= 9) {
+                      result[findWeek].data[5].count++;
+                    } else if (x > 9 && x <= 11) {
+                      result[findWeek].data[6].count++;
+                    } else if (x > 11) {
+                      result[findWeek].data[7].count++;
+                    } else {
+                    }
+                  }
+                }
+              }
             }
           }
         } else {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
-              //
+              if (data[i]['A12'] === 2) {
+                for (let x = 1; x <= 27; x++) {
+                  if (data[i][`A33b_${x}`] !== 0) {
+                    result[findWeek].total++;
+                    if (x === 1) {
+                      result[findWeek].data[0].count++;
+                    } else if (x > 1 && x <= 3) {
+                      result[findWeek].data[1].count++;
+                    } else if (x > 3 && x <= 4) {
+                      result[findWeek].data[2].count++;
+                    } else if (x > 4 && x <= 6) {
+                      result[findWeek].data[3].count++;
+                    } else if (x > 6 && x <= 7) {
+                      result[findWeek].data[4].count++;
+                    } else if (x > 7 && x <= 9) {
+                      result[findWeek].data[5].count++;
+                    } else if (x > 9 && x <= 11) {
+                      result[findWeek].data[6].count++;
+                    } else if (x > 11) {
+                      result[findWeek].data[7].count++;
+                    } else {
+                    }
+                  }
+                }
+              }
             }
           } else if (region !== '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                //
+                if (data[i]['A12'] === 2) {
+                  for (let x = 1; x <= 27; x++) {
+                    if (data[i][`A33b_${x}`] !== 0) {
+                      result[findWeek].total++;
+                      if (x === 1) {
+                        result[findWeek].data[0].count++;
+                      } else if (x > 1 && x <= 3) {
+                        result[findWeek].data[1].count++;
+                      } else if (x > 3 && x <= 4) {
+                        result[findWeek].data[2].count++;
+                      } else if (x > 4 && x <= 6) {
+                        result[findWeek].data[3].count++;
+                      } else if (x > 6 && x <= 7) {
+                        result[findWeek].data[4].count++;
+                      } else if (x > 7 && x <= 9) {
+                        result[findWeek].data[5].count++;
+                      } else if (x > 9 && x <= 11) {
+                        result[findWeek].data[6].count++;
+                      } else if (x > 11) {
+                        result[findWeek].data[7].count++;
+                      } else {
+                      }
+                    }
+                  }
+                }
               }
             } else {
               if (data[i]['A2'] === province) {
-                //
+                if (data[i]['A12'] === 2) {
+                  for (let x = 1; x <= 27; x++) {
+                    if (data[i][`A33b_${x}`] !== 0) {
+                      result[findWeek].total++;
+                      if (x === 1) {
+                        result[findWeek].data[0].count++;
+                      } else if (x > 1 && x <= 3) {
+                        result[findWeek].data[1].count++;
+                      } else if (x > 3 && x <= 4) {
+                        result[findWeek].data[2].count++;
+                      } else if (x > 4 && x <= 6) {
+                        result[findWeek].data[3].count++;
+                      } else if (x > 6 && x <= 7) {
+                        result[findWeek].data[4].count++;
+                      } else if (x > 7 && x <= 9) {
+                        result[findWeek].data[5].count++;
+                      } else if (x > 9 && x <= 11) {
+                        result[findWeek].data[6].count++;
+                      } else if (x > 11) {
+                        result[findWeek].data[7].count++;
+                      } else {
+                      }
+                    }
+                  }
+                }
               }
             }
           } else if (region === '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                //
+                if (data[i]['A12'] === 2) {
+                  for (let x = 1; x <= 27; x++) {
+                    if (data[i][`A33b_${x}`] !== 0) {
+                      result[findWeek].total++;
+                      if (x === 1) {
+                        result[findWeek].data[0].count++;
+                      } else if (x > 1 && x <= 3) {
+                        result[findWeek].data[1].count++;
+                      } else if (x > 3 && x <= 4) {
+                        result[findWeek].data[2].count++;
+                      } else if (x > 4 && x <= 6) {
+                        result[findWeek].data[3].count++;
+                      } else if (x > 6 && x <= 7) {
+                        result[findWeek].data[4].count++;
+                      } else if (x > 7 && x <= 9) {
+                        result[findWeek].data[5].count++;
+                      } else if (x > 9 && x <= 11) {
+                        result[findWeek].data[6].count++;
+                      } else if (x > 11) {
+                        result[findWeek].data[7].count++;
+                      } else {
+                      }
+                    }
+                  }
+                }
               }
             } else {
-              //
+              if (data[i]['A12'] === 2) {
+                for (let x = 1; x <= 27; x++) {
+                  if (data[i][`A33b_${x}`] !== 0) {
+                    result[findWeek].total++;
+                    if (x === 1) {
+                      result[findWeek].data[0].count++;
+                    } else if (x > 1 && x <= 3) {
+                      result[findWeek].data[1].count++;
+                    } else if (x > 3 && x <= 4) {
+                      result[findWeek].data[2].count++;
+                    } else if (x > 4 && x <= 6) {
+                      result[findWeek].data[3].count++;
+                    } else if (x > 6 && x <= 7) {
+                      result[findWeek].data[4].count++;
+                    } else if (x > 7 && x <= 9) {
+                      result[findWeek].data[5].count++;
+                    } else if (x > 9 && x <= 11) {
+                      result[findWeek].data[6].count++;
+                    } else if (x > 11) {
+                      result[findWeek].data[7].count++;
+                    } else {
+                    }
+                  }
+                }
+              }
             }
           } else {
             if (data[i]['A12'] === 2) {
               for (let x = 1; x <= 27; x++) {
-                if (data[i][`A18_${x}`] !== 0) {
+                if (data[i][`A33b_${x}`] !== 0) {
                   result[findWeek].total++;
-                  if (x >= 1 && x <= 4) {
+                  if (x === 1) {
                     result[findWeek].data[0].count++;
-                  } else if (x > 4 && x <= 6) {
+                  } else if (x > 1 && x <= 3) {
                     result[findWeek].data[1].count++;
-                  } else if (x > 6 && x <= 9) {
+                  } else if (x > 3 && x <= 4) {
                     result[findWeek].data[2].count++;
-                  } else if (x > 9 && x <= 11) {
+                  } else if (x > 4 && x <= 6) {
                     result[findWeek].data[3].count++;
-                  } else if (x > 11 && x <= 13) {
+                  } else if (x > 6 && x <= 7) {
                     result[findWeek].data[4].count++;
-                  } else if (x > 13 && x <= 16) {
+                  } else if (x > 7 && x <= 9) {
                     result[findWeek].data[5].count++;
-                  } else if (x > 16 && x <= 19) {
+                  } else if (x > 9 && x <= 11) {
                     result[findWeek].data[6].count++;
-                  } else if (x > 19 && x <= 24) {
+                  } else if (x > 11) {
                     result[findWeek].data[7].count++;
                   } else {
-                    result[findWeek].data[8].count++;
                   }
                 }
               }
