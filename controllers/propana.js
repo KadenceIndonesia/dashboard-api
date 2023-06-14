@@ -832,7 +832,7 @@ exports.getStatusPangkalan = async function (req, res) {
         value: 0,
       },
       {
-        label: 'Kunjungan Non-Fisik',
+        label: 'Kunjungan Non Fisik (Arahan SBM Supaya Tidak Dikunjungi)',
         count: 0,
         value: 0,
       },
@@ -4689,6 +4689,7 @@ exports.getProgressNotBoarding = async function (req, res) {
           { label: 'Masalah Jaringan', count: 0, value: 0 },
           { label: 'Handphone Tidak Memadai', count: 0, value: 0 },
           { label: 'Ke-tidak-praktisan', count: 0, value: 0 },
+          { label: 'Masalah Agen', count: 0, value: 0 },
         ],
       });
     }
@@ -4712,8 +4713,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                         result[findWeek].data[2].count++;
                       } else if (x > 7 && x <= 10) {
                         result[findWeek].data[3].count++;
-                      } else {
+                      } else if (x > 10 && x <= 11) {
                         result[findWeek].data[4].count++;
+                      } else {
+                        result[findWeek].data[5].count++;
                       }
                     }
                   }
@@ -4734,8 +4737,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                           result[findWeek].data[2].count++;
                         } else if (x > 7 && x <= 10) {
                           result[findWeek].data[3].count++;
-                        } else {
+                        } else if (x > 10 && x <= 11) {
                           result[findWeek].data[4].count++;
+                        } else {
+                          result[findWeek].data[5].count++;
                         }
                       }
                     }
@@ -4755,8 +4760,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                           result[findWeek].data[2].count++;
                         } else if (x > 7 && x <= 10) {
                           result[findWeek].data[3].count++;
-                        } else {
+                        } else if (x > 10 && x <= 11) {
                           result[findWeek].data[4].count++;
+                        } else {
+                          result[findWeek].data[5].count++;
                         }
                       }
                     }
@@ -4778,8 +4785,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                           result[findWeek].data[2].count++;
                         } else if (x > 7 && x <= 10) {
                           result[findWeek].data[3].count++;
-                        } else {
+                        } else if (x > 10 && x <= 11) {
                           result[findWeek].data[4].count++;
+                        } else {
+                          result[findWeek].data[5].count++;
                         }
                       }
                     }
@@ -4798,8 +4807,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                         result[findWeek].data[2].count++;
                       } else if (x > 7 && x <= 10) {
                         result[findWeek].data[3].count++;
-                      } else {
+                      } else if (x > 10 && x <= 11) {
                         result[findWeek].data[4].count++;
+                      } else {
+                        result[findWeek].data[5].count++;
                       }
                     }
                   }
@@ -4818,8 +4829,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                       result[findWeek].data[2].count++;
                     } else if (x > 7 && x <= 10) {
                       result[findWeek].data[3].count++;
-                    } else {
+                    } else if (x > 10 && x <= 11) {
                       result[findWeek].data[4].count++;
+                    } else {
+                      result[findWeek].data[5].count++;
                     }
                   }
                 }
@@ -4841,8 +4854,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                       result[findWeek].data[2].count++;
                     } else if (x > 7 && x <= 10) {
                       result[findWeek].data[3].count++;
-                    } else {
+                    } else if (x > 10 && x <= 11) {
                       result[findWeek].data[4].count++;
+                    } else {
+                      result[findWeek].data[5].count++;
                     }
                   }
                 }
@@ -4863,8 +4878,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                         result[findWeek].data[2].count++;
                       } else if (x > 7 && x <= 10) {
                         result[findWeek].data[3].count++;
-                      } else {
+                      } else if (x > 10 && x <= 11) {
                         result[findWeek].data[4].count++;
+                      } else {
+                        result[findWeek].data[5].count++;
                       }
                     }
                   }
@@ -4884,8 +4901,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                         result[findWeek].data[2].count++;
                       } else if (x > 7 && x <= 10) {
                         result[findWeek].data[3].count++;
-                      } else {
+                      } else if (x > 10 && x <= 11) {
                         result[findWeek].data[4].count++;
+                      } else {
+                        result[findWeek].data[5].count++;
                       }
                     }
                   }
@@ -4907,8 +4926,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                         result[findWeek].data[2].count++;
                       } else if (x > 7 && x <= 10) {
                         result[findWeek].data[3].count++;
-                      } else {
+                      } else if (x > 10 && x <= 11) {
                         result[findWeek].data[4].count++;
+                      } else {
+                        result[findWeek].data[5].count++;
                       }
                     }
                   }
@@ -4927,8 +4948,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                       result[findWeek].data[2].count++;
                     } else if (x > 7 && x <= 10) {
                       result[findWeek].data[3].count++;
-                    } else {
+                    } else if (x > 10 && x <= 11) {
                       result[findWeek].data[4].count++;
+                    } else {
+                      result[findWeek].data[5].count++;
                     }
                   }
                 }
@@ -4947,8 +4970,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                     result[findWeek].data[2].count++;
                   } else if (x > 7 && x <= 10) {
                     result[findWeek].data[3].count++;
-                  } else {
+                  } else if (x > 10 && x <= 11) {
                     result[findWeek].data[4].count++;
+                  } else {
+                    result[findWeek].data[5].count++;
                   }
                 }
               }
