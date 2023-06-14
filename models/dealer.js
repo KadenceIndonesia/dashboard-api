@@ -10,6 +10,8 @@ const dealerSchema = mongoose.Schema({
   idProject: String,
   dealerName: String,
   type: String,
+  company: String,
+  idCompany: Number,
 });
 
 module.exports = mongoose.model('Dealer', dealerSchema);

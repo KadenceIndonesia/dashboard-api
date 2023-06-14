@@ -45,6 +45,33 @@ exports.getHyundaiRegion = async function (req, res) {
   }
 };
 
+exports.getHyundaiCompany = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+
+    //users
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+
+    var _groupingCompanyByDealer = await groupingCompanyByDealer(
+      pid,
+      accessDealerByProject
+    );
+
+    var _getCompanyByPid = await getCompanyByPid(pid, _groupingCompanyByDealer);
+    var region = [];
+    for (let i = 0; i < _getCompanyByPid.length; i++) {
+      region.push(_getCompanyByPid[i]);
+    }
+    res.status(200).json(region);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getHyundaiArea = async function (req, res) {
   try {
     const pid = req.params.pid;
@@ -180,6 +207,7 @@ exports.getHyundaiDealerDetail = async function (req, res) {
 exports.getHyundaiDealerFilter = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const company = req.query.company;
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
@@ -194,6 +222,7 @@ exports.getHyundaiDealerFilter = async function (req, res) {
 
     var _getDealerByPid = await getDealerByFilter(
       pid,
+      company,
       region,
       area,
       city,
@@ -662,6 +691,7 @@ exports.getTouchPointScoreQuarterTotal = async function (req, res) {
 exports.getTouchPointScoreRegionTotal = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const company = req.query.company;
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
@@ -676,6 +706,7 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
     var dealer = await getDealerByFilter(
       pid,
+      company,
       region,
       area,
       city,
@@ -704,7 +735,7 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
 
     var response = [];
     var base = [];
-    if (parseInt(region) === 0) {
+    if (parseInt(region) === 0 && parseInt(company) === 0) {
       for (let i = 0; i < regionArr.length; i++) {
         response.push({
           code: regionArr[i].idRegion,
@@ -733,58 +764,88 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
       }
     } else {
       // cari angka region
-      for (let i = 0; i < regionArr.length; i++) {
-        if (regionArr[i].idRegion === parseInt(region)) {
+      if (region !== '0') {
+        for (let i = 0; i < regionArr.length; i++) {
+          if (regionArr[i].idRegion === parseInt(region)) {
+            response.push({
+              code: regionArr[i].idRegion,
+              label: regionArr[i].regionName,
+              value: 0,
+            });
+            base.push(80);
+          }
+        }
+        for (let i = 0; i < response.length; i++) {
+          var _scoreTouchPointByRegion = await scoreTouchPointByRegion(
+            pid,
+            'score',
+            response[i].code,
+            quarter,
+            brand
+          );
+          var touchPointCountRegion = 0;
+          if (_scoreTouchPointByRegion.length > 0) {
+            for (let x = 0; x < _scoreTouchPointByRegion.length; x++) {
+              touchPointCountRegion =
+                touchPointCountRegion + _scoreTouchPointByRegion[x].score;
+            }
+            response[i].value =
+              touchPointCountRegion / _scoreTouchPointByRegion.length;
+          }
+        }
+
+        for (let i = 0; i < dealer.length; i++) {
           response.push({
-            code: regionArr[i].idRegion,
-            label: regionArr[i].regionName,
+            code: dealer[i].idDealer,
+            label: dealer[i].dealerName,
             value: 0,
           });
           base.push(80);
         }
-      }
-      for (let i = 0; i < response.length; i++) {
-        var _scoreTouchPointByRegion = await scoreTouchPointByRegion(
-          pid,
-          'score',
-          response[i].code,
-          quarter,
-          brand
-        );
-        var touchPointCountRegion = 0;
-        if (_scoreTouchPointByRegion.length > 0) {
-          for (let x = 0; x < _scoreTouchPointByRegion.length; x++) {
-            touchPointCountRegion =
-              touchPointCountRegion + _scoreTouchPointByRegion[x].score;
+        for (let i = 1; i < response.length; i++) {
+          var _scoreTouchPointByDealer = await scoreTouchPointByDelaer(
+            pid,
+            'score',
+            response[i].code,
+            quarter,
+            brand
+          );
+          var touchPointCount = 0;
+          if (_scoreTouchPointByDealer.length > 0) {
+            for (let x = 0; x < _scoreTouchPointByDealer.length; x++) {
+              touchPointCount =
+                touchPointCount + _scoreTouchPointByDealer[x].score;
+            }
+            response[i].value =
+              touchPointCount / _scoreTouchPointByDealer.length;
           }
-          response[i].value =
-            touchPointCountRegion / _scoreTouchPointByRegion.length;
         }
-      }
-
-      for (let i = 0; i < dealer.length; i++) {
-        response.push({
-          code: dealer[i].idDealer,
-          label: dealer[i].dealerName,
-          value: 0,
-        });
-        base.push(80);
-      }
-      for (let i = 1; i < response.length; i++) {
-        var _scoreTouchPointByDealer = await scoreTouchPointByDelaer(
-          pid,
-          'score',
-          response[i].code,
-          quarter,
-          brand
-        );
-        var touchPointCount = 0;
-        if (_scoreTouchPointByDealer.length > 0) {
-          for (let x = 0; x < _scoreTouchPointByDealer.length; x++) {
-            touchPointCount =
-              touchPointCount + _scoreTouchPointByDealer[x].score;
+      }else{
+        for (let i = 0; i < dealer.length; i++) {
+          response.push({
+            code: dealer[i].idDealer,
+            label: dealer[i].dealerName,
+            value: 0,
+          });
+          base.push(80);
+        }
+        for (let i = 0; i < response.length; i++) {
+          var _scoreTouchPointByDealer = await scoreTouchPointByDelaer(
+            pid,
+            'score',
+            response[i].code,
+            quarter,
+            brand
+          );
+          var touchPointCount = 0;
+          if (_scoreTouchPointByDealer.length > 0) {
+            for (let x = 0; x < _scoreTouchPointByDealer.length; x++) {
+              touchPointCount =
+                touchPointCount + _scoreTouchPointByDealer[x].score;
+            }
+            response[i].value =
+              touchPointCount / _scoreTouchPointByDealer.length;
           }
-          response[i].value = touchPointCount / _scoreTouchPointByDealer.length;
         }
       }
     }
@@ -802,6 +863,7 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
 exports.getTouchPointScoreTotal = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const company = req.query.company;
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
@@ -817,6 +879,7 @@ exports.getTouchPointScoreTotal = async function (req, res) {
 
     var dealer = await getDealerByFilter(
       pid,
+      company,
       region,
       area,
       city,
@@ -858,6 +921,7 @@ exports.getTouchPointScoreTotal = async function (req, res) {
 exports.getTouchPointScoreDealerTotal = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const company = req.query.company;
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
@@ -872,6 +936,7 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
 
     var dealer = await getDealerByFilter(
       pid,
+      company,
       region,
       area,
       city,
@@ -932,6 +997,7 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
 exports.getTouchPointScoreDealerSort = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const company = req.query.company;
     const region = req.query.region;
     const area = req.query.area;
     const city = req.query.city;
@@ -947,6 +1013,7 @@ exports.getTouchPointScoreDealerSort = async function (req, res) {
 
     var dealer = await getDealerByFilter(
       pid,
+      company,
       region,
       area,
       city,

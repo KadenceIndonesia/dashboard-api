@@ -4,6 +4,7 @@ const Router = express();
 
 //hyundai kona koni
 Router.get('/:pid/administration/get/region', hyundaiControllers.getHyundaiRegion);
+Router.get('/:pid/administration/get/company', hyundaiControllers.getHyundaiCompany);
 Router.get('/:pid/administration/get/area', hyundaiControllers.getHyundaiArea);
 Router.get('/:pid/administration/get/city', hyundaiControllers.getHyundaiCity);
 Router.get('/:pid/administration/get/dealer', hyundaiControllers.getHyundaiDealer);
