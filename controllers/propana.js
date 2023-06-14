@@ -8,6 +8,7 @@ require('../lib/administration');
 require('../lib/dataExcel');
 require('../lib/hyundai');
 require('../lib/glossary');
+require('../lib/target');
 
 const A6Code = [
   { code: 1, label: 'Pangkalan aktif bertemu pemilik' },
@@ -51,50 +52,50 @@ const boardingNoTransactionCode = [
 exports.getTargetPangkalan = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const wave = req.query.wave;
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-
+    var data;
     var result = 0;
-    if (region === '0') {
-      if (province === '0') {
-        var _getAdminstrationProvince = await getAdminstrationProvince(pid);
-      } else {
-        if (city === '0') {
-          var _getAdminstrationProvince = await getAdminstrationProvinceById(
-            pid,
-            province
-          );
+
+    if (wave !== '0') {
+      if (region !== '0') {
+        if (province !== '0') {
+          if (city !== '0') {
+            data = await targetByWaveRegionProvinceCity(
+              wave,
+              region,
+              province,
+              city
+            );
+          } else {
+            data = await targetByWaveRegionProvince(wave, region, province);
+          }
         } else {
-          var _getAdminstrationProvince = await getAdminstrationCityByName(
-            pid,
-            city
-          );
+          data = await targetByWaveRegion(wave, region);
         }
+      } else {
+        data = await targetByWave(wave);
       }
     } else {
-      if (province === '0') {
-        var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
-          pid,
-          region
-        );
-      } else {
-        if (city === '0') {
-          var _getAdminstrationProvince = await getAdminstrationProvinceById(
-            pid,
-            province
-          );
+      if (region !== '0') {
+        if (province !== '0') {
+          if (city !== '0') {
+            data = await targetByCity(city);
+          } else {
+            data = await targetByProvince(province);
+          }
         } else {
-          var _getAdminstrationProvince = await getAdminstrationCityByName(
-            pid,
-            city
-          );
+          data = await targetByRegion(region);
         }
+      } else {
+        data = await targetAll();
       }
     }
 
-    for (let i = 0; i < _getAdminstrationProvince.length; i++) {
-      result = result + _getAdminstrationProvince[i].target;
+    for (let i = 0; i < data.length; i++) {
+      result = result + data[i].target;
     }
 
     res.status(200).json({

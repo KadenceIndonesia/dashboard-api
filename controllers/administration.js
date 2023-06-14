@@ -1,4 +1,5 @@
 require('../lib/administration');
+require('../lib/helper');
 
 exports.getProvinces = async function (req, res) {
   try {
@@ -106,50 +107,55 @@ exports.getCityTotal = async function (req, res) {
 exports.getHelperTotal = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const wave = req.query.wave;
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-
+    var data;
     var result = 0;
 
-    if (region !== '0' && province === '0' && city === '0') {
-      var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
-        pid,
-        region
-      );
-      for (let i = 0; i < _getAdminstrationProvince.length; i++) {
-        var _getAdminstrationCityByProvince =
-          await getAdminstrationCityByProvince(
-            pid,
-            _getAdminstrationProvince[i].provinceName
-          );
-        for (let x = 0; x < _getAdminstrationCityByProvince.length; x++) {
-          result = result + _getAdminstrationCityByProvince[x].others;
+    if (wave !== '0') {
+      if (region !== '0') {
+        if (province !== '0') {
+          if (city !== '0') {
+            data = await helperByWaveRegionProvinceCity(
+              wave,
+              region,
+              province,
+              city
+            );
+          } else {
+            data = await helperByWaveRegionProvince(wave, region, province);
+          }
+        } else {
+          data = await helperByWaveRegion(wave, region);
         }
+      } else {
+        data = await helperByWave(wave);
       }
-    } else if (region !== '0' && province !== '0' && city === '0') {
-      var _getAdminstrationCityByProvince =
-        await getAdminstrationCityByProvince(pid, province);
-      for (let i = 0; i < _getAdminstrationCityByProvince.length; i++) {
-        result = result + _getAdminstrationCityByProvince[i].others;
-      }
-      result = _getAdminstrationCityByProvince.length;
-    } else if (region !== '0' && province !== '0' && city !== '0') {
-      var _getAdminstrationCityByName = await getAdminstrationCityByName(
-        pid,
-        city
-      );
-      result = _getAdminstrationCityByName[0].others;
     } else {
-      var _getAdminstrationProvince = await getAdminstrationCityAll(pid);
-      for (let i = 0; i < _getAdminstrationProvince.length; i++) {
-        result = result + _getAdminstrationProvince[i].others;
+      if (region !== '0') {
+        if (province !== '0') {
+          if (city !== '0') {
+            data = await helperByCity(city);
+          } else {
+            data = await helperByProvince(province);
+          }
+        } else {
+          data = await helperByRegion(region);
+        }
+      } else {
+        data = await helperAll();
       }
+    }
+
+    for (let i = 0; i < data.length; i++) {
+      result = result + data[i].total;
     }
 
     res.status(200).json({
       statusCode: 200,
-      message: 'Success get Administration City By Province',
+      message: 'Success get Helper',
       data: result,
     });
   } catch (error) {
