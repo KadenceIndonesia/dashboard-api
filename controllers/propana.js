@@ -291,7 +291,7 @@ exports.getVisitAchievementByDate = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var today = moment().format('D MMM YYYY');
     var result = {
@@ -312,32 +312,48 @@ exports.getVisitAchievementByDate = async function (req, res) {
     for (let i = 0; i < data.length; i++) {
       var _excelDatetoJS = excelDatetoJS(data[i]['CUT OFF DATE']);
 
-      if (wave !== 0) {
+      if (wave !== '0') {
         if (wave === data[i]['WAVE']) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
-              if (data[i]['S0'] === 1) {
+              for (let x = 0; x < result.date.length; x++) {
+                var splitDate = result.date[x].split(',');
+                var findArrayDate = splitDate.indexOf(
+                  moment(_excelDatetoJS).format('D MMM YYYY')
+                );
                 if (findArrayDate !== -1) {
-                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                  if (data[i]['S0'] === 1) {
+                    result.value[x] = result.value[x] + 1;
+                  }
                 }
               }
             }
           } else if (region !== '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                if (data[i]['S0'] === 1) {
+                for (let x = 0; x < result.date.length; x++) {
+                  var splitDate = result.date[x].split(',');
+                  var findArrayDate = splitDate.indexOf(
+                    moment(_excelDatetoJS).format('D MMM YYYY')
+                  );
                   if (findArrayDate !== -1) {
-                    result.value[findArrayDate] =
-                      result.value[findArrayDate] + 1;
+                    if (data[i]['S0'] === 1) {
+                      result.value[x] = result.value[x] + 1;
+                    }
                   }
                 }
               }
             } else {
               if (data[i]['A2'] === province) {
-                if (data[i]['S0'] === 1) {
+                for (let x = 0; x < result.date.length; x++) {
+                  var splitDate = result.date[x].split(',');
+                  var findArrayDate = splitDate.indexOf(
+                    moment(_excelDatetoJS).format('D MMM YYYY')
+                  );
                   if (findArrayDate !== -1) {
-                    result.value[findArrayDate] =
-                      result.value[findArrayDate] + 1;
+                    if (data[i]['S0'] === 1) {
+                      result.value[x] = result.value[x] + 1;
+                    }
                   }
                 }
               }
@@ -345,27 +361,43 @@ exports.getVisitAchievementByDate = async function (req, res) {
           } else if (region === '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                if (data[i]['S0'] === 1) {
+                for (let x = 0; x < result.date.length; x++) {
+                  var splitDate = result.date[x].split(',');
+                  var findArrayDate = splitDate.indexOf(
+                    moment(_excelDatetoJS).format('D MMM YYYY')
+                  );
                   if (findArrayDate !== -1) {
-                    result.value[findArrayDate] =
-                      result.value[findArrayDate] + 1;
+                    if (data[i]['S0'] === 1) {
+                      result.value[x] = result.value[x] + 1;
+                    }
                   }
                 }
               }
             } else {
               if (data[i]['A2'] === province) {
-                if (data[i]['S0'] === 1) {
+                for (let x = 0; x < result.date.length; x++) {
+                  var splitDate = result.date[x].split(',');
+                  var findArrayDate = splitDate.indexOf(
+                    moment(_excelDatetoJS).format('D MMM YYYY')
+                  );
                   if (findArrayDate !== -1) {
-                    result.value[findArrayDate] =
-                      result.value[findArrayDate] + 1;
+                    if (data[i]['S0'] === 1) {
+                      result.value[x] = result.value[x] + 1;
+                    }
                   }
                 }
               }
             }
           } else {
-            if (data[i]['S0'] === 1) {
+            for (let x = 0; x < result.date.length; x++) {
+              var splitDate = result.date[x].split(',');
+              var findArrayDate = splitDate.indexOf(
+                moment(_excelDatetoJS).format('D MMM YYYY')
+              );
               if (findArrayDate !== -1) {
-                result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                if (data[i]['S0'] === 1) {
+                  result.value[x] = result.value[x] + 1;
+                }
               }
             }
           }
@@ -373,26 +405,44 @@ exports.getVisitAchievementByDate = async function (req, res) {
       } else {
         if (region !== '0' && province === '0') {
           if (data[i]['A1'] === region) {
-            if (data[i]['S0'] === 1) {
+            for (let x = 0; x < result.date.length; x++) {
+              var splitDate = result.date[x].split(',');
+              var findArrayDate = splitDate.indexOf(
+                moment(_excelDatetoJS).format('D MMM YYYY')
+              );
               if (findArrayDate !== -1) {
-                result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                if (data[i]['S0'] === 1) {
+                  result.value[x] = result.value[x] + 1;
+                }
               }
             }
           }
         } else if (region !== '0' && province !== '0') {
           if (city !== '0') {
             if (data[i]['A3'] === city) {
-              if (data[i]['S0'] === 1) {
+              for (let x = 0; x < result.date.length; x++) {
+                var splitDate = result.date[x].split(',');
+                var findArrayDate = splitDate.indexOf(
+                  moment(_excelDatetoJS).format('D MMM YYYY')
+                );
                 if (findArrayDate !== -1) {
-                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                  if (data[i]['S0'] === 1) {
+                    result.value[x] = result.value[x] + 1;
+                  }
                 }
               }
             }
           } else {
             if (data[i]['A2'] === province) {
-              if (data[i]['S0'] === 1) {
+              for (let x = 0; x < result.date.length; x++) {
+                var splitDate = result.date[x].split(',');
+                var findArrayDate = splitDate.indexOf(
+                  moment(_excelDatetoJS).format('D MMM YYYY')
+                );
                 if (findArrayDate !== -1) {
-                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                  if (data[i]['S0'] === 1) {
+                    result.value[x] = result.value[x] + 1;
+                  }
                 }
               }
             }
@@ -400,17 +450,29 @@ exports.getVisitAchievementByDate = async function (req, res) {
         } else if (region === '0' && province !== '0') {
           if (city !== '0') {
             if (data[i]['A3'] === city) {
-              if (data[i]['S0'] === 1) {
+              for (let x = 0; x < result.date.length; x++) {
+                var splitDate = result.date[x].split(',');
+                var findArrayDate = splitDate.indexOf(
+                  moment(_excelDatetoJS).format('D MMM YYYY')
+                );
                 if (findArrayDate !== -1) {
-                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                  if (data[i]['S0'] === 1) {
+                    result.value[x] = result.value[x] + 1;
+                  }
                 }
               }
             }
           } else {
             if (data[i]['A2'] === province) {
-              if (data[i]['S0'] === 1) {
+              for (let x = 0; x < result.date.length; x++) {
+                var splitDate = result.date[x].split(',');
+                var findArrayDate = splitDate.indexOf(
+                  moment(_excelDatetoJS).format('D MMM YYYY')
+                );
                 if (findArrayDate !== -1) {
-                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                  if (data[i]['S0'] === 1) {
+                    result.value[x] = result.value[x] + 1;
+                  }
                 }
               }
             }
@@ -432,7 +494,7 @@ exports.getVisitAchievementByDate = async function (req, res) {
     }
 
     for (let i = 0; i < result.date.length; i++) {
-      var getLastDate = result.date[i].split(',')[0];
+      var getLastDate = result.date[i];
       result.date[i] = getLastDate;
     }
 
@@ -452,7 +514,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var result = [];
     for (let i = 0; i < A6Code.length; i++) {
@@ -471,7 +533,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
             data[i]['A6'] === 1 &&
             (data[i]['A7'] === 1 || data[i]['A7'] === 2)
           ) {
-            if (wave !== 0) {
+            if (wave !== '0') {
               result[0].value =
                 data[i]['WAVE'] === wave
                   ? result[0].value + 1
@@ -481,7 +543,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
             }
           }
           if (data[i]['A6'] === 2) {
-            if (wave !== 0) {
+            if (wave !== '0') {
               result[1].value =
                 data[i]['WAVE'] === wave
                   ? result[1].value + 1
@@ -491,7 +553,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
             }
           }
           if (data[i]['A6'] === 3) {
-            if (wave !== 0) {
+            if (wave !== '0') {
               result[2].value =
                 data[i]['WAVE'] === wave
                   ? result[2].value + 1
@@ -501,7 +563,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
             }
           }
           if (data[i]['A6'] === 4) {
-            if (wave !== 0) {
+            if (wave !== '0') {
               result[3].value =
                 data[i]['WAVE'] === wave
                   ? result[3].value + 1
@@ -511,7 +573,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
             }
           }
           if (data[i]['A6'] === 5) {
-            if (wave !== 0) {
+            if (wave !== '0') {
               result[4].value =
                 data[i]['WAVE'] === wave
                   ? result[4].value + 1
@@ -521,7 +583,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
             }
           }
           if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-            if (wave !== 0) {
+            if (wave !== '0') {
               result[5].value =
                 data[i]['WAVE'] === wave
                   ? result[5].value + 1
@@ -538,7 +600,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[0].value =
                   data[i]['WAVE'] === wave
                     ? result[0].value + 1
@@ -548,7 +610,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 2) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[1].value =
                   data[i]['WAVE'] === wave
                     ? result[1].value + 1
@@ -558,7 +620,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[2].value =
                   data[i]['WAVE'] === wave
                     ? result[2].value + 1
@@ -568,7 +630,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 4) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[3].value =
                   data[i]['WAVE'] === wave
                     ? result[3].value + 1
@@ -578,7 +640,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 5) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[4].value =
                   data[i]['WAVE'] === wave
                     ? result[4].value + 1
@@ -588,7 +650,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[5].value =
                   data[i]['WAVE'] === wave
                     ? result[5].value + 1
@@ -604,7 +666,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[0].value =
                   data[i]['WAVE'] === wave
                     ? result[0].value + 1
@@ -614,7 +676,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 2) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[1].value =
                   data[i]['WAVE'] === wave
                     ? result[1].value + 1
@@ -624,7 +686,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[2].value =
                   data[i]['WAVE'] === wave
                     ? result[2].value + 1
@@ -634,7 +696,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 4) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[3].value =
                   data[i]['WAVE'] === wave
                     ? result[3].value + 1
@@ -644,7 +706,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 5) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[4].value =
                   data[i]['WAVE'] === wave
                     ? result[4].value + 1
@@ -654,7 +716,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[5].value =
                   data[i]['WAVE'] === wave
                     ? result[5].value + 1
@@ -672,7 +734,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[0].value =
                   data[i]['WAVE'] === wave
                     ? result[0].value + 1
@@ -682,7 +744,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 2) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[1].value =
                   data[i]['WAVE'] === wave
                     ? result[1].value + 1
@@ -692,7 +754,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[2].value =
                   data[i]['WAVE'] === wave
                     ? result[2].value + 1
@@ -702,7 +764,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 4) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[3].value =
                   data[i]['WAVE'] === wave
                     ? result[3].value + 1
@@ -712,7 +774,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 5) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[4].value =
                   data[i]['WAVE'] === wave
                     ? result[4].value + 1
@@ -722,7 +784,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
               }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 result[5].value =
                   data[i]['WAVE'] === wave
                     ? result[5].value + 1
@@ -762,7 +824,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
           data[i]['A6'] === 1 &&
           (data[i]['A7'] === 1 || data[i]['A7'] === 2)
         ) {
-          if (wave !== 0) {
+          if (wave !== '0') {
             result[0].value =
               data[i]['WAVE'] === wave ? result[0].value + 1 : result[0].value;
           } else {
@@ -770,7 +832,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
           }
         }
         if (data[i]['A6'] === 2) {
-          if (wave !== 0) {
+          if (wave !== '0') {
             result[1].value =
               data[i]['WAVE'] === wave ? result[1].value + 1 : result[1].value;
           } else {
@@ -778,7 +840,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
           }
         }
         if (data[i]['A6'] === 3) {
-          if (wave !== 0) {
+          if (wave !== '0') {
             result[2].value =
               data[i]['WAVE'] === wave ? result[2].value + 1 : result[2].value;
           } else {
@@ -786,7 +848,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
           }
         }
         if (data[i]['A6'] === 4) {
-          if (wave !== 0) {
+          if (wave !== '0') {
             result[3].value =
               data[i]['WAVE'] === wave ? result[3].value + 1 : result[3].value;
           } else {
@@ -794,7 +856,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
           }
         }
         if (data[i]['A6'] === 5) {
-          if (wave !== 0) {
+          if (wave !== '0') {
             result[4].value =
               data[i]['WAVE'] === wave ? result[4].value + 1 : result[4].value;
           } else {
@@ -802,7 +864,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
           }
         }
         if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-          if (wave !== 0) {
+          if (wave !== '0') {
             result[5].value =
               data[i]['WAVE'] === wave ? result[5].value + 1 : result[5].value;
           } else {
@@ -828,7 +890,7 @@ exports.getStatusPangkalan = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var result = [
       {
@@ -837,7 +899,14 @@ exports.getStatusPangkalan = async function (req, res) {
         value: 0,
       },
       {
-        label: 'Kunjungan Non Fisik (Arahan SBM Supaya Tidak Dikunjungi)',
+        label:
+          'Kunjungan Non Fisik (arahan SBM supaya tidak perlu dikunjungi karena pangkalan sudah on boarding dan transaksi lancar)',
+        count: 0,
+        value: 0,
+      },
+      {
+        label:
+          'Kunjungan Non Fisik (arahan SBM supaya tidak perlu dikunjungi karena akun pangkalan dipegang oleh agen)',
         count: 0,
         value: 0,
       },
@@ -845,9 +914,8 @@ exports.getStatusPangkalan = async function (req, res) {
     var total = 0;
 
     var data = await excelData(pid);
-
     for (let i = 0; i < data.length; i++) {
-      if (wave !== 0) {
+      if (wave !== '0') {
         if (data[i]['WAVE'] === wave) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
@@ -964,7 +1032,7 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var result = [];
     var total = 0;
@@ -985,42 +1053,42 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
             data[i]['A6'] === 1 &&
             (data[i]['A7'] === 1 || data[i]['A7'] === 2)
           ) {
-            if (wave !== 0) {
+            if (wave !== '0') {
               data[i]['WAVE'] === wave && result[0].count++;
             } else {
               result[0].count = result[0].count + 1;
             }
           }
           if (data[i]['A6'] === 2) {
-            if (wave !== 0) {
+            if (wave !== '0') {
               data[i]['WAVE'] === wave && result[1].count++;
             } else {
               result[1].count = result[1].count + 1;
             }
           }
           if (data[i]['A6'] === 3) {
-            if (wave !== 0) {
+            if (wave !== '0') {
               data[i]['WAVE'] === wave && result[2].count++;
             } else {
               result[2].count = result[2].count + 1;
             }
           }
           if (data[i]['A6'] === 4) {
-            if (wave !== 0) {
+            if (wave !== '0') {
               data[i]['WAVE'] === wave && result[3].count++;
             } else {
               result[3].count = result[3].count + 1;
             }
           }
           if (data[i]['A6'] === 5) {
-            if (wave !== 0) {
+            if (wave !== '0') {
               data[i]['WAVE'] === wave && result[4].count++;
             } else {
               result[4].count = result[4].count + 1;
             }
           }
           if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-            if (wave !== 0) {
+            if (wave !== '0') {
               data[i]['WAVE'] === wave && result[5].count++;
             } else {
               result[5].count = result[5].count + 1;
@@ -1035,42 +1103,42 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[0].count++;
               } else {
                 result[0].count = result[0].count + 1;
               }
             }
             if (data[i]['A6'] === 2) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[1].count++;
               } else {
                 result[1].count = result[1].count + 1;
               }
             }
             if (data[i]['A6'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[2].count++;
               } else {
                 result[2].count = result[2].count + 1;
               }
             }
             if (data[i]['A6'] === 4) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[3].count++;
               } else {
                 result[3].count = result[3].count + 1;
               }
             }
             if (data[i]['A6'] === 5) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[4].count++;
               } else {
                 result[4].count = result[4].count + 1;
               }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[5].count++;
               } else {
                 result[5].count = result[5].count + 1;
@@ -1084,42 +1152,42 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[0].count++;
               } else {
                 result[0].count = result[0].count + 1;
               }
             }
             if (data[i]['A6'] === 2) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[1].count++;
               } else {
                 result[1].count = result[1].count + 1;
               }
             }
             if (data[i]['A6'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[2].count++;
               } else {
                 result[2].count = result[2].count + 1;
               }
             }
             if (data[i]['A6'] === 4) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[3].count++;
               } else {
                 result[3].count = result[3].count + 1;
               }
             }
             if (data[i]['A6'] === 5) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[4].count++;
               } else {
                 result[4].count = result[4].count + 1;
               }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[5].count++;
               } else {
                 result[5].count = result[5].count + 1;
@@ -1135,42 +1203,42 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[0].count++;
               } else {
                 result[0].count = result[0].count + 1;
               }
             }
             if (data[i]['A6'] === 2) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[1].count++;
               } else {
                 result[1].count = result[1].count + 1;
               }
             }
             if (data[i]['A6'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[2].count++;
               } else {
                 result[2].count = result[2].count + 1;
               }
             }
             if (data[i]['A6'] === 4) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[3].count++;
               } else {
                 result[3].count = result[3].count + 1;
               }
             }
             if (data[i]['A6'] === 5) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[4].count++;
               } else {
                 result[4].count = result[4].count + 1;
               }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[5].count++;
               } else {
                 result[5].count = result[5].count + 1;
@@ -1184,42 +1252,42 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
               data[i]['A6'] === 1 &&
               (data[i]['A7'] === 1 || data[i]['A7'] === 2)
             ) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[0].count++;
               } else {
                 result[0].count = result[0].count + 1;
               }
             }
             if (data[i]['A6'] === 2) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[1].count++;
               } else {
                 result[1].count = result[1].count + 1;
               }
             }
             if (data[i]['A6'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[2].count++;
               } else {
                 result[2].count = result[2].count + 1;
               }
             }
             if (data[i]['A6'] === 4) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[3].count++;
               } else {
                 result[3].count = result[3].count + 1;
               }
             }
             if (data[i]['A6'] === 5) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[4].count++;
               } else {
                 result[4].count = result[4].count + 1;
               }
             }
             if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-              if (wave !== 0) {
+              if (wave !== '0') {
                 data[i]['WAVE'] === wave && result[5].count++;
               } else {
                 result[5].count = result[5].count + 1;
@@ -1233,42 +1301,42 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
           data[i]['A6'] === 1 &&
           (data[i]['A7'] === 1 || data[i]['A7'] === 2)
         ) {
-          if (wave !== 0) {
+          if (wave !== '0') {
             data[i]['WAVE'] === wave && result[0].count++;
           } else {
             result[0].count = result[0].count + 1;
           }
         }
         if (data[i]['A6'] === 2) {
-          if (wave !== 0) {
+          if (wave !== '0') {
             data[i]['WAVE'] === wave && result[1].count++;
           } else {
             result[1].count = result[1].count + 1;
           }
         }
         if (data[i]['A6'] === 3) {
-          if (wave !== 0) {
+          if (wave !== '0') {
             data[i]['WAVE'] === wave && result[2].count++;
           } else {
             result[2].count = result[2].count + 1;
           }
         }
         if (data[i]['A6'] === 4) {
-          if (wave !== 0) {
+          if (wave !== '0') {
             data[i]['WAVE'] === wave && result[3].count++;
           } else {
             result[3].count = result[3].count + 1;
           }
         }
         if (data[i]['A6'] === 5) {
-          if (wave !== 0) {
+          if (wave !== '0') {
             data[i]['WAVE'] === wave && result[4].count++;
           } else {
             result[4].count = result[4].count + 1;
           }
         }
         if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
-          if (wave !== 0) {
+          if (wave !== '0') {
             data[i]['WAVE'] === wave && result[5].count++;
           } else {
             result[5].count = result[5].count + 1;
@@ -1299,7 +1367,7 @@ exports.getPosterAchievement = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var result = [
       {
@@ -1317,7 +1385,7 @@ exports.getPosterAchievement = async function (req, res) {
 
     for (let i = 0; i < data.length; i++) {
       if (data[i]['A35']) {
-        if (wave !== 0) {
+        if (wave !== '0') {
           if (data[i]['WAVE'] === wave) {
             if (region !== '0' && province === '0') {
               if (data[i]['A1'] === region) {
@@ -1407,7 +1475,7 @@ exports.getPosterViewAchievement = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var result = [
       {
@@ -1425,8 +1493,8 @@ exports.getPosterViewAchievement = async function (req, res) {
 
     for (let i = 0; i < data.length; i++) {
       if (data[i]['A36']) {
-        if (wave !== 0) {
-          if (data[i]['wave'] === wave) {
+        if (wave !== '0') {
+          if (data[i]['WAVE'] === wave) {
             if (region !== '0' && province === '0') {
               if (data[i]['A1'] === region) {
                 result[data[i]['A36'] - 1].value =
@@ -1516,7 +1584,7 @@ exports.getSortPoster = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var _getCity = await getAdminstrationCityAll(pid);
 
@@ -1525,7 +1593,7 @@ exports.getSortPoster = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (wave !== 0) {
+      if (wave !== '0') {
         if (data[i]['WAVE'] === wave) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
@@ -1805,7 +1873,7 @@ exports.getStatusOnBoardingPangkalan = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var result = [];
     for (let i = 0; i < A12Code.length; i++) {
@@ -1818,7 +1886,7 @@ exports.getStatusOnBoardingPangkalan = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (wave !== 0) {
+      if (wave !== '0') {
         if (data[i]['WAVE'] === wave) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
@@ -2027,7 +2095,7 @@ exports.getHelpBoardingPangkalan = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var result = [];
     for (let i = 0; i < helBoardingCode.length; i++) {
@@ -2040,7 +2108,7 @@ exports.getHelpBoardingPangkalan = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (wave !== 0) {
+      if (wave !== '0') {
         if (data[i]['WAVE'] === wave) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
@@ -2166,7 +2234,7 @@ exports.getSortBoarding = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var _getCity = await getAdminstrationCityAll(pid);
 
@@ -2175,7 +2243,7 @@ exports.getSortBoarding = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (wave !== 0) {
+      if (wave !== '0') {
         if (data[i]['WAVE'] === wave) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
@@ -2456,29 +2524,88 @@ exports.getVisitByRegion = async function (req, res) {
     const pid = req.params.pid;
     const wave = req.query.wave;
     const region = req.query.region;
-    // const province = req.query.province;
 
     var result = [];
     var total = 0;
+    if (wave !== '0') {
+      if (region !== '0') {
+        var _getAdminstrationRegion = await getAdminstrationRegionByCode(
+          pid,
+          region
+        );
+        for (let i = 0; i < _getAdminstrationRegion.length; i++) {
+          var _targetByWaveRegion = await targetByWaveRegion(
+            wave,
+            _getAdminstrationRegion[i].regionCode
+          );
+          var target = 0;
+          for (let x = 0; x < _targetByWaveRegion.length; x++) {
+            target = target + _targetByWaveRegion[x].target;
+          }
+          var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
+          result.push({
+            code: splitCode[1],
+            label: _getAdminstrationRegion[i].regionName,
+            target: target,
+            count: 0,
+            value: 0,
+            sortCode: _getAdminstrationRegion[i].sortCode,
+          });
+        }
+      } else {
+        var _getAdminstrationRegion = await getAdminstrationRegion(pid);
 
-    if (region !== '0') {
-      var _getAdminstrationRegion = await getAdminstrationRegionByCode(
-        pid,
-        region
-      );
+        for (let i = 0; i < _getAdminstrationRegion.length; i++) {
+          var _targetByWaveRegion = await targetByWaveRegion(
+            wave,
+            _getAdminstrationRegion[i].regionCode
+          );
+          var target = 0;
+          for (let x = 0; x < _targetByWaveRegion.length; x++) {
+            target = target + _targetByWaveRegion[x].target;
+          }
+          var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
+          result.push({
+            code: splitCode[1],
+            label: _getAdminstrationRegion[i].regionName,
+            target: target,
+            count: 0,
+            value: 0,
+            sortCode: _getAdminstrationRegion[i].sortCode,
+          });
+        }
+      }
     } else {
-      var _getAdminstrationRegion = await getAdminstrationRegion(pid);
-    }
-
-    for (let i = 0; i < _getAdminstrationRegion.length; i++) {
-      var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
-      result.push({
-        code: splitCode[1],
-        label: _getAdminstrationRegion[i].regionName,
-        target: _getAdminstrationRegion[i].target,
-        count: 0,
-        value: 0,
-      });
+      if (region !== '0') {
+        var _getAdminstrationRegion = await getAdminstrationRegionByCode(
+          pid,
+          region
+        );
+        for (let i = 0; i < _getAdminstrationRegion.length; i++) {
+          var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
+          result.push({
+            code: splitCode[1],
+            label: _getAdminstrationRegion[i].regionName,
+            target: _getAdminstrationRegion[i].target,
+            count: 0,
+            value: 0,
+            sortCode: _getAdminstrationRegion[i].sortCode,
+          });
+        }
+      } else {
+        var _getAdminstrationRegion = await getAdminstrationRegion(pid);
+        for (let i = 0; i < _getAdminstrationRegion.length; i++) {
+          var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
+          result.push({
+            code: splitCode[1],
+            label: _getAdminstrationRegion[i].regionName,
+            target: _getAdminstrationRegion[i].target,
+            count: 0,
+            value: 0,
+            sortCode: _getAdminstrationRegion[i].sortCode,
+          });
+        }
+      }
     }
 
     var data = await excelData(pid);
@@ -2488,11 +2615,15 @@ exports.getVisitByRegion = async function (req, res) {
       if (findData !== -1) {
         if (wave !== '0') {
           if (data[i]['WAVE'] === wave) {
-            result[findData].count = result[findData].count + 1;
+            if (data[i]['S0'] === 1) {
+              result[findData].count = result[findData].count + 1;
+            }
             total++;
           }
         } else {
-          result[findData].count = result[findData].count + 1;
+          if (data[i]['S0'] === 1) {
+            result[findData].count = result[findData].count + 1;
+          }
           total++;
         }
       }
@@ -2501,6 +2632,7 @@ exports.getVisitByRegion = async function (req, res) {
     for (let i = 0; i < result.length; i++) {
       result[i].value = countPercent(result[i].count, result[i].target);
     }
+    bubbleSortAsc(result, 'sortCode');
     res.status(200).json({
       statusCode: 200,
       message: 'Success get Administration provinces',
@@ -2514,32 +2646,99 @@ exports.getVisitByRegion = async function (req, res) {
 exports.getVisitByProvince = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const wave = req.query.wave;
     const province = req.query.province;
     const region = req.query.region;
 
     var result = [];
-    if (region !== '0' && province === '0') {
-      var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
-        pid,
-        region
-      );
-    } else if (province !== '0') {
-      var _getAdminstrationProvince = await getAdminstrationProvinceById(
-        pid,
-        province
-      );
+    if (wave === '0') {
+      if (region !== '0' && province === '0') {
+        var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
+          pid,
+          region
+        );
+        for (let i = 0; i < _getAdminstrationProvince.length; i++) {
+          result.push({
+            code: _getAdminstrationProvince[i].idProvince,
+            label: _getAdminstrationProvince[i].provinceName,
+            target: _getAdminstrationProvince[i].target,
+            count: 0,
+            value: 0,
+            mapCode: _getAdminstrationProvince[i].mapCode,
+          });
+        }
+      } else if (province !== '0') {
+        var _getAdminstrationProvince = await getAdminstrationProvinceById(
+          pid,
+          province
+        );
+        for (let i = 0; i < _getAdminstrationProvince.length; i++) {
+          result.push({
+            code: _getAdminstrationProvince[i].idProvince,
+            label: _getAdminstrationProvince[i].provinceName,
+            target: _getAdminstrationProvince[i].target,
+            count: 0,
+            value: 0,
+            mapCode: _getAdminstrationProvince[i].mapCode,
+          });
+        }
+      } else {
+        var _getAdminstrationProvince = await getAdminstrationProvince(pid);
+        for (let i = 0; i < _getAdminstrationProvince.length; i++) {
+          result.push({
+            code: _getAdminstrationProvince[i].idProvince,
+            label: _getAdminstrationProvince[i].provinceName,
+            target: _getAdminstrationProvince[i].target,
+            count: 0,
+            value: 0,
+            mapCode: _getAdminstrationProvince[i].mapCode,
+          });
+        }
+      }
     } else {
-      var _getAdminstrationProvince = await getAdminstrationProvince(pid);
-    }
-    for (let i = 0; i < _getAdminstrationProvince.length; i++) {
-      result.push({
-        code: _getAdminstrationProvince[i].idProvince,
-        label: _getAdminstrationProvince[i].provinceName,
-        target: _getAdminstrationProvince[i].target,
-        count: 0,
-        value: 0,
-        mapCode: _getAdminstrationProvince[i].mapCode,
-      });
+      if (region !== '0' && province === '0') {
+        var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
+          pid,
+          region
+        );
+        for (let i = 0; i < _getAdminstrationProvince.length; i++) {
+          result.push({
+            code: _getAdminstrationProvince[i].idProvince,
+            label: _getAdminstrationProvince[i].provinceName,
+            target: _getAdminstrationProvince[i].target,
+            count: 0,
+            value: 0,
+            mapCode: _getAdminstrationProvince[i].mapCode,
+          });
+        }
+      } else if (province !== '0') {
+        var _getAdminstrationProvince = await getAdminstrationProvinceById(
+          pid,
+          province
+        );
+        for (let i = 0; i < _getAdminstrationProvince.length; i++) {
+          result.push({
+            code: _getAdminstrationProvince[i].idProvince,
+            label: _getAdminstrationProvince[i].provinceName,
+            target: _getAdminstrationProvince[i].target,
+            count: 0,
+            value: 0,
+            mapCode: _getAdminstrationProvince[i].mapCode,
+          });
+        }
+      } else {
+        var _getAdminstrationProvince = await getAdminstrationProvince(pid);
+        for (let i = 0; i < _getAdminstrationProvince.length; i++) {
+          result.push({
+            code: _getAdminstrationProvince[i].idProvince,
+            label: _getAdminstrationProvince[i].provinceName,
+            target: _getAdminstrationProvince[i].target,
+            count: 0,
+            value: 0,
+            mapCode: _getAdminstrationProvince[i].mapCode,
+          });
+        }
+      }
     }
 
     var data = await excelData(pid);
@@ -2548,8 +2747,10 @@ exports.getVisitByProvince = async function (req, res) {
     for (let i = 0; i < data.length; i++) {
       var findData = await findObj(result, 'label', data[i]['A2']);
       if (findData !== -1) {
-        result[findData].count = result[findData].count + 1;
-        total++;
+        if (data[i]['S0'] === 1) {
+          result[findData].count = result[findData].count + 1;
+          total++;
+        }
       }
     }
 
@@ -2573,7 +2774,7 @@ exports.getVisitByCity = async function (req, res) {
     const province = req.query.province;
     const city = req.query.city;
     const region = req.query.region;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var result = [];
     if (region === '0') {
@@ -2648,7 +2849,7 @@ exports.getVisitByCity = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (wave !== 0) {
+      if (wave !== '0') {
         if (data[i]['WAVE'] === wave) {
           var findData = await findObj(result, 'cityName', data[i]['A3']);
           if (findData !== -1) {
@@ -3409,7 +3610,7 @@ exports.getOnBoardingNoTransaction = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var result = [];
     for (let i = 0; i < boardingNoTransactionCode.length; i++) {
@@ -3422,7 +3623,7 @@ exports.getOnBoardingNoTransaction = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (wave !== 0) {
+      if (wave !== '0') {
         if (data[i]['WAVE'] === wave) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
@@ -3548,7 +3749,7 @@ exports.getSortBoardingTransaction = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var _getCity = await getAdminstrationCityAll(pid);
 
@@ -3557,7 +3758,7 @@ exports.getSortBoardingTransaction = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (wave !== 0) {
+      if (wave !== '0') {
         if (data[i]['WAVE'] === wave) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
@@ -4321,7 +4522,7 @@ exports.getExportCity = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
     var data = await excelData(pid);
     var isifile = [];
 
@@ -4398,7 +4599,7 @@ exports.getExportCity = async function (req, res) {
     var data = await excelData(pid);
 
     for (let i = 0; i < data.length; i++) {
-      if (wave !== 0) {
+      if (wave !== '0') {
         if (data[i]['WAVE'] === wave) {
           var findData = await findObj(result, 'cityName', data[i]['A3']);
           if (findData !== -1) {
@@ -4676,7 +4877,7 @@ exports.getProgressNotBoarding = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var result = [];
     var week = [];
@@ -4704,6 +4905,7 @@ exports.getProgressNotBoarding = async function (req, res) {
           { label: 'Handphone Tidak Memadai', count: 0, value: 0 },
           { label: 'Ke-tidak-praktisan', count: 0, value: 0 },
           { label: 'Masalah Agen', count: 0, value: 0 },
+          { label: 'Lainnya', count: 0, value: 0 },
         ],
       });
     }
@@ -4711,11 +4913,11 @@ exports.getProgressNotBoarding = async function (req, res) {
     for (let i = 0; i < data.length; i++) {
       var findWeek = weekslice.indexOf(data[i]['WEEK']);
       if (findWeek !== -1) {
-        if (wave !== 0) {
+        if (wave !== '0') {
           if (data[i]['WAVE'] === wave) {
             if (region !== '0' && province === '0') {
               if (data[i]['A1'] === region) {
-                if (data[i]['A12'] === 1) {
+                if (data[i]['A31'] === 2) {
                   result[findWeek].count++;
                   for (let x = 1; x <= 15; x++) {
                     if (data[i][`A31b_${x}`] !== 0) {
@@ -4730,8 +4932,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                         result[findWeek].data[3].count++;
                       } else if (x > 10 && x <= 11) {
                         result[findWeek].data[4].count++;
-                      } else {
+                      } else if (x > 12 && x <= 14) {
                         result[findWeek].data[5].count++;
+                      } else if (x === 12 || x === 15) {
+                        result[findWeek].data[6].count++;
                       }
                     }
                   }
@@ -4740,7 +4944,7 @@ exports.getProgressNotBoarding = async function (req, res) {
             } else if (region !== '0' && province !== '0') {
               if (city !== '0') {
                 if (data[i]['A3'] === city) {
-                  if (data[i]['A12'] === 1) {
+                  if (data[i]['A31'] === 2) {
                     result[findWeek].count++;
                     for (let x = 1; x <= 15; x++) {
                       if (data[i][`A31b_${x}`] !== 0) {
@@ -4755,8 +4959,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                           result[findWeek].data[3].count++;
                         } else if (x > 10 && x <= 11) {
                           result[findWeek].data[4].count++;
-                        } else {
+                        } else if (x > 12 && x <= 14) {
                           result[findWeek].data[5].count++;
+                        } else if (x === 12 || x === 15) {
+                          result[findWeek].data[6].count++;
                         }
                       }
                     }
@@ -4764,7 +4970,7 @@ exports.getProgressNotBoarding = async function (req, res) {
                 }
               } else {
                 if (data[i]['A2'] === province) {
-                  if (data[i]['A12'] === 1) {
+                  if (data[i]['A31'] === 2) {
                     result[findWeek].count++;
                     for (let x = 1; x <= 15; x++) {
                       if (data[i][`A31b_${x}`] !== 0) {
@@ -4779,8 +4985,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                           result[findWeek].data[3].count++;
                         } else if (x > 10 && x <= 11) {
                           result[findWeek].data[4].count++;
-                        } else {
+                        } else if (x > 12 && x <= 14) {
                           result[findWeek].data[5].count++;
+                        } else if (x === 12 || x === 15) {
+                          result[findWeek].data[6].count++;
                         }
                       }
                     }
@@ -4790,7 +4998,7 @@ exports.getProgressNotBoarding = async function (req, res) {
             } else if (region === '0' && province !== '0') {
               if (city !== '0') {
                 if (data[i]['A3'] === city) {
-                  if (data[i]['A12'] === 1) {
+                  if (data[i]['A31'] === 2) {
                     result[findWeek].count++;
                     for (let x = 1; x <= 15; x++) {
                       if (data[i][`A31b_${x}`] !== 0) {
@@ -4805,15 +5013,17 @@ exports.getProgressNotBoarding = async function (req, res) {
                           result[findWeek].data[3].count++;
                         } else if (x > 10 && x <= 11) {
                           result[findWeek].data[4].count++;
-                        } else {
+                        } else if (x > 12 && x <= 14) {
                           result[findWeek].data[5].count++;
+                        } else if (x === 12 || x === 15) {
+                          result[findWeek].data[6].count++;
                         }
                       }
                     }
                   }
                 }
               } else {
-                if (data[i]['A12'] === 1) {
+                if (data[i]['A31'] === 2) {
                   result[findWeek].count++;
                   for (let x = 1; x <= 15; x++) {
                     if (data[i][`A31b_${x}`] !== 0) {
@@ -4828,15 +5038,17 @@ exports.getProgressNotBoarding = async function (req, res) {
                         result[findWeek].data[3].count++;
                       } else if (x > 10 && x <= 11) {
                         result[findWeek].data[4].count++;
-                      } else {
+                      } else if (x > 12 && x <= 14) {
                         result[findWeek].data[5].count++;
+                      } else if (x === 12 || x === 15) {
+                        result[findWeek].data[6].count++;
                       }
                     }
                   }
                 }
               }
             } else {
-              if (data[i]['A12'] === 1) {
+              if (data[i]['A31'] === 2) {
                 result[findWeek].count++;
                 for (let x = 1; x <= 15; x++) {
                   if (data[i][`A31b_${x}`] !== 0) {
@@ -4851,8 +5063,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                       result[findWeek].data[3].count++;
                     } else if (x > 10 && x <= 11) {
                       result[findWeek].data[4].count++;
-                    } else {
+                    } else if (x > 12 && x <= 14) {
                       result[findWeek].data[5].count++;
+                    } else if (x === 12 || x === 15) {
+                      result[findWeek].data[6].count++;
                     }
                   }
                 }
@@ -4862,7 +5076,7 @@ exports.getProgressNotBoarding = async function (req, res) {
         } else {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
-              if (data[i]['A12'] === 1) {
+              if (data[i]['A31'] === 2) {
                 result[findWeek].count++;
                 for (let x = 1; x <= 15; x++) {
                   if (data[i][`A31b_${x}`] !== 0) {
@@ -4877,8 +5091,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                       result[findWeek].data[3].count++;
                     } else if (x > 10 && x <= 11) {
                       result[findWeek].data[4].count++;
-                    } else {
+                    } else if (x > 12 && x <= 14) {
                       result[findWeek].data[5].count++;
+                    } else if (x === 12 || x === 15) {
+                      result[findWeek].data[6].count++;
                     }
                   }
                 }
@@ -4887,7 +5103,7 @@ exports.getProgressNotBoarding = async function (req, res) {
           } else if (region !== '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                if (data[i]['A12'] === 1) {
+                if (data[i]['A31'] === 2) {
                   result[findWeek].count++;
                   for (let x = 1; x <= 15; x++) {
                     if (data[i][`A31b_${x}`] !== 0) {
@@ -4902,8 +5118,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                         result[findWeek].data[3].count++;
                       } else if (x > 10 && x <= 11) {
                         result[findWeek].data[4].count++;
-                      } else {
+                      } else if (x > 12 && x <= 14) {
                         result[findWeek].data[5].count++;
+                      } else if (x === 12 || x === 15) {
+                        result[findWeek].data[6].count++;
                       }
                     }
                   }
@@ -4911,7 +5129,7 @@ exports.getProgressNotBoarding = async function (req, res) {
               }
             } else {
               if (data[i]['A2'] === province) {
-                if (data[i]['A12'] === 1) {
+                if (data[i]['A31'] === 2) {
                   result[findWeek].count++;
                   for (let x = 1; x <= 15; x++) {
                     if (data[i][`A31b_${x}`] !== 0) {
@@ -4926,8 +5144,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                         result[findWeek].data[3].count++;
                       } else if (x > 10 && x <= 11) {
                         result[findWeek].data[4].count++;
-                      } else {
+                      } else if (x > 12 && x <= 14) {
                         result[findWeek].data[5].count++;
+                      } else if (x === 12 || x === 15) {
+                        result[findWeek].data[6].count++;
                       }
                     }
                   }
@@ -4937,7 +5157,7 @@ exports.getProgressNotBoarding = async function (req, res) {
           } else if (region === '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                if (data[i]['A12'] === 1) {
+                if (data[i]['A31'] === 2) {
                   result[findWeek].count++;
                   for (let x = 1; x <= 15; x++) {
                     if (data[i][`A31b_${x}`] !== 0) {
@@ -4952,15 +5172,17 @@ exports.getProgressNotBoarding = async function (req, res) {
                         result[findWeek].data[3].count++;
                       } else if (x > 10 && x <= 11) {
                         result[findWeek].data[4].count++;
-                      } else {
+                      } else if (x > 12 && x <= 14) {
                         result[findWeek].data[5].count++;
+                      } else if (x === 12 || x === 15) {
+                        result[findWeek].data[6].count++;
                       }
                     }
                   }
                 }
               }
             } else {
-              if (data[i]['A12'] === 1) {
+              if (data[i]['A31'] === 2) {
                 result[findWeek].count++;
                 for (let x = 1; x <= 15; x++) {
                   if (data[i][`A31b_${x}`] !== 0) {
@@ -4975,15 +5197,17 @@ exports.getProgressNotBoarding = async function (req, res) {
                       result[findWeek].data[3].count++;
                     } else if (x > 10 && x <= 11) {
                       result[findWeek].data[4].count++;
-                    } else {
+                    } else if (x > 12 && x <= 14) {
                       result[findWeek].data[5].count++;
+                    } else if (x === 12 || x === 15) {
+                      result[findWeek].data[6].count++;
                     }
                   }
                 }
               }
             }
           } else {
-            if (data[i]['A12'] === 1) {
+            if (data[i]['A31'] === 2) {
               result[findWeek].count++;
               for (let x = 1; x <= 15; x++) {
                 if (data[i][`A31b_${x}`] !== 0) {
@@ -4998,8 +5222,10 @@ exports.getProgressNotBoarding = async function (req, res) {
                     result[findWeek].data[3].count++;
                   } else if (x > 10 && x <= 11) {
                     result[findWeek].data[4].count++;
-                  } else {
+                  } else if (x > 12 && x <= 14) {
                     result[findWeek].data[5].count++;
+                  } else if (x === 12 || x === 15) {
+                    result[findWeek].data[6].count++;
                   }
                 }
               }
@@ -5013,7 +5239,7 @@ exports.getProgressNotBoarding = async function (req, res) {
       for (let x = 0; x < result[i].data.length; x++) {
         result[i].data[x].value = countPercent(
           result[i].data[x].count,
-          result[i].total
+          result[i].count
         );
       }
     }
@@ -5034,7 +5260,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var result = [];
     var week = [];
@@ -5071,11 +5297,11 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
     for (let i = 0; i < data.length; i++) {
       var findWeek = weekslice.indexOf(data[i]['WEEK']);
       if (findWeek !== -1) {
-        if (wave !== 0) {
+        if (wave !== '0') {
           if (data[i]['WAVE'] === wave) {
             if (region !== '0' && province === '0') {
               if (data[i]['A1'] === region) {
-                if (data[i]['A12'] === 2) {
+                if (data[i]['A33'] === 2) {
                   result[findWeek].count++;
                   for (let x = 1; x <= 27; x++) {
                     if (data[i][`A33b_${x}`] !== 0) {
@@ -5094,7 +5320,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                         result[findWeek].data[5].count++;
                       } else if (x > 9 && x <= 11) {
                         result[findWeek].data[6].count++;
-                      } else if (x > 11) {
+                      } else if (x > 11 && x <= 12) {
                         result[findWeek].data[7].count++;
                       } else {
                       }
@@ -5105,7 +5331,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
             } else if (region !== '0' && province !== '0') {
               if (city !== '0') {
                 if (data[i]['A3'] === city) {
-                  if (data[i]['A12'] === 2) {
+                  if (data[i]['A33'] === 2) {
                     result[findWeek].count++;
                     for (let x = 1; x <= 27; x++) {
                       if (data[i][`A33b_${x}`] !== 0) {
@@ -5124,7 +5350,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                           result[findWeek].data[5].count++;
                         } else if (x > 9 && x <= 11) {
                           result[findWeek].data[6].count++;
-                        } else if (x > 11) {
+                        } else if (x > 11 && x <= 12) {
                           result[findWeek].data[7].count++;
                         } else {
                         }
@@ -5134,7 +5360,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                 }
               } else {
                 if (data[i]['A2'] === province) {
-                  if (data[i]['A12'] === 2) {
+                  if (data[i]['A33'] === 2) {
                     result[findWeek].count++;
                     for (let x = 1; x <= 27; x++) {
                       if (data[i][`A33b_${x}`] !== 0) {
@@ -5153,7 +5379,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                           result[findWeek].data[5].count++;
                         } else if (x > 9 && x <= 11) {
                           result[findWeek].data[6].count++;
-                        } else if (x > 11) {
+                        } else if (x > 11 && x <= 12) {
                           result[findWeek].data[7].count++;
                         } else {
                         }
@@ -5165,7 +5391,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
             } else if (region === '0' && province !== '0') {
               if (city !== '0') {
                 if (data[i]['A3'] === city) {
-                  if (data[i]['A12'] === 2) {
+                  if (data[i]['A33'] === 2) {
                     result[findWeek].count++;
                     for (let x = 1; x <= 27; x++) {
                       if (data[i][`A33b_${x}`] !== 0) {
@@ -5184,7 +5410,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                           result[findWeek].data[5].count++;
                         } else if (x > 9 && x <= 11) {
                           result[findWeek].data[6].count++;
-                        } else if (x > 11) {
+                        } else if (x > 11 && x <= 12) {
                           result[findWeek].data[7].count++;
                         } else {
                         }
@@ -5193,7 +5419,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                   }
                 }
               } else {
-                if (data[i]['A12'] === 2) {
+                if (data[i]['A33'] === 2) {
                   result[findWeek].count++;
                   for (let x = 1; x <= 27; x++) {
                     if (data[i][`A33b_${x}`] !== 0) {
@@ -5212,7 +5438,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                         result[findWeek].data[5].count++;
                       } else if (x > 9 && x <= 11) {
                         result[findWeek].data[6].count++;
-                      } else if (x > 11) {
+                      } else if (x > 11 && x <= 12) {
                         result[findWeek].data[7].count++;
                       } else {
                       }
@@ -5221,7 +5447,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                 }
               }
             } else {
-              if (data[i]['A12'] === 2) {
+              if (data[i]['A33'] === 2) {
                 result[findWeek].count++;
                 for (let x = 1; x <= 27; x++) {
                   if (data[i][`A33b_${x}`] !== 0) {
@@ -5240,7 +5466,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                       result[findWeek].data[5].count++;
                     } else if (x > 9 && x <= 11) {
                       result[findWeek].data[6].count++;
-                    } else if (x > 11) {
+                    } else if (x > 11 && x <= 12) {
                       result[findWeek].data[7].count++;
                     } else {
                     }
@@ -5252,7 +5478,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
         } else {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
-              if (data[i]['A12'] === 2) {
+              if (data[i]['A33'] === 2) {
                 result[findWeek].count++;
                 for (let x = 1; x <= 27; x++) {
                   if (data[i][`A33b_${x}`] !== 0) {
@@ -5271,7 +5497,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                       result[findWeek].data[5].count++;
                     } else if (x > 9 && x <= 11) {
                       result[findWeek].data[6].count++;
-                    } else if (x > 11) {
+                    } else if (x > 11 && x <= 12) {
                       result[findWeek].data[7].count++;
                     } else {
                     }
@@ -5282,7 +5508,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
           } else if (region !== '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                if (data[i]['A12'] === 2) {
+                if (data[i]['A33'] === 2) {
                   result[findWeek].count++;
                   for (let x = 1; x <= 27; x++) {
                     if (data[i][`A33b_${x}`] !== 0) {
@@ -5301,7 +5527,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                         result[findWeek].data[5].count++;
                       } else if (x > 9 && x <= 11) {
                         result[findWeek].data[6].count++;
-                      } else if (x > 11) {
+                      } else if (x > 11 && x <= 12) {
                         result[findWeek].data[7].count++;
                       } else {
                       }
@@ -5311,7 +5537,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
               }
             } else {
               if (data[i]['A2'] === province) {
-                if (data[i]['A12'] === 2) {
+                if (data[i]['A33'] === 2) {
                   result[findWeek].count++;
                   for (let x = 1; x <= 27; x++) {
                     if (data[i][`A33b_${x}`] !== 0) {
@@ -5330,7 +5556,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                         result[findWeek].data[5].count++;
                       } else if (x > 9 && x <= 11) {
                         result[findWeek].data[6].count++;
-                      } else if (x > 11) {
+                      } else if (x > 11 && x <= 12) {
                         result[findWeek].data[7].count++;
                       } else {
                       }
@@ -5342,7 +5568,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
           } else if (region === '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                if (data[i]['A12'] === 2) {
+                if (data[i]['A33'] === 2) {
                   result[findWeek].count++;
                   for (let x = 1; x <= 27; x++) {
                     if (data[i][`A33b_${x}`] !== 0) {
@@ -5361,7 +5587,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                         result[findWeek].data[5].count++;
                       } else if (x > 9 && x <= 11) {
                         result[findWeek].data[6].count++;
-                      } else if (x > 11) {
+                      } else if (x > 11 && x <= 12) {
                         result[findWeek].data[7].count++;
                       } else {
                       }
@@ -5370,7 +5596,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                 }
               }
             } else {
-              if (data[i]['A12'] === 2) {
+              if (data[i]['A33'] === 2) {
                 result[findWeek].count++;
                 for (let x = 1; x <= 27; x++) {
                   if (data[i][`A33b_${x}`] !== 0) {
@@ -5389,7 +5615,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                       result[findWeek].data[5].count++;
                     } else if (x > 9 && x <= 11) {
                       result[findWeek].data[6].count++;
-                    } else if (x > 11) {
+                    } else if (x > 11 && x <= 12) {
                       result[findWeek].data[7].count++;
                     } else {
                     }
@@ -5398,7 +5624,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
               }
             }
           } else {
-            if (data[i]['A12'] === 2) {
+            if (data[i]['A33'] === 2) {
               result[findWeek].count++;
               for (let x = 1; x <= 27; x++) {
                 if (data[i][`A33b_${x}`] !== 0) {
@@ -5417,7 +5643,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                     result[findWeek].data[5].count++;
                   } else if (x > 9 && x <= 11) {
                     result[findWeek].data[6].count++;
-                  } else if (x > 11) {
+                  } else if (x > 11 && x <= 12) {
                     result[findWeek].data[7].count++;
                   } else {
                   }
@@ -5433,7 +5659,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
       for (let x = 0; x < result[i].data.length; x++) {
         result[i].data[x].value = countPercent(
           result[i].data[x].count,
-          result[i].total
+          result[i].count
         );
       }
     }

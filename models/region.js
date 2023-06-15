@@ -6,7 +6,8 @@ const regionSchema = mongoose.Schema({
   idProject: String,
   regionName: String,
   regionCode: String,
-  target: Number
+  target: Number,
+  sortCode: Number
 });
 
 module.exports = mongoose.model('Region', regionSchema);
