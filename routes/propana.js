@@ -33,6 +33,7 @@ Router.get('/:pid/pangkalan/detail/:key', propanaController.getDetailPangkalan);
 
 Router.get('/:pid/pangkalan/export', propanaController.getExportPangkalan);
 Router.get('/:pid/city/export', propanaController.getExportCity);
+Router.get('/:pid/status-pangkalan/export', propanaController.getStatusPangkalanExport);
 
 //progress
 Router.get('/:pid/progress/not-boarding', propanaController.getProgressNotBoarding);

@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const fileupload = require("express-fileupload");
 const cors = require('cors');
 const mongoose = require('mongoose');
 const indexRoutes = require('./routes/index');
@@ -13,7 +14,6 @@ const hyundaiRoutes = require('./routes/hyundai');
 const administrationRoutes = require('./routes/administration');
 const propanaRoutes = require('./routes/propana');
 
-
 require('dotenv').config();
 // require('./helpers/init_mongodb')
 
@@ -21,8 +21,8 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
-// app.use(bodyParser.urlencoded());
+app.use(fileupload());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public'));
@@ -35,7 +35,6 @@ app.use('/form', formRoutes);
 app.use('/attribute', attributeRoutes);
 app.use('/hyundai', hyundaiRoutes);
 app.use('/propana', propanaRoutes);
-
 
 app.listen(process.env.PORT, (req, res) => {
   console.log('connect');

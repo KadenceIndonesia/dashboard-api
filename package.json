@@ -21,6 +21,7 @@
     "dotenv": "^10.0.0",
     "env": "^0.0.2",
     "express": "^4.17.1",
+    "express-fileupload": "^1.4.0",
     "global": "^4.4.0",
     "http-proxy-middleware": "^2.0.1",
     "http-status-codes": "^2.1.4",

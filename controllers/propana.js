@@ -5673,3 +5673,236 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
     res.status(400).send(error);
   }
 };
+
+exports.getStatusPangkalanExport = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+    const wave = req.query.wave;
+    var data = await excelData(pid);
+    var isifile = [];
+
+    var result = [];
+    if (region === '0') {
+      if (province === '0') {
+        var _getAdminstrationCityAll = await getAdminstrationCityAll(pid);
+      } else {
+        if (city === '0') {
+          var _getAdminstrationCityAll = await getAdminstrationCityByProvince(
+            pid,
+            province
+          );
+        } else {
+          var _getAdminstrationCityAll = await getAdminstrationCityByName(
+            pid,
+            city
+          );
+        }
+      }
+    } else {
+      if (province === '0') {
+        var _getAdminstrationProvinceByRegion =
+          await getAdminstrationProvinceByRegion(pid, region);
+        var dataProvince = _getAdminstrationProvinceByRegion.map(
+          (data) => data.provinceName
+        );
+        var _getAdminstrationCityAll =
+          await getAdminstrationCityByArrayProvince(pid, dataProvince);
+      } else {
+        if (city === '0') {
+          var _getAdminstrationCityAll = await getAdminstrationCityByProvince(
+            pid,
+            province
+          );
+        } else {
+          var _getAdminstrationCityAll = await getAdminstrationCityByName(
+            pid,
+            city
+          );
+        }
+      }
+    }
+
+    for (let i = 0; i < _getAdminstrationCityAll.length; i++) {
+      result.push({
+        code: _getAdminstrationCityAll[i].idCity,
+        province: _getAdminstrationCityAll[i].areaName,
+        cityName: _getAdminstrationCityAll[i].cityName,
+        dataList: _getAdminstrationCityAll[i].dataList,
+        visit: 0,
+        visitPercentage: 0,
+        pangkalanAktif: 0,
+        tutupPermanen: 0,
+        tidakDitemukan: 0,
+        pindahAlamat: 0,
+        tutupSaatKunjungan: 0,
+        pangkalanAktif2: 0,
+        notBoardingWithDevice: 0,
+        notBoardingNoDevice: 0,
+        boardingNoTransaction: 0,
+        boardingTransaction: 0,
+        successBoarding: 0,
+        failedEmail: 0,
+        failedDontWantOnBoard: 0,
+        failedOthers: 0,
+        boardingSuccessTransaction: 0,
+        boardingFailedTransaction: 0,
+        successTransaction: 0,
+        failedTransaction: 0,
+      });
+    }
+
+    var data = await excelData(pid);
+
+    for (let i = 0; i < data.length; i++) {
+      if (data[i]['P0'] === 2 || data[i]['P0'] === 3) {
+        if (wave !== '0') {
+          if (data[i]['WAVE'] === wave) {
+            var findData = await findObj(result, 'cityName', data[i]['A3']);
+            if (findData !== -1) {
+              result[findData].visit = result[findData].visit + 1;
+
+              //status kunjungan pangkalan
+              if (
+                data[i]['A6'] === 1 &&
+                (data[i]['A7'] === 1 || data[i]['A7'] === 2)
+              ) {
+                result[findData].pangkalanAktif =
+                  result[findData].pangkalanAktif + 1;
+              }
+              if (data[i]['A6'] === 2) {
+                result[findData].tutupPermanen =
+                  result[findData].tutupPermanen + 1;
+              }
+              if (data[i]['A6'] === 3) {
+                result[findData].tidakDitemukan =
+                  result[findData].tidakDitemukan + 1;
+              }
+              if (data[i]['A6'] === 4) {
+                result[findData].pindahAlamat =
+                  result[findData].pindahAlamat + 1;
+              }
+              if (data[i]['A6'] === 5) {
+                result[findData].tutupSaatKunjungan =
+                  result[findData].tutupSaatKunjungan + 1;
+              }
+              if (data[i]['A6'] === 1 && data[i]['A7'] === 3) {
+                result[findData].pangkalanAktif2 =
+                  result[findData].pangkalanAktif2 + 1;
+              }
+
+              // status boarding pangkalan
+              if (data[i]['A12'] === 1 && data[i]['A113'] === 1) {
+                result[findData].notBoardingWithDevice =
+                  result[findData].notBoardingWithDevice + 1;
+              }
+              if (data[i]['A113'] === 2) {
+                result[findData].notBoardingNoDevice =
+                  result[findData].notBoardingNoDevice + 1;
+              }
+              if (data[i]['A12'] === 2) {
+                result[findData].boardingNoTransaction =
+                  result[findData].boardingNoTransaction + 1;
+              }
+              if (data[i]['A12'] === 3 || data[i]['A12'] === 4) {
+                result[findData].boardingTransaction =
+                  result[findData].boardingTransaction + 1;
+              }
+
+              // belum on boarding
+              if (data[i]['A31'] === 1) {
+                result[findData].successBoarding =
+                  result[findData].successBoarding + 1;
+              }
+              if (data[i]['A31'] === 2) {
+                result[findData].failedEmail = result[findData].failedEmail + 1;
+              }
+              if (data[i]['A31'] === 3) {
+                result[findData].failedDontWantOnBoard =
+                  result[findData].failedDontWantOnBoard + 1;
+              }
+              if (data[i]['A31'] === 4) {
+                result[findData].failedOthers =
+                  result[findData].failedOthers + 1;
+              }
+
+              // transaction
+              if (data[i]['A50'] === 1) {
+                result[findData].boardingSuccessTransaction =
+                  result[findData].boardingSuccessTransaction + 1;
+              }
+              if (data[i]['A50'] === 2 || data[i]['A50'] === 3) {
+                result[findData].boardingFailedTransaction =
+                  result[findData].boardingFailedTransaction + 1;
+              }
+              if (data[i]['A33'] === 1) {
+                result[findData].successTransaction =
+                  result[findData].successTransaction + 1;
+              }
+              if (data[i]['A33'] === 2 || data[i]['A33'] === 3) {
+                result[findData].failedTransaction =
+                  result[findData].failedTransaction + 1;
+              }
+            }
+          }
+        } else {
+          isifile.push([
+            data[i]['KID_Pangkalan'],
+            data[i]['WAVE'],
+            data[i]['A1'],
+            data[i]['A2'],
+            data[i]['A3'],
+            data[i]['NAMAPANGKALAN'],
+            data[i]['SAM'],
+            data[i]['P0'] === 2
+              ? 'Kunjungan Non Fisik (arahan SBM supaya tidak perlu dikunjungi karena pangkalan sudah on boarding dan transaksi lancar)'
+              : 'Kunjungan Non Fisik (arahan SBM supaya tidak perlu dikunjungi karena akun pangkalan dipegang oleh agen)',
+          ]);
+        }
+      }
+    }
+
+    var header = [
+      [
+        'ID Pangkalan',
+        'Wave',
+        'Region',
+        'Province',
+        'Kota/Kabupaten',
+        'Nama Pangkalan',
+        'sbm',
+        'Jenis Kunjungan',
+      ],
+    ];
+
+    var formatdate = moment().format('YYYY_MM_DD_HH_mm_ss');
+    var newfilename = `${pid}_${formatdate}_jenis_pangkalan.xlsx`;
+    var createfile = header.concat(isifile);
+    const progress = xlsx.build([{ name: 'Data', data: createfile }]);
+    fs.writeFile(
+      `public/fileexcel/${newfilename}`,
+      progress,
+      function (errwritefile) {
+        if (errwritefile) {
+          console.log('error');
+        } else {
+          console.log('tidak error');
+          res.status(200).json({
+            statusCode: 200,
+            message: 'Success export data pangkalan',
+            data: `https://survey.kadence.co.id/fileexcel/${newfilename}`,
+          });
+        }
+      }
+    );
+    // res.status(200).json({
+    //   statusCode: 200,
+    //   message: 'Success get touchpoint score parent',
+    //   data: isifile,
+    // });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
