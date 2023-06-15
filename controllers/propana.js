@@ -5892,7 +5892,7 @@ exports.getStatusPangkalanExport = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success export data pangkalan',
-            data: `http://dashboard.kadence.co.id/fileexcel/${newfilename}`,
+            data: `https://dashboard.kadence.co.id/fileexcel/${newfilename}`,
           });
         }
       }
