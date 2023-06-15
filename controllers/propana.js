@@ -431,6 +431,11 @@ exports.getVisitAchievementByDate = async function (req, res) {
       }
     }
 
+    for (let i = 0; i < result.date.length; i++) {
+      var getLastDate = result.date[i].split(",")[0]
+      result.date[i] = getLastDate
+    }
+
     res.status(200).json({
       statusCode: 200,
       message: 'Success get Total Visit',
@@ -4682,6 +4687,7 @@ exports.getProgressNotBoarding = async function (req, res) {
     for (let i = 0; i < weekslice.length; i++) {
       result.push({
         week: weekslice[i],
+        count: 0,
         total: 0,
         data: [
           { label: 'Tidak Mau', count: 0, value: 0 },
@@ -4702,6 +4708,7 @@ exports.getProgressNotBoarding = async function (req, res) {
             if (region !== '0' && province === '0') {
               if (data[i]['A1'] === region) {
                 if (data[i]['A12'] === 1) {
+                  result[findWeek].count++;
                   for (let x = 1; x <= 15; x++) {
                     if (data[i][`A31b_${x}`] !== 0) {
                       result[findWeek].total++;
@@ -4726,6 +4733,7 @@ exports.getProgressNotBoarding = async function (req, res) {
               if (city !== '0') {
                 if (data[i]['A3'] === city) {
                   if (data[i]['A12'] === 1) {
+                    result[findWeek].count++;
                     for (let x = 1; x <= 15; x++) {
                       if (data[i][`A31b_${x}`] !== 0) {
                         result[findWeek].total++;
@@ -4749,6 +4757,7 @@ exports.getProgressNotBoarding = async function (req, res) {
               } else {
                 if (data[i]['A2'] === province) {
                   if (data[i]['A12'] === 1) {
+                    result[findWeek].count++;
                     for (let x = 1; x <= 15; x++) {
                       if (data[i][`A31b_${x}`] !== 0) {
                         result[findWeek].total++;
@@ -4774,6 +4783,7 @@ exports.getProgressNotBoarding = async function (req, res) {
               if (city !== '0') {
                 if (data[i]['A3'] === city) {
                   if (data[i]['A12'] === 1) {
+                    result[findWeek].count++;
                     for (let x = 1; x <= 15; x++) {
                       if (data[i][`A31b_${x}`] !== 0) {
                         result[findWeek].total++;
@@ -4796,6 +4806,7 @@ exports.getProgressNotBoarding = async function (req, res) {
                 }
               } else {
                 if (data[i]['A12'] === 1) {
+                  result[findWeek].count++;
                   for (let x = 1; x <= 15; x++) {
                     if (data[i][`A31b_${x}`] !== 0) {
                       result[findWeek].total++;
@@ -4818,6 +4829,7 @@ exports.getProgressNotBoarding = async function (req, res) {
               }
             } else {
               if (data[i]['A12'] === 1) {
+                result[findWeek].count++;
                 for (let x = 1; x <= 15; x++) {
                   if (data[i][`A31b_${x}`] !== 0) {
                     result[findWeek].total++;
@@ -4843,6 +4855,7 @@ exports.getProgressNotBoarding = async function (req, res) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
               if (data[i]['A12'] === 1) {
+                result[findWeek].count++;
                 for (let x = 1; x <= 15; x++) {
                   if (data[i][`A31b_${x}`] !== 0) {
                     result[findWeek].total++;
@@ -4867,6 +4880,7 @@ exports.getProgressNotBoarding = async function (req, res) {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
                 if (data[i]['A12'] === 1) {
+                  result[findWeek].count++;
                   for (let x = 1; x <= 15; x++) {
                     if (data[i][`A31b_${x}`] !== 0) {
                       result[findWeek].total++;
@@ -4890,6 +4904,7 @@ exports.getProgressNotBoarding = async function (req, res) {
             } else {
               if (data[i]['A2'] === province) {
                 if (data[i]['A12'] === 1) {
+                  result[findWeek].count++;
                   for (let x = 1; x <= 15; x++) {
                     if (data[i][`A31b_${x}`] !== 0) {
                       result[findWeek].total++;
@@ -4915,6 +4930,7 @@ exports.getProgressNotBoarding = async function (req, res) {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
                 if (data[i]['A12'] === 1) {
+                  result[findWeek].count++;
                   for (let x = 1; x <= 15; x++) {
                     if (data[i][`A31b_${x}`] !== 0) {
                       result[findWeek].total++;
@@ -4937,6 +4953,7 @@ exports.getProgressNotBoarding = async function (req, res) {
               }
             } else {
               if (data[i]['A12'] === 1) {
+                result[findWeek].count++;
                 for (let x = 1; x <= 15; x++) {
                   if (data[i][`A31b_${x}`] !== 0) {
                     result[findWeek].total++;
@@ -4959,6 +4976,7 @@ exports.getProgressNotBoarding = async function (req, res) {
             }
           } else {
             if (data[i]['A12'] === 1) {
+              result[findWeek].count++;
               for (let x = 1; x <= 15; x++) {
                 if (data[i][`A31b_${x}`] !== 0) {
                   result[findWeek].total++;
@@ -5027,6 +5045,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
     for (let i = 0; i < weekslice.length; i++) {
       result.push({
         week: weekslice[i],
+        count: 0,
         total: 0,
         data: [
           { label: 'TIDAK ADA PELANGGAN SAAT KUNJUNGAN', count: 0, value: 0 },
@@ -5049,6 +5068,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
             if (region !== '0' && province === '0') {
               if (data[i]['A1'] === region) {
                 if (data[i]['A12'] === 2) {
+                  result[findWeek].count++;
                   for (let x = 1; x <= 27; x++) {
                     if (data[i][`A33b_${x}`] !== 0) {
                       result[findWeek].total++;
@@ -5078,6 +5098,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
               if (city !== '0') {
                 if (data[i]['A3'] === city) {
                   if (data[i]['A12'] === 2) {
+                    result[findWeek].count++;
                     for (let x = 1; x <= 27; x++) {
                       if (data[i][`A33b_${x}`] !== 0) {
                         result[findWeek].total++;
@@ -5106,6 +5127,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
               } else {
                 if (data[i]['A2'] === province) {
                   if (data[i]['A12'] === 2) {
+                    result[findWeek].count++;
                     for (let x = 1; x <= 27; x++) {
                       if (data[i][`A33b_${x}`] !== 0) {
                         result[findWeek].total++;
@@ -5136,6 +5158,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
               if (city !== '0') {
                 if (data[i]['A3'] === city) {
                   if (data[i]['A12'] === 2) {
+                    result[findWeek].count++;
                     for (let x = 1; x <= 27; x++) {
                       if (data[i][`A33b_${x}`] !== 0) {
                         result[findWeek].total++;
@@ -5163,6 +5186,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
                 }
               } else {
                 if (data[i]['A12'] === 2) {
+                  result[findWeek].count++;
                   for (let x = 1; x <= 27; x++) {
                     if (data[i][`A33b_${x}`] !== 0) {
                       result[findWeek].total++;
@@ -5190,6 +5214,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
               }
             } else {
               if (data[i]['A12'] === 2) {
+                result[findWeek].count++;
                 for (let x = 1; x <= 27; x++) {
                   if (data[i][`A33b_${x}`] !== 0) {
                     result[findWeek].total++;
@@ -5220,6 +5245,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
               if (data[i]['A12'] === 2) {
+                result[findWeek].count++;
                 for (let x = 1; x <= 27; x++) {
                   if (data[i][`A33b_${x}`] !== 0) {
                     result[findWeek].total++;
@@ -5249,6 +5275,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
                 if (data[i]['A12'] === 2) {
+                  result[findWeek].count++;
                   for (let x = 1; x <= 27; x++) {
                     if (data[i][`A33b_${x}`] !== 0) {
                       result[findWeek].total++;
@@ -5277,6 +5304,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
             } else {
               if (data[i]['A2'] === province) {
                 if (data[i]['A12'] === 2) {
+                  result[findWeek].count++;
                   for (let x = 1; x <= 27; x++) {
                     if (data[i][`A33b_${x}`] !== 0) {
                       result[findWeek].total++;
@@ -5307,6 +5335,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
                 if (data[i]['A12'] === 2) {
+                  result[findWeek].count++;
                   for (let x = 1; x <= 27; x++) {
                     if (data[i][`A33b_${x}`] !== 0) {
                       result[findWeek].total++;
@@ -5334,6 +5363,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
               }
             } else {
               if (data[i]['A12'] === 2) {
+                result[findWeek].count++;
                 for (let x = 1; x <= 27; x++) {
                   if (data[i][`A33b_${x}`] !== 0) {
                     result[findWeek].total++;
@@ -5361,6 +5391,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
             }
           } else {
             if (data[i]['A12'] === 2) {
+              result[findWeek].count++;
               for (let x = 1; x <= 27; x++) {
                 if (data[i][`A33b_${x}`] !== 0) {
                   result[findWeek].total++;
