@@ -10,7 +10,8 @@ const citySchema = mongoose.Schema({
   target: Number,
   dataList: Number,
   list: Number,
-  others: Number
+  others: Number,
+  wave: String
 });
 
 module.exports = mongoose.model('City', citySchema);

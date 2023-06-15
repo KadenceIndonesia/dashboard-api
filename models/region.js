@@ -5,6 +5,7 @@ const regionSchema = mongoose.Schema({
   idRegion: Number,
   idProject: String,
   regionName: String,
+  regionCode: String,
   target: Number
 });
 

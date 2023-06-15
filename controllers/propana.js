@@ -185,12 +185,12 @@ exports.getVisitAchievement = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    const wave = parseInt(req.query.wave);
+    const wave = req.query.wave;
 
     var result = 0;
     var data = await excelData(pid);
     for (let i = 0; i < data.length; i++) {
-      if (wave !== 0) {
+      if (wave !== '0') {
         if (wave === data[i]['WAVE']) {
           if (region !== '0' && province === '0') {
             if (data[i]['A1'] === region) {
@@ -432,8 +432,8 @@ exports.getVisitAchievementByDate = async function (req, res) {
     }
 
     for (let i = 0; i < result.date.length; i++) {
-      var getLastDate = result.date[i].split(",")[0]
-      result.date[i] = getLastDate
+      var getLastDate = result.date[i].split(',')[0];
+      result.date[i] = getLastDate;
     }
 
     res.status(200).json({
@@ -2454,6 +2454,7 @@ exports.getSortBoarding = async function (req, res) {
 exports.getVisitByRegion = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const wave = req.query.wave;
     const region = req.query.region;
     // const province = req.query.province;
 
@@ -2461,7 +2462,7 @@ exports.getVisitByRegion = async function (req, res) {
     var total = 0;
 
     if (region !== '0') {
-      var _getAdminstrationRegion = await getAdminstrationRegionByName(
+      var _getAdminstrationRegion = await getAdminstrationRegionByCode(
         pid,
         region
       );
@@ -2471,7 +2472,6 @@ exports.getVisitByRegion = async function (req, res) {
 
     for (let i = 0; i < _getAdminstrationRegion.length; i++) {
       var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
-      console.log(splitCode[1]);
       result.push({
         code: splitCode[1],
         label: _getAdminstrationRegion[i].regionName,
@@ -2486,8 +2486,15 @@ exports.getVisitByRegion = async function (req, res) {
     for (let i = 0; i < data.length; i++) {
       var findData = await findObj(result, 'code', data[i]['A1']);
       if (findData !== -1) {
-        result[findData].count = result[findData].count + 1;
-        total++;
+        if (wave !== '0') {
+          if (data[i]['WAVE'] === wave) {
+            result[findData].count = result[findData].count + 1;
+            total++;
+          }
+        } else {
+          result[findData].count = result[findData].count + 1;
+          total++;
+        }
       }
     }
 
@@ -2930,6 +2937,7 @@ exports.getAchievementDeviceTotal = async function (req, res) {
 exports.getDataListPangkalan = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const wave = req.query.wave;
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;

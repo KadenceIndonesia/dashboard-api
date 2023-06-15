@@ -64,34 +64,62 @@ exports.getCityListProvince = async function (req, res) {
 exports.getCityTotal = async function (req, res) {
   try {
     const pid = req.params.pid;
+    const wave = req.query.wave;
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
 
     var result = 0;
 
-    if (region !== '0' && province === '0' && city === '0') {
-      var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
-        pid,
-        region
-      );
-      for (let i = 0; i < _getAdminstrationProvince.length; i++) {
+    if (wave !== '0') {
+      if (region !== '0' && province === '0' && city === '0') {
+        var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
+          pid,
+          region
+        );
+        for (let i = 0; i < _getAdminstrationProvince.length; i++) {
+          var _getAdminstrationCityByProvince =
+            await getAdminstrationCityByProvinceWave(
+              pid,
+              _getAdminstrationProvince[i].provinceName,
+              wave
+            );
+          result = result + _getAdminstrationCityByProvince.length;
+        }
+      } else if (region !== '0' && province !== '0' && city === '0') {
         var _getAdminstrationCityByProvince =
-          await getAdminstrationCityByProvince(
-            pid,
-            _getAdminstrationProvince[i].provinceName
-          );
-        result = result + _getAdminstrationCityByProvince.length;
+          await getAdminstrationCityByProvinceWave(pid, province, wave);
+        result = _getAdminstrationCityByProvince.length;
+      } else if (region !== '0' && province !== '0' && city !== '0') {
+        result = 1;
+      } else {
+        var data = await getAdminstrationCityWave(pid, wave);
+        result = data.length;
       }
-    } else if (region !== '0' && province !== '0' && city === '0') {
-      var _getAdminstrationCityByProvince =
-        await getAdminstrationCityByProvince(pid, province);
-      result = _getAdminstrationCityByProvince.length;
-    } else if (region !== '0' && province !== '0' && city !== '0') {
-      result = 1;
     } else {
-      var _getAdminstrationProvince = await getAdminstrationCityAll(pid);
-      result = _getAdminstrationProvince.length;
+      if (region !== '0' && province === '0' && city === '0') {
+        var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
+          pid,
+          region
+        );
+        for (let i = 0; i < _getAdminstrationProvince.length; i++) {
+          var _getAdminstrationCityByProvince =
+            await getAdminstrationCityByProvince(
+              pid,
+              _getAdminstrationProvince[i].provinceName
+            );
+          result = result + _getAdminstrationCityByProvince.length;
+        }
+      } else if (region !== '0' && province !== '0' && city === '0') {
+        var _getAdminstrationCityByProvince =
+          await getAdminstrationCityByProvince(pid, province);
+        result = _getAdminstrationCityByProvince.length;
+      } else if (region !== '0' && province !== '0' && city !== '0') {
+        result = 1;
+      } else {
+        var _getAdminstrationProvince = await getAdminstrationCityAll(pid);
+        result = _getAdminstrationProvince.length;
+      }
     }
 
     res.status(200).json({
