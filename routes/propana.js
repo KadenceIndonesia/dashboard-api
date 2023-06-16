@@ -2,16 +2,16 @@ const express = require('express');
 const propanaController = require('../controllers/propana');
 const Router = express.Router();
 
-Router.get('/:pid/achievement/visit', propanaController.getVisitAchievement);
-Router.get('/:pid/achievement/visit-by-date', propanaController.getVisitAchievementByDate);
-Router.get('/:pid/achievement/status-visit', propanaController.getStatusVisitAchievement); //done
-Router.get('/:pid/achievement/status-visit-percent', propanaController.getStatusVisitAchievementPercent); //done
+Router.get('/:pid/achievement/visit', propanaController.getVisitAchievement); //S0
+Router.get('/:pid/achievement/visit-by-date', propanaController.getVisitAchievementByDate); //S0
+Router.get('/:pid/achievement/status-visit', propanaController.getStatusVisitAchievement); //A6A7
+Router.get('/:pid/achievement/status-visit-percent', propanaController.getStatusVisitAchievementPercent); //A6A7
 Router.get('/:pid/achievement/visit-region', propanaController.getVisitByRegion);
 Router.get('/:pid/achievement/visit-province', propanaController.getVisitByProvince);
 Router.get('/:pid/achievement/visit-city', propanaController.getVisitByCity);
 Router.get('/:pid/achievement/status-pangkalan', propanaController.getStatusPangkalan);
-Router.get('/:pid/achievement/status-boarding-pangkalan', propanaController.getStatusOnBoardingPangkalan); //done wave
-Router.get('/:pid/achievement/help-boarding', propanaController.getHelpBoardingPangkalan); //done wave
+Router.get('/:pid/achievement/status-boarding-pangkalan', propanaController.getStatusOnBoardingPangkalan); //A12A113
+Router.get('/:pid/achievement/help-boarding', propanaController.getHelpBoardingPangkalan); //A31
 Router.get('/:pid/sort/boarding/:type', propanaController.getSortBoarding); //done wave
 
 // on boarding belum transaksi

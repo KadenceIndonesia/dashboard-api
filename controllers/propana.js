@@ -188,7 +188,7 @@ exports.getVisitAchievement = async function (req, res) {
     const wave = req.query.wave;
 
     var result = 0;
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'S0');
     for (let i = 0; i < data.length; i++) {
       if (wave !== '0') {
         if (wave === data[i]['WAVE']) {
@@ -292,201 +292,121 @@ exports.getVisitAchievementByDate = async function (req, res) {
     const province = req.query.province;
     const city = req.query.city;
     const wave = req.query.wave;
-
-    var today = moment().format('D MMM YYYY');
     var result = {
       date: [],
       value: [0, 0, 0, 0],
     };
-    for (let i = 7; i >= 0; i--) {
-      if (i % 2 === 0) {
-        var day1 = moment().subtract(i, 'days').format('D MMM YYYY');
-        var day2 = moment()
-          .subtract(i + 1, 'days')
-          .format('D MMM YYYY');
-        result.date.push(`${day1},${day2}`);
+
+    var excelDate = await excelDataByQuest(`${pid}`, 'date');
+
+    for (let i = 0; i < excelDate.length; i++) {
+      var dates = excelDatetoJS(excelDate[i].cutoffdate);
+      if (excelDate[i]['code'] > 0) {
+        result.date.push(moment(dates).format('D MMM YYYY'));
       }
     }
 
-    var data = await excelData(pid);
+    // for (let i = 7; i >= 0; i--) {
+    //   if (i % 2 === 0) {
+    //     var day1 = moment().subtract(i, 'days').format('D MMM YYYY');
+    //     var day2 = moment()
+    //       .subtract(i + 1, 'days')
+    //       .format('D MMM YYYY');
+    //     result.date.push(`${day1},${day2}`);
+    //   }
+    // }
+
+    var data = await excelDataByQuest(`${pid}`, 'S0');
     for (let i = 0; i < data.length; i++) {
       var _excelDatetoJS = excelDatetoJS(data[i]['CUT OFF DATE']);
-
-      if (wave !== '0') {
-        if (wave === data[i]['WAVE']) {
-          if (region !== '0' && province === '0') {
-            if (data[i]['A1'] === region) {
-              for (let x = 0; x < result.date.length; x++) {
-                var splitDate = result.date[x].split(',');
-                var findArrayDate = splitDate.indexOf(
-                  moment(_excelDatetoJS).format('D MMM YYYY')
-                );
-                if (findArrayDate !== -1) {
+      var findArrayDate = result.date.indexOf(
+        moment(_excelDatetoJS).format('D MMM YYYY')
+      );
+      if (findArrayDate !== -1) {
+        if (wave !== '0') {
+          if (wave === data[i]['WAVE']) {
+            if (region !== '0' && province === '0') {
+              if (data[i]['A1'] === region) {
+                if (data[i]['S0'] === 1) {
+                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
+                }
+              }
+            } else if (region !== '0' && province !== '0') {
+              if (city !== '0') {
+                if (data[i]['A3'] === city) {
                   if (data[i]['S0'] === 1) {
-                    result.value[x] = result.value[x] + 1;
+                    result.value[findArrayDate] =
+                      result.value[findArrayDate] + 1;
                   }
                 }
+              } else {
+                if (data[i]['A2'] === province) {
+                  if (data[i]['S0'] === 1) {
+                    result.value[findArrayDate] =
+                      result.value[findArrayDate] + 1;
+                  }
+                }
+              }
+            } else if (region === '0' && province !== '0') {
+              if (city !== '0') {
+                if (data[i]['A3'] === city) {
+                  if (data[i]['S0'] === 1) {
+                    result.value[findArrayDate] =
+                      result.value[findArrayDate] + 1;
+                  }
+                }
+              } else {
+                if (data[i]['A2'] === province) {
+                  if (data[i]['S0'] === 1) {
+                    result.value[findArrayDate] =
+                      result.value[findArrayDate] + 1;
+                  }
+                }
+              }
+            } else {
+              if (data[i]['S0'] === 1) {
+                result.value[findArrayDate] = result.value[findArrayDate] + 1;
+              }
+            }
+          }
+        } else {
+          if (region !== '0' && province === '0') {
+            if (data[i]['A1'] === region) {
+              if (data[i]['S0'] === 1) {
+                result.value[findArrayDate] = result.value[findArrayDate] + 1;
               }
             }
           } else if (region !== '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                for (let x = 0; x < result.date.length; x++) {
-                  var splitDate = result.date[x].split(',');
-                  var findArrayDate = splitDate.indexOf(
-                    moment(_excelDatetoJS).format('D MMM YYYY')
-                  );
-                  if (findArrayDate !== -1) {
-                    if (data[i]['S0'] === 1) {
-                      result.value[x] = result.value[x] + 1;
-                    }
-                  }
+                if (data[i]['S0'] === 1) {
+                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
                 }
               }
             } else {
               if (data[i]['A2'] === province) {
-                for (let x = 0; x < result.date.length; x++) {
-                  var splitDate = result.date[x].split(',');
-                  var findArrayDate = splitDate.indexOf(
-                    moment(_excelDatetoJS).format('D MMM YYYY')
-                  );
-                  if (findArrayDate !== -1) {
-                    if (data[i]['S0'] === 1) {
-                      result.value[x] = result.value[x] + 1;
-                    }
-                  }
+                if (data[i]['S0'] === 1) {
+                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
                 }
               }
             }
           } else if (region === '0' && province !== '0') {
             if (city !== '0') {
               if (data[i]['A3'] === city) {
-                for (let x = 0; x < result.date.length; x++) {
-                  var splitDate = result.date[x].split(',');
-                  var findArrayDate = splitDate.indexOf(
-                    moment(_excelDatetoJS).format('D MMM YYYY')
-                  );
-                  if (findArrayDate !== -1) {
-                    if (data[i]['S0'] === 1) {
-                      result.value[x] = result.value[x] + 1;
-                    }
-                  }
+                if (data[i]['S0'] === 1) {
+                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
                 }
               }
             } else {
               if (data[i]['A2'] === province) {
-                for (let x = 0; x < result.date.length; x++) {
-                  var splitDate = result.date[x].split(',');
-                  var findArrayDate = splitDate.indexOf(
-                    moment(_excelDatetoJS).format('D MMM YYYY')
-                  );
-                  if (findArrayDate !== -1) {
-                    if (data[i]['S0'] === 1) {
-                      result.value[x] = result.value[x] + 1;
-                    }
-                  }
-                }
-              }
-            }
-          } else {
-            for (let x = 0; x < result.date.length; x++) {
-              var splitDate = result.date[x].split(',');
-              var findArrayDate = splitDate.indexOf(
-                moment(_excelDatetoJS).format('D MMM YYYY')
-              );
-              if (findArrayDate !== -1) {
                 if (data[i]['S0'] === 1) {
-                  result.value[x] = result.value[x] + 1;
-                }
-              }
-            }
-          }
-        }
-      } else {
-        if (region !== '0' && province === '0') {
-          if (data[i]['A1'] === region) {
-            for (let x = 0; x < result.date.length; x++) {
-              var splitDate = result.date[x].split(',');
-              var findArrayDate = splitDate.indexOf(
-                moment(_excelDatetoJS).format('D MMM YYYY')
-              );
-              if (findArrayDate !== -1) {
-                if (data[i]['S0'] === 1) {
-                  result.value[x] = result.value[x] + 1;
-                }
-              }
-            }
-          }
-        } else if (region !== '0' && province !== '0') {
-          if (city !== '0') {
-            if (data[i]['A3'] === city) {
-              for (let x = 0; x < result.date.length; x++) {
-                var splitDate = result.date[x].split(',');
-                var findArrayDate = splitDate.indexOf(
-                  moment(_excelDatetoJS).format('D MMM YYYY')
-                );
-                if (findArrayDate !== -1) {
-                  if (data[i]['S0'] === 1) {
-                    result.value[x] = result.value[x] + 1;
-                  }
+                  result.value[findArrayDate] = result.value[findArrayDate] + 1;
                 }
               }
             }
           } else {
-            if (data[i]['A2'] === province) {
-              for (let x = 0; x < result.date.length; x++) {
-                var splitDate = result.date[x].split(',');
-                var findArrayDate = splitDate.indexOf(
-                  moment(_excelDatetoJS).format('D MMM YYYY')
-                );
-                if (findArrayDate !== -1) {
-                  if (data[i]['S0'] === 1) {
-                    result.value[x] = result.value[x] + 1;
-                  }
-                }
-              }
-            }
-          }
-        } else if (region === '0' && province !== '0') {
-          if (city !== '0') {
-            if (data[i]['A3'] === city) {
-              for (let x = 0; x < result.date.length; x++) {
-                var splitDate = result.date[x].split(',');
-                var findArrayDate = splitDate.indexOf(
-                  moment(_excelDatetoJS).format('D MMM YYYY')
-                );
-                if (findArrayDate !== -1) {
-                  if (data[i]['S0'] === 1) {
-                    result.value[x] = result.value[x] + 1;
-                  }
-                }
-              }
-            }
-          } else {
-            if (data[i]['A2'] === province) {
-              for (let x = 0; x < result.date.length; x++) {
-                var splitDate = result.date[x].split(',');
-                var findArrayDate = splitDate.indexOf(
-                  moment(_excelDatetoJS).format('D MMM YYYY')
-                );
-                if (findArrayDate !== -1) {
-                  if (data[i]['S0'] === 1) {
-                    result.value[x] = result.value[x] + 1;
-                  }
-                }
-              }
-            }
-          }
-        } else {
-          for (let x = 0; x < result.date.length; x++) {
-            var splitDate = result.date[x].split(',');
-            var findArrayDate = splitDate.indexOf(
-              moment(_excelDatetoJS).format('D MMM YYYY')
-            );
-            if (findArrayDate !== -1) {
-              if (data[i]['S0'] === 1) {
-                result.value[x] = result.value[x] + 1;
-              }
+            if (data[i]['S0'] === 1) {
+              result.value[findArrayDate] = result.value[findArrayDate] + 1;
             }
           }
         }
@@ -524,7 +444,7 @@ exports.getStatusVisitAchievement = async function (req, res) {
         value: 0,
       });
     }
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'A6A7');
 
     for (let i = 0; i < data.length; i++) {
       if (region !== '0' && province === '0') {
@@ -913,7 +833,7 @@ exports.getStatusPangkalan = async function (req, res) {
     ];
     var total = 0;
 
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'P0');
     for (let i = 0; i < data.length; i++) {
       if (wave !== '0') {
         if (data[i]['WAVE'] === wave) {
@@ -1044,7 +964,7 @@ exports.getStatusVisitAchievementPercent = async function (req, res) {
         value: 0,
       });
     }
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'A6A7');
 
     for (let i = 0; i < data.length; i++) {
       if (region !== '0' && province === '0') {
@@ -1381,7 +1301,7 @@ exports.getPosterAchievement = async function (req, res) {
         value: 0,
       },
     ];
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'A35');
 
     for (let i = 0; i < data.length; i++) {
       if (data[i]['A35']) {
@@ -1489,7 +1409,7 @@ exports.getPosterViewAchievement = async function (req, res) {
         value: 0,
       },
     ];
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'A36');
 
     for (let i = 0; i < data.length; i++) {
       if (data[i]['A36']) {
@@ -1590,7 +1510,7 @@ exports.getSortPoster = async function (req, res) {
 
     var result = [];
 
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'A7A35');
 
     for (let i = 0; i < data.length; i++) {
       if (wave !== '0') {
@@ -1883,7 +1803,7 @@ exports.getStatusOnBoardingPangkalan = async function (req, res) {
         value: 0,
       });
     }
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'A12A113');
 
     for (let i = 0; i < data.length; i++) {
       if (wave !== '0') {
@@ -2105,7 +2025,7 @@ exports.getHelpBoardingPangkalan = async function (req, res) {
         value: 0,
       });
     }
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'A31');
 
     for (let i = 0; i < data.length; i++) {
       if (wave !== '0') {
@@ -2236,11 +2156,9 @@ exports.getSortBoarding = async function (req, res) {
     const city = req.query.city;
     const wave = req.query.wave;
 
-    var _getCity = await getAdminstrationCityAll(pid);
-
     var result = [];
 
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'A31A113A12');
 
     for (let i = 0; i < data.length; i++) {
       if (wave !== '0') {
@@ -2608,7 +2526,7 @@ exports.getVisitByRegion = async function (req, res) {
       }
     }
 
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'S0');
 
     for (let i = 0; i < data.length; i++) {
       var findData = await findObj(result, 'code', data[i]['A1']);
@@ -2741,7 +2659,7 @@ exports.getVisitByProvince = async function (req, res) {
       }
     }
 
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'S0');
     var total = 0;
 
     for (let i = 0; i < data.length; i++) {
@@ -3143,7 +3061,7 @@ exports.getDataListPangkalan = async function (req, res) {
     const province = req.query.province;
     const city = req.query.city;
 
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(pid, 'all');
     var result = [];
 
     for (let i = 0; i < data.length; i++) {
@@ -3620,7 +3538,7 @@ exports.getOnBoardingNoTransaction = async function (req, res) {
         value: 0,
       });
     }
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'A33');
 
     for (let i = 0; i < data.length; i++) {
       if (wave !== '0') {
@@ -3751,11 +3669,9 @@ exports.getSortBoardingTransaction = async function (req, res) {
     const city = req.query.city;
     const wave = req.query.wave;
 
-    var _getCity = await getAdminstrationCityAll(pid);
-
     var result = [];
 
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'A33A12');
 
     for (let i = 0; i < data.length; i++) {
       if (wave !== '0') {
@@ -4040,7 +3956,7 @@ exports.getExportPangkalan = async function (req, res) {
     const region = req.query.region;
     const province = req.query.province;
     const city = req.query.city;
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(pid, 'all');
     var isifile = [];
 
     for (let i = 0; i < data.length; i++) {
@@ -4883,7 +4799,7 @@ exports.getProgressNotBoarding = async function (req, res) {
     var week = [];
     var weekslice = [];
 
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'A31A31b');
 
     for (let i = 0; i < data.length; i++) {
       if (week.indexOf(data[i]['WEEK']) === -1) {
@@ -5266,7 +5182,7 @@ exports.getProgressOnBoardingTransaction = async function (req, res) {
     var week = [];
     var weekslice = [];
 
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'A33A33b');
 
     for (let i = 0; i < data.length; i++) {
       if (week.indexOf(data[i]['WEEK']) === -1) {
@@ -5681,7 +5597,7 @@ exports.getStatusPangkalanExport = async function (req, res) {
     const province = req.query.province;
     const city = req.query.city;
     const wave = req.query.wave;
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(pid, 'all');
     var isifile = [];
 
     var result = [];
@@ -5754,7 +5670,7 @@ exports.getStatusPangkalanExport = async function (req, res) {
       });
     }
 
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(pid, 'all');
 
     for (let i = 0; i < data.length; i++) {
       if (data[i]['P0'] === 2 || data[i]['P0'] === 3) {
