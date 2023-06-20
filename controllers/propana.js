@@ -3458,7 +3458,7 @@ exports.getDataListPangkalan = async function (req, res) {
           province: data[i]['A2'],
           city: data[i]['A3'],
           key: data[i]['KID_KEPO'],
-          pangkalan: data[i]['NAMAPEMILIK'],
+          pangkalan: data[i]['NAMAPANGKALAN'],
           kecamatan: data[i]['KECAMATAN'],
           kelurahan: data[i]['KELURAHAN'],
           P0: data[i]['P0'],
@@ -3500,7 +3500,7 @@ exports.getDetailPangkalan = async function (req, res) {
     const key = req.params.key;
     var result = '';
 
-    var data = await excelData(pid);
+    var data = await excelDataByQuest(`${pid}`, 'all');
     var findData = await findObj(data, 'KID_KEPO', key);
     result = {
       province: data[findData]['A2'],
