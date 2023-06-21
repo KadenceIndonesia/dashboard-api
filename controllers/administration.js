@@ -1,24 +1,87 @@
+require('../lib/index');
 require('../lib/administration');
 require('../lib/helper');
+
+exports.getRegion = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const wave = req.query.wave;
+    var result = [];
+    if (wave !== '0') {
+      var arrArea = [];
+      var _getAdminstrationCityWave = await getAdminstrationCityWave(pid, wave);
+      for (let i = 0; i < _getAdminstrationCityWave.length; i++) {
+        if (arrArea.indexOf(_getAdminstrationCityWave[i].idArea) === -1) {
+          arrArea.push(_getAdminstrationCityWave[i].idArea);
+        }
+      }
+      var _getAdminstrationProvinceByArray =
+        await getAdminstrationProvinceByArray(pid, arrArea);
+
+      for (let i = 0; i < _getAdminstrationProvinceByArray.length; i++) {
+        var _getAdminstrationRegionByCode = await getAdminstrationRegionByCode(
+          pid,
+          _getAdminstrationProvinceByArray[i].regionName
+        );
+        var findArray = await findObj(
+          result,
+          'code',
+          _getAdminstrationRegionByCode[0].regionCode
+        );
+        if (findArray === -1) {
+          result.push({
+            code: _getAdminstrationRegionByCode[0].regionCode,
+            label: _getAdminstrationRegionByCode[0].regionName,
+          });
+        }
+      }
+    } else {
+      var data = await getAdminstrationRegion(pid);
+      for (let i = 0; i < data.length; i++) {
+        result.push({
+          code: data[i].regionCode,
+          label: data[i].regionName,
+        });
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Administration Region',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
 
 exports.getProvinces = async function (req, res) {
   try {
     const pid = req.params.pid;
     const region = req.query.region;
-
-    // if (region === '0' || region === undefined) {
-    //   var _getAdminstrationProvince = await getAdminstrationProvince(pid);
-    // } else {
-    var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
-      pid,
-      region
-    );
-    // }
+    const wave = req.query.wave;
+    var result;
+    if (wave !== '0') {
+      var arrArea = [];
+      var _getAdminstrationCityWave = await getAdminstrationCityWave(pid, wave);
+      for (let i = 0; i < _getAdminstrationCityWave.length; i++) {
+        if (arrArea.indexOf(_getAdminstrationCityWave[i].idArea) === -1) {
+          arrArea.push(_getAdminstrationCityWave[i].idArea);
+        }
+      }
+      var result = await getAdminstrationProvinceByRegionArrayProvince(
+        pid,
+        region,
+        arrArea
+      );
+    } else {
+      var result = await getAdminstrationProvinceByRegion(pid, region);
+    }
 
     res.status(200).json({
       statusCode: 200,
       message: 'Success get Administration provinces',
-      data: _getAdminstrationProvince,
+      data: result,
     });
   } catch (error) {
     res.status(400).send(error);
@@ -45,16 +108,18 @@ exports.getCityListProvince = async function (req, res) {
   try {
     const pid = req.params.pid;
     const province = req.params.province;
-
-    var _getAdminstrationProvince = await getAdminstrationCityByProvince(
-      pid,
-      province
-    );
+    const wave = req.query.wave;
+    var result;
+    if (wave !== '0') {
+      result = await getAdminstrationCityByProvinceWave(pid, province, wave);
+    } else {
+      result = await getAdminstrationCityByProvince(pid, province);
+    }
 
     res.status(200).json({
       statusCode: 200,
       message: 'Success get Administration City By Province',
-      data: _getAdminstrationProvince,
+      data: result,
     });
   } catch (error) {
     res.status(400).send(error);

@@ -2615,10 +2615,22 @@ exports.getVisitByProvince = async function (req, res) {
       }
     } else {
       if (region !== '0' && province === '0') {
-        var _getAdminstrationProvince = await getAdminstrationProvinceByRegion(
+        var arrArea = [];
+        var _getAdminstrationCityWave = await getAdminstrationCityWave(
           pid,
-          region
+          wave
         );
+        for (let i = 0; i < _getAdminstrationCityWave.length; i++) {
+          if (arrArea.indexOf(_getAdminstrationCityWave[i].idArea) === -1) {
+            arrArea.push(_getAdminstrationCityWave[i].idArea);
+          }
+        }
+        var _getAdminstrationProvince =
+          await getAdminstrationProvinceByRegionArrayProvince(
+            pid,
+            region,
+            arrArea
+          );
         for (let i = 0; i < _getAdminstrationProvince.length; i++) {
           result.push({
             code: _getAdminstrationProvince[i].idProvince,
@@ -2645,7 +2657,20 @@ exports.getVisitByProvince = async function (req, res) {
           });
         }
       } else {
-        var _getAdminstrationProvince = await getAdminstrationProvince(pid);
+        var arrArea = [];
+        var _getAdminstrationCityWave = await getAdminstrationCityWave(
+          pid,
+          wave
+        );
+        for (let i = 0; i < _getAdminstrationCityWave.length; i++) {
+          if (arrArea.indexOf(_getAdminstrationCityWave[i].idArea) === -1) {
+            arrArea.push(_getAdminstrationCityWave[i].idArea);
+          }
+        }
+        var _getAdminstrationProvince = await getAdminstrationProvinceByArray(
+          pid,
+          arrArea
+        );
         for (let i = 0; i < _getAdminstrationProvince.length; i++) {
           result.push({
             code: _getAdminstrationProvince[i].idProvince,
@@ -3110,7 +3135,7 @@ exports.getDataListPangkalan = async function (req, res) {
             province: data[i]['A2'],
             city: data[i]['A3'],
             key: data[i]['KID_KEPO'],
-            pangkalan: data[i]['NAMAPEMILIK'],
+            pangkalan: data[i]['NAMAPANGKALAN'],
             kecamatan: data[i]['KECAMATAN'],
             kelurahan: data[i]['KELURAHAN'],
             P0: data[i]['P0'],
@@ -3180,7 +3205,7 @@ exports.getDataListPangkalan = async function (req, res) {
               province: data[i]['A2'],
               city: data[i]['A3'],
               key: data[i]['KID_KEPO'],
-              pangkalan: data[i]['NAMAPEMILIK'],
+              pangkalan: data[i]['NAMAPANGKALAN'],
               kecamatan: data[i]['KECAMATAN'],
               kelurahan: data[i]['KELURAHAN'],
               P0: data[i]['P0'],
@@ -3249,7 +3274,7 @@ exports.getDataListPangkalan = async function (req, res) {
               province: data[i]['A2'],
               city: data[i]['A3'],
               key: data[i]['KID_KEPO'],
-              pangkalan: data[i]['NAMAPEMILIK'],
+              pangkalan: data[i]['NAMAPANGKALAN'],
               kecamatan: data[i]['KECAMATAN'],
               kelurahan: data[i]['KELURAHAN'],
               P0: data[i]['P0'],
@@ -3320,7 +3345,7 @@ exports.getDataListPangkalan = async function (req, res) {
               province: data[i]['A2'],
               city: data[i]['A3'],
               key: data[i]['KID_KEPO'],
-              pangkalan: data[i]['NAMAPEMILIK'],
+              pangkalan: data[i]['NAMAPANGKALAN'],
               kecamatan: data[i]['KECAMATAN'],
               kelurahan: data[i]['KELURAHAN'],
               P0: data[i]['P0'],
@@ -3389,7 +3414,7 @@ exports.getDataListPangkalan = async function (req, res) {
               province: data[i]['A2'],
               city: data[i]['A3'],
               key: data[i]['KID_KEPO'],
-              pangkalan: data[i]['NAMAPEMILIK'],
+              pangkalan: data[i]['NAMAPANGKALAN'],
               kecamatan: data[i]['KECAMATAN'],
               kelurahan: data[i]['KELURAHAN'],
               P0: data[i]['P0'],
@@ -3506,7 +3531,7 @@ exports.getDetailPangkalan = async function (req, res) {
       province: data[findData]['A2'],
       city: data[findData]['A3'],
       key: data[findData]['KID_KEPO'],
-      pangkalan: data[findData]['NAMAPEMILIK'],
+      pangkalan: data[findData]['NAMAPANGKALAN'],
       kecamatan: data[findData]['KECAMATAN'],
       kelurahan: data[findData]['KELURAHAN'],
     };
@@ -4002,7 +4027,7 @@ exports.getExportPangkalan = async function (req, res) {
           ];
           datas.push(
             data[i]['KID_Pangkalan'],
-            data[i]['NAMAPEMILIK'],
+            data[i]['NAMAPANGKALAN'],
             data[i]['A1'],
             data[i]['A2'],
             data[i]['A3'],
@@ -4071,7 +4096,7 @@ exports.getExportPangkalan = async function (req, res) {
             ];
             datas.push(
               data[i]['KID_Pangkalan'],
-              data[i]['NAMAPEMILIK'],
+              data[i]['NAMAPANGKALAN'],
               data[i]['A1'],
               data[i]['A2'],
               data[i]['A3'],
@@ -4139,7 +4164,7 @@ exports.getExportPangkalan = async function (req, res) {
             ];
             datas.push(
               data[i]['KID_Pangkalan'],
-              data[i]['NAMAPEMILIK'],
+              data[i]['NAMAPANGKALAN'],
               data[i]['A1'],
               data[i]['A2'],
               data[i]['A3'],
@@ -4209,7 +4234,7 @@ exports.getExportPangkalan = async function (req, res) {
             ];
             datas.push(
               data[i]['KID_Pangkalan'],
-              data[i]['NAMAPEMILIK'],
+              data[i]['NAMAPANGKALAN'],
               data[i]['A1'],
               data[i]['A2'],
               data[i]['A3'],
@@ -4277,7 +4302,7 @@ exports.getExportPangkalan = async function (req, res) {
             ];
             datas.push(
               data[i]['KID_Pangkalan'],
-              data[i]['NAMAPEMILIK'],
+              data[i]['NAMAPANGKALAN'],
               data[i]['A1'],
               data[i]['A2'],
               data[i]['A3'],
@@ -4345,7 +4370,7 @@ exports.getExportPangkalan = async function (req, res) {
         ];
         datas.push(
           data[i]['KID_Pangkalan'],
-          data[i]['NAMAPEMILIK'],
+          data[i]['NAMAPANGKALAN'],
           data[i]['A1'],
           data[i]['A2'],
           data[i]['A3'],
