@@ -3097,7 +3097,7 @@ exports.getDataListPangkalan = async function (req, res) {
     var endPage = 0;
 
     if (page) {
-      if (page > 1) {
+      if (page > 0) {
         startPage = page * perPage;
       }
     } else {
@@ -3110,10 +3110,10 @@ exports.getDataListPangkalan = async function (req, res) {
       endPage = 2;
     }
 
-    for (let i = startPage; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       if (wave !== '0' && region == '0') {
         if (data[i]['WAVE'] === wave) {
-          if (total < endPage) {
+          if (total >= startPage && total < startPage + endPage) {
             var A14 = [
               data[i]['A14_1'] > 0 && 1,
               data[i]['A14_2'] > 0 && 2,
@@ -3188,7 +3188,7 @@ exports.getDataListPangkalan = async function (req, res) {
         if (data[i]['A1'] === region) {
           if (province !== '0' && data[i]['A2'] === province) {
             if (city !== '0' && data[i]['A3'] === city) {
-              if (total < endPage) {
+              if (total >= startPage && total < startPage + endPage) {
                 var A14 = [
                   data[i]['A14_1'] > 0 && 1,
                   data[i]['A14_2'] > 0 && 2,
@@ -3259,7 +3259,7 @@ exports.getDataListPangkalan = async function (req, res) {
               }
               total++;
             } else {
-              if (total < endPage) {
+              if (total >= startPage && total < startPage + endPage) {
                 var A14 = [
                   data[i]['A14_1'] > 0 && 1,
                   data[i]['A14_2'] > 0 && 2,
@@ -3331,7 +3331,7 @@ exports.getDataListPangkalan = async function (req, res) {
               total++;
             }
           } else {
-            if (total < endPage) {
+            if (total >= startPage && total < startPage + endPage) {
               var A14 = [
                 data[i]['A14_1'] > 0 && 1,
                 data[i]['A14_2'] > 0 && 2,
@@ -3407,7 +3407,7 @@ exports.getDataListPangkalan = async function (req, res) {
         if (data[i]['WAVE'] === wave && data[i]['A1'] === region) {
           if (province !== '0' && data[i]['A2'] === province) {
             if (city !== '0' && data[i]['A3'] === city) {
-              if (total < endPage) {
+              if (total >= startPage && total < startPage + endPage) {
                 var A14 = [
                   data[i]['A14_1'] > 0 && 1,
                   data[i]['A14_2'] > 0 && 2,
@@ -3478,7 +3478,7 @@ exports.getDataListPangkalan = async function (req, res) {
               }
               total++;
             } else {
-              if (total < endPage) {
+              if (total >= startPage && total < startPage + endPage) {
                 var A14 = [
                   data[i]['A14_1'] > 0 && 1,
                   data[i]['A14_2'] > 0 && 2,
@@ -3550,7 +3550,7 @@ exports.getDataListPangkalan = async function (req, res) {
               total++;
             }
           } else {
-            if (total < endPage) {
+            if (total >= startPage && total < startPage + endPage) {
               var A14 = [
                 data[i]['A14_1'] > 0 && 1,
                 data[i]['A14_2'] > 0 && 2,
@@ -3623,7 +3623,7 @@ exports.getDataListPangkalan = async function (req, res) {
           }
         }
       } else {
-        if (total < endPage) {
+        if (total >= startPage && total < startPage + endPage) {
           var A14 = [
             data[i]['A14_1'] > 0 && 1,
             data[i]['A14_2'] > 0 && 2,
