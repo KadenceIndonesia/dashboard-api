@@ -3087,7 +3087,7 @@ exports.getDataListPangkalan = async function (req, res) {
     const city = req.query.city;
     const page = parseInt(req.query.page);
     const perPage = parseInt(req.query.perPage);
-    const search = req.query.search;
+    const search = req.query.search || '';
 
     var data = await excelDataByQuest(pid, 'all');
     var result = [];
@@ -3110,589 +3110,149 @@ exports.getDataListPangkalan = async function (req, res) {
       endPage = 2;
     }
 
+    const inputResult = (i) => {
+      var A14 = [
+        data[i]['A14_1'] > 0 && 1,
+        data[i]['A14_2'] > 0 && 2,
+        data[i]['A14_3'] > 0 && 3,
+        data[i]['A14_4'] > 0 && 4,
+        data[i]['A14_5'] > 0 && 5,
+        data[i]['A14_6'] > 0 && 6,
+        data[i]['A14_7'] > 0 && 7,
+      ];
+      var A18 = [
+        data[i]['A18_1'] > 0 && 1,
+        data[i]['A18_2'] > 0 && 2,
+        data[i]['A18_3'] > 0 && 3,
+        data[i]['A18_4'] > 0 && 4,
+        data[i]['A18_5'] > 0 && 5,
+        data[i]['A18_6'] > 0 && 6,
+        data[i]['A18_7'] > 0 && 7,
+        data[i]['A18_8'] > 0 && 8,
+        data[i]['A18_9'] > 0 && 9,
+        data[i]['A18_10'] > 0 && 10,
+        data[i]['A18_11'] > 0 && 11,
+        data[i]['A18_12'] > 0 && 12,
+        data[i]['A18_13'] > 0 && 13,
+      ];
+      var A21 = [
+        data[i]['A21_1'] > 0 && 1,
+        data[i]['A21_2'] > 0 && 2,
+        data[i]['A21_3'] > 0 && 3,
+        data[i]['A21_4'] > 0 && 4,
+        data[i]['A21_5'] > 0 && 5,
+        data[i]['A21_6'] > 0 && 6,
+        data[i]['A21_7'] > 0 && 7,
+        data[i]['A21_8'] > 0 && 8,
+        data[i]['A21_9'] > 0 && 9,
+        data[i]['A21_10'] > 0 && 10,
+        data[i]['A21_11'] > 0 && 11,
+      ];
+      result.push({
+        id: data[i]['KID_Pangkalan'],
+        region: data[i]['A1'],
+        province: data[i]['A2'],
+        city: data[i]['A3'],
+        key: data[i]['KID_KEPO'],
+        pangkalan: data[i]['NAMAPANGKALAN'],
+        kecamatan: data[i]['KECAMATAN'],
+        kelurahan: data[i]['KELURAHAN'],
+        P0: data[i]['P0'],
+        A6: data[i]['A6'],
+        A6C: data[i]['A6C'],
+        A6b: data[i]['A6b'],
+        A113: data[i]['A113'],
+        A12: data[i]['A12'],
+        A13: data[i]['A13'],
+        A13: data[i]['A13'],
+        A14: A14,
+        A28: data[i]['A28'],
+        A29: data[i]['A29'],
+        A29B: data[i]['A29B'],
+        A31: data[i]['A31'],
+        A18: A18,
+        A33: data[i]['A33'],
+        A20: data[i]['A20'],
+        A21: A21,
+        A35: data[i]['A35'],
+        A36: data[i]['A36'],
+        wave: data[i]['WAVE'],
+      });
+    };
+
     for (let i = 0; i < data.length; i++) {
-      if (wave !== '0' && region == '0') {
-        if (data[i]['WAVE'] === wave) {
+      var isSearch = true;
+      if (search !== '') {
+        if (
+          data[i]['NAMAPANGKALAN']
+            .toLowerCase()
+            .indexOf(search.toLowerCase()) !== -1 ||
+          String(data[i]['KID_Pangkalan'])
+            .toLowerCase()
+            .indexOf(search.toLowerCase()) !== -1
+        ) {
+          isSearch = true;
+        } else {
+          isSearch = false;
+        }
+      }
+
+      if (isSearch) {
+        if (wave !== '0' && region == '0') {
+          if (data[i]['WAVE'] === wave) {
+            if (total >= startPage && total < startPage + endPage) {
+              inputResult(i);
+            }
+            total++;
+          }
+        } else if (wave === '0' && region !== '0') {
+          if (data[i]['A1'] === region) {
+            if (province !== '0' && data[i]['A2'] === province) {
+              if (city !== '0' && data[i]['A3'] === city) {
+                if (total >= startPage && total < startPage + endPage) {
+                  inputResult(i);
+                }
+                total++;
+              } else {
+                if (total >= startPage && total < startPage + endPage) {
+                  inputResult(i);
+                }
+                total++;
+              }
+            } else {
+              if (total >= startPage && total < startPage + endPage) {
+                inputResult(i);
+              }
+              total++;
+            }
+          }
+        } else if (wave !== '0' && region !== '0') {
+          if (data[i]['WAVE'] === wave && data[i]['A1'] === region) {
+            if (province !== '0' && data[i]['A2'] === province) {
+              if (city !== '0' && data[i]['A3'] === city) {
+                if (total >= startPage && total < startPage + endPage) {
+                  inputResult(i);
+                }
+                total++;
+              } else {
+                if (total >= startPage && total < startPage + endPage) {
+                  inputResult(i);
+                }
+                total++;
+              }
+            } else {
+              if (total >= startPage && total < startPage + endPage) {
+                inputResult(i);
+              }
+              total++;
+            }
+          }
+        } else {
           if (total >= startPage && total < startPage + endPage) {
-            var A14 = [
-              data[i]['A14_1'] > 0 && 1,
-              data[i]['A14_2'] > 0 && 2,
-              data[i]['A14_3'] > 0 && 3,
-              data[i]['A14_4'] > 0 && 4,
-              data[i]['A14_5'] > 0 && 5,
-              data[i]['A14_6'] > 0 && 6,
-              data[i]['A14_7'] > 0 && 7,
-            ];
-            var A18 = [
-              data[i]['A18_1'] > 0 && 1,
-              data[i]['A18_2'] > 0 && 2,
-              data[i]['A18_3'] > 0 && 3,
-              data[i]['A18_4'] > 0 && 4,
-              data[i]['A18_5'] > 0 && 5,
-              data[i]['A18_6'] > 0 && 6,
-              data[i]['A18_7'] > 0 && 7,
-              data[i]['A18_8'] > 0 && 8,
-              data[i]['A18_9'] > 0 && 9,
-              data[i]['A18_10'] > 0 && 10,
-              data[i]['A18_11'] > 0 && 11,
-              data[i]['A18_12'] > 0 && 12,
-              data[i]['A18_13'] > 0 && 13,
-            ];
-            var A21 = [
-              data[i]['A21_1'] > 0 && 1,
-              data[i]['A21_2'] > 0 && 2,
-              data[i]['A21_3'] > 0 && 3,
-              data[i]['A21_4'] > 0 && 4,
-              data[i]['A21_5'] > 0 && 5,
-              data[i]['A21_6'] > 0 && 6,
-              data[i]['A21_7'] > 0 && 7,
-              data[i]['A21_8'] > 0 && 8,
-              data[i]['A21_9'] > 0 && 9,
-              data[i]['A21_10'] > 0 && 10,
-              data[i]['A21_11'] > 0 && 11,
-            ];
-            result.push({
-              id: data[i]['KID_Pangkalan'],
-              region: data[i]['A1'],
-              province: data[i]['A2'],
-              city: data[i]['A3'],
-              key: data[i]['KID_KEPO'],
-              pangkalan: data[i]['NAMAPANGKALAN'],
-              kecamatan: data[i]['KECAMATAN'],
-              kelurahan: data[i]['KELURAHAN'],
-              P0: data[i]['P0'],
-              A6: data[i]['A6'],
-              A6C: data[i]['A6C'],
-              A6b: data[i]['A6b'],
-              A113: data[i]['A113'],
-              A12: data[i]['A12'],
-              A13: data[i]['A13'],
-              A13: data[i]['A13'],
-              A14: A14,
-              A28: data[i]['A28'],
-              A29: data[i]['A29'],
-              A29B: data[i]['A29B'],
-              A31: data[i]['A31'],
-              A18: A18,
-              A33: data[i]['A33'],
-              A20: data[i]['A20'],
-              A21: A21,
-              A35: data[i]['A35'],
-              A36: data[i]['A36'],
-              wave: data[i]['WAVE'],
-            });
+            inputResult(i);
           }
           total++;
         }
-      } else if (wave === '0' && region !== '0') {
-        if (data[i]['A1'] === region) {
-          if (province !== '0' && data[i]['A2'] === province) {
-            if (city !== '0' && data[i]['A3'] === city) {
-              if (total >= startPage && total < startPage + endPage) {
-                var A14 = [
-                  data[i]['A14_1'] > 0 && 1,
-                  data[i]['A14_2'] > 0 && 2,
-                  data[i]['A14_3'] > 0 && 3,
-                  data[i]['A14_4'] > 0 && 4,
-                  data[i]['A14_5'] > 0 && 5,
-                  data[i]['A14_6'] > 0 && 6,
-                  data[i]['A14_7'] > 0 && 7,
-                ];
-                var A18 = [
-                  data[i]['A18_1'] > 0 && 1,
-                  data[i]['A18_2'] > 0 && 2,
-                  data[i]['A18_3'] > 0 && 3,
-                  data[i]['A18_4'] > 0 && 4,
-                  data[i]['A18_5'] > 0 && 5,
-                  data[i]['A18_6'] > 0 && 6,
-                  data[i]['A18_7'] > 0 && 7,
-                  data[i]['A18_8'] > 0 && 8,
-                  data[i]['A18_9'] > 0 && 9,
-                  data[i]['A18_10'] > 0 && 10,
-                  data[i]['A18_11'] > 0 && 11,
-                  data[i]['A18_12'] > 0 && 12,
-                  data[i]['A18_13'] > 0 && 13,
-                ];
-                var A21 = [
-                  data[i]['A21_1'] > 0 && 1,
-                  data[i]['A21_2'] > 0 && 2,
-                  data[i]['A21_3'] > 0 && 3,
-                  data[i]['A21_4'] > 0 && 4,
-                  data[i]['A21_5'] > 0 && 5,
-                  data[i]['A21_6'] > 0 && 6,
-                  data[i]['A21_7'] > 0 && 7,
-                  data[i]['A21_8'] > 0 && 8,
-                  data[i]['A21_9'] > 0 && 9,
-                  data[i]['A21_10'] > 0 && 10,
-                  data[i]['A21_11'] > 0 && 11,
-                ];
-                result.push({
-                  id: data[i]['KID_Pangkalan'],
-                  region: data[i]['A1'],
-                  province: data[i]['A2'],
-                  city: data[i]['A3'],
-                  key: data[i]['KID_KEPO'],
-                  pangkalan: data[i]['NAMAPANGKALAN'],
-                  kecamatan: data[i]['KECAMATAN'],
-                  kelurahan: data[i]['KELURAHAN'],
-                  P0: data[i]['P0'],
-                  A6: data[i]['A6'],
-                  A6C: data[i]['A6C'],
-                  A6b: data[i]['A6b'],
-                  A113: data[i]['A113'],
-                  A12: data[i]['A12'],
-                  A13: data[i]['A13'],
-                  A13: data[i]['A13'],
-                  A14: A14,
-                  A28: data[i]['A28'],
-                  A29: data[i]['A29'],
-                  A29B: data[i]['A29B'],
-                  A31: data[i]['A31'],
-                  A18: A18,
-                  A33: data[i]['A33'],
-                  A20: data[i]['A20'],
-                  A21: A21,
-                  A35: data[i]['A35'],
-                  A36: data[i]['A36'],
-                  wave: data[i]['WAVE'],
-                });
-              }
-              total++;
-            } else {
-              if (total >= startPage && total < startPage + endPage) {
-                var A14 = [
-                  data[i]['A14_1'] > 0 && 1,
-                  data[i]['A14_2'] > 0 && 2,
-                  data[i]['A14_3'] > 0 && 3,
-                  data[i]['A14_4'] > 0 && 4,
-                  data[i]['A14_5'] > 0 && 5,
-                  data[i]['A14_6'] > 0 && 6,
-                  data[i]['A14_7'] > 0 && 7,
-                ];
-                var A18 = [
-                  data[i]['A18_1'] > 0 && 1,
-                  data[i]['A18_2'] > 0 && 2,
-                  data[i]['A18_3'] > 0 && 3,
-                  data[i]['A18_4'] > 0 && 4,
-                  data[i]['A18_5'] > 0 && 5,
-                  data[i]['A18_6'] > 0 && 6,
-                  data[i]['A18_7'] > 0 && 7,
-                  data[i]['A18_8'] > 0 && 8,
-                  data[i]['A18_9'] > 0 && 9,
-                  data[i]['A18_10'] > 0 && 10,
-                  data[i]['A18_11'] > 0 && 11,
-                  data[i]['A18_12'] > 0 && 12,
-                  data[i]['A18_13'] > 0 && 13,
-                ];
-                var A21 = [
-                  data[i]['A21_1'] > 0 && 1,
-                  data[i]['A21_2'] > 0 && 2,
-                  data[i]['A21_3'] > 0 && 3,
-                  data[i]['A21_4'] > 0 && 4,
-                  data[i]['A21_5'] > 0 && 5,
-                  data[i]['A21_6'] > 0 && 6,
-                  data[i]['A21_7'] > 0 && 7,
-                  data[i]['A21_8'] > 0 && 8,
-                  data[i]['A21_9'] > 0 && 9,
-                  data[i]['A21_10'] > 0 && 10,
-                  data[i]['A21_11'] > 0 && 11,
-                ];
-                result.push({
-                  id: data[i]['KID_Pangkalan'],
-                  region: data[i]['A1'],
-                  province: data[i]['A2'],
-                  city: data[i]['A3'],
-                  key: data[i]['KID_KEPO'],
-                  pangkalan: data[i]['NAMAPANGKALAN'],
-                  kecamatan: data[i]['KECAMATAN'],
-                  kelurahan: data[i]['KELURAHAN'],
-                  P0: data[i]['P0'],
-                  A6: data[i]['A6'],
-                  A6C: data[i]['A6C'],
-                  A6b: data[i]['A6b'],
-                  A113: data[i]['A113'],
-                  A12: data[i]['A12'],
-                  A13: data[i]['A13'],
-                  A13: data[i]['A13'],
-                  A14: A14,
-                  A28: data[i]['A28'],
-                  A29: data[i]['A29'],
-                  A29B: data[i]['A29B'],
-                  A31: data[i]['A31'],
-                  A18: A18,
-                  A33: data[i]['A33'],
-                  A20: data[i]['A20'],
-                  A21: A21,
-                  A35: data[i]['A35'],
-                  A36: data[i]['A36'],
-                  wave: data[i]['WAVE'],
-                });
-              }
-              total++;
-            }
-          } else {
-            if (total >= startPage && total < startPage + endPage) {
-              var A14 = [
-                data[i]['A14_1'] > 0 && 1,
-                data[i]['A14_2'] > 0 && 2,
-                data[i]['A14_3'] > 0 && 3,
-                data[i]['A14_4'] > 0 && 4,
-                data[i]['A14_5'] > 0 && 5,
-                data[i]['A14_6'] > 0 && 6,
-                data[i]['A14_7'] > 0 && 7,
-              ];
-              var A18 = [
-                data[i]['A18_1'] > 0 && 1,
-                data[i]['A18_2'] > 0 && 2,
-                data[i]['A18_3'] > 0 && 3,
-                data[i]['A18_4'] > 0 && 4,
-                data[i]['A18_5'] > 0 && 5,
-                data[i]['A18_6'] > 0 && 6,
-                data[i]['A18_7'] > 0 && 7,
-                data[i]['A18_8'] > 0 && 8,
-                data[i]['A18_9'] > 0 && 9,
-                data[i]['A18_10'] > 0 && 10,
-                data[i]['A18_11'] > 0 && 11,
-                data[i]['A18_12'] > 0 && 12,
-                data[i]['A18_13'] > 0 && 13,
-              ];
-              var A21 = [
-                data[i]['A21_1'] > 0 && 1,
-                data[i]['A21_2'] > 0 && 2,
-                data[i]['A21_3'] > 0 && 3,
-                data[i]['A21_4'] > 0 && 4,
-                data[i]['A21_5'] > 0 && 5,
-                data[i]['A21_6'] > 0 && 6,
-                data[i]['A21_7'] > 0 && 7,
-                data[i]['A21_8'] > 0 && 8,
-                data[i]['A21_9'] > 0 && 9,
-                data[i]['A21_10'] > 0 && 10,
-                data[i]['A21_11'] > 0 && 11,
-              ];
-              result.push({
-                id: data[i]['KID_Pangkalan'],
-                region: data[i]['A1'],
-                province: data[i]['A2'],
-                city: data[i]['A3'],
-                key: data[i]['KID_KEPO'],
-                pangkalan: data[i]['NAMAPANGKALAN'],
-                kecamatan: data[i]['KECAMATAN'],
-                kelurahan: data[i]['KELURAHAN'],
-                P0: data[i]['P0'],
-                A6: data[i]['A6'],
-                A6C: data[i]['A6C'],
-                A6b: data[i]['A6b'],
-                A113: data[i]['A113'],
-                A12: data[i]['A12'],
-                A13: data[i]['A13'],
-                A13: data[i]['A13'],
-                A14: A14,
-                A28: data[i]['A28'],
-                A29: data[i]['A29'],
-                A29B: data[i]['A29B'],
-                A31: data[i]['A31'],
-                A18: A18,
-                A33: data[i]['A33'],
-                A20: data[i]['A20'],
-                A21: A21,
-                A35: data[i]['A35'],
-                A36: data[i]['A36'],
-                wave: data[i]['WAVE'],
-              });
-            }
-            total++;
-          }
-        }
-      } else if (wave !== '0' && region !== '0') {
-        if (data[i]['WAVE'] === wave && data[i]['A1'] === region) {
-          if (province !== '0' && data[i]['A2'] === province) {
-            if (city !== '0' && data[i]['A3'] === city) {
-              if (total >= startPage && total < startPage + endPage) {
-                var A14 = [
-                  data[i]['A14_1'] > 0 && 1,
-                  data[i]['A14_2'] > 0 && 2,
-                  data[i]['A14_3'] > 0 && 3,
-                  data[i]['A14_4'] > 0 && 4,
-                  data[i]['A14_5'] > 0 && 5,
-                  data[i]['A14_6'] > 0 && 6,
-                  data[i]['A14_7'] > 0 && 7,
-                ];
-                var A18 = [
-                  data[i]['A18_1'] > 0 && 1,
-                  data[i]['A18_2'] > 0 && 2,
-                  data[i]['A18_3'] > 0 && 3,
-                  data[i]['A18_4'] > 0 && 4,
-                  data[i]['A18_5'] > 0 && 5,
-                  data[i]['A18_6'] > 0 && 6,
-                  data[i]['A18_7'] > 0 && 7,
-                  data[i]['A18_8'] > 0 && 8,
-                  data[i]['A18_9'] > 0 && 9,
-                  data[i]['A18_10'] > 0 && 10,
-                  data[i]['A18_11'] > 0 && 11,
-                  data[i]['A18_12'] > 0 && 12,
-                  data[i]['A18_13'] > 0 && 13,
-                ];
-                var A21 = [
-                  data[i]['A21_1'] > 0 && 1,
-                  data[i]['A21_2'] > 0 && 2,
-                  data[i]['A21_3'] > 0 && 3,
-                  data[i]['A21_4'] > 0 && 4,
-                  data[i]['A21_5'] > 0 && 5,
-                  data[i]['A21_6'] > 0 && 6,
-                  data[i]['A21_7'] > 0 && 7,
-                  data[i]['A21_8'] > 0 && 8,
-                  data[i]['A21_9'] > 0 && 9,
-                  data[i]['A21_10'] > 0 && 10,
-                  data[i]['A21_11'] > 0 && 11,
-                ];
-                result.push({
-                  id: data[i]['KID_Pangkalan'],
-                  region: data[i]['A1'],
-                  province: data[i]['A2'],
-                  city: data[i]['A3'],
-                  key: data[i]['KID_KEPO'],
-                  pangkalan: data[i]['NAMAPANGKALAN'],
-                  kecamatan: data[i]['KECAMATAN'],
-                  kelurahan: data[i]['KELURAHAN'],
-                  P0: data[i]['P0'],
-                  A6: data[i]['A6'],
-                  A6C: data[i]['A6C'],
-                  A6b: data[i]['A6b'],
-                  A113: data[i]['A113'],
-                  A12: data[i]['A12'],
-                  A13: data[i]['A13'],
-                  A13: data[i]['A13'],
-                  A14: A14,
-                  A28: data[i]['A28'],
-                  A29: data[i]['A29'],
-                  A29B: data[i]['A29B'],
-                  A31: data[i]['A31'],
-                  A18: A18,
-                  A33: data[i]['A33'],
-                  A20: data[i]['A20'],
-                  A21: A21,
-                  A35: data[i]['A35'],
-                  A36: data[i]['A36'],
-                  wave: data[i]['WAVE'],
-                });
-              }
-              total++;
-            } else {
-              if (total >= startPage && total < startPage + endPage) {
-                var A14 = [
-                  data[i]['A14_1'] > 0 && 1,
-                  data[i]['A14_2'] > 0 && 2,
-                  data[i]['A14_3'] > 0 && 3,
-                  data[i]['A14_4'] > 0 && 4,
-                  data[i]['A14_5'] > 0 && 5,
-                  data[i]['A14_6'] > 0 && 6,
-                  data[i]['A14_7'] > 0 && 7,
-                ];
-                var A18 = [
-                  data[i]['A18_1'] > 0 && 1,
-                  data[i]['A18_2'] > 0 && 2,
-                  data[i]['A18_3'] > 0 && 3,
-                  data[i]['A18_4'] > 0 && 4,
-                  data[i]['A18_5'] > 0 && 5,
-                  data[i]['A18_6'] > 0 && 6,
-                  data[i]['A18_7'] > 0 && 7,
-                  data[i]['A18_8'] > 0 && 8,
-                  data[i]['A18_9'] > 0 && 9,
-                  data[i]['A18_10'] > 0 && 10,
-                  data[i]['A18_11'] > 0 && 11,
-                  data[i]['A18_12'] > 0 && 12,
-                  data[i]['A18_13'] > 0 && 13,
-                ];
-                var A21 = [
-                  data[i]['A21_1'] > 0 && 1,
-                  data[i]['A21_2'] > 0 && 2,
-                  data[i]['A21_3'] > 0 && 3,
-                  data[i]['A21_4'] > 0 && 4,
-                  data[i]['A21_5'] > 0 && 5,
-                  data[i]['A21_6'] > 0 && 6,
-                  data[i]['A21_7'] > 0 && 7,
-                  data[i]['A21_8'] > 0 && 8,
-                  data[i]['A21_9'] > 0 && 9,
-                  data[i]['A21_10'] > 0 && 10,
-                  data[i]['A21_11'] > 0 && 11,
-                ];
-                result.push({
-                  id: data[i]['KID_Pangkalan'],
-                  region: data[i]['A1'],
-                  province: data[i]['A2'],
-                  city: data[i]['A3'],
-                  key: data[i]['KID_KEPO'],
-                  pangkalan: data[i]['NAMAPANGKALAN'],
-                  kecamatan: data[i]['KECAMATAN'],
-                  kelurahan: data[i]['KELURAHAN'],
-                  P0: data[i]['P0'],
-                  A6: data[i]['A6'],
-                  A6C: data[i]['A6C'],
-                  A6b: data[i]['A6b'],
-                  A113: data[i]['A113'],
-                  A12: data[i]['A12'],
-                  A13: data[i]['A13'],
-                  A13: data[i]['A13'],
-                  A14: A14,
-                  A28: data[i]['A28'],
-                  A29: data[i]['A29'],
-                  A29B: data[i]['A29B'],
-                  A31: data[i]['A31'],
-                  A18: A18,
-                  A33: data[i]['A33'],
-                  A20: data[i]['A20'],
-                  A21: A21,
-                  A35: data[i]['A35'],
-                  A36: data[i]['A36'],
-                  wave: data[i]['WAVE'],
-                });
-              }
-              total++;
-            }
-          } else {
-            if (total >= startPage && total < startPage + endPage) {
-              var A14 = [
-                data[i]['A14_1'] > 0 && 1,
-                data[i]['A14_2'] > 0 && 2,
-                data[i]['A14_3'] > 0 && 3,
-                data[i]['A14_4'] > 0 && 4,
-                data[i]['A14_5'] > 0 && 5,
-                data[i]['A14_6'] > 0 && 6,
-                data[i]['A14_7'] > 0 && 7,
-              ];
-              var A18 = [
-                data[i]['A18_1'] > 0 && 1,
-                data[i]['A18_2'] > 0 && 2,
-                data[i]['A18_3'] > 0 && 3,
-                data[i]['A18_4'] > 0 && 4,
-                data[i]['A18_5'] > 0 && 5,
-                data[i]['A18_6'] > 0 && 6,
-                data[i]['A18_7'] > 0 && 7,
-                data[i]['A18_8'] > 0 && 8,
-                data[i]['A18_9'] > 0 && 9,
-                data[i]['A18_10'] > 0 && 10,
-                data[i]['A18_11'] > 0 && 11,
-                data[i]['A18_12'] > 0 && 12,
-                data[i]['A18_13'] > 0 && 13,
-              ];
-              var A21 = [
-                data[i]['A21_1'] > 0 && 1,
-                data[i]['A21_2'] > 0 && 2,
-                data[i]['A21_3'] > 0 && 3,
-                data[i]['A21_4'] > 0 && 4,
-                data[i]['A21_5'] > 0 && 5,
-                data[i]['A21_6'] > 0 && 6,
-                data[i]['A21_7'] > 0 && 7,
-                data[i]['A21_8'] > 0 && 8,
-                data[i]['A21_9'] > 0 && 9,
-                data[i]['A21_10'] > 0 && 10,
-                data[i]['A21_11'] > 0 && 11,
-              ];
-              result.push({
-                id: data[i]['KID_Pangkalan'],
-                region: data[i]['A1'],
-                province: data[i]['A2'],
-                city: data[i]['A3'],
-                key: data[i]['KID_KEPO'],
-                pangkalan: data[i]['NAMAPANGKALAN'],
-                kecamatan: data[i]['KECAMATAN'],
-                kelurahan: data[i]['KELURAHAN'],
-                P0: data[i]['P0'],
-                A6: data[i]['A6'],
-                A6C: data[i]['A6C'],
-                A6b: data[i]['A6b'],
-                A113: data[i]['A113'],
-                A12: data[i]['A12'],
-                A13: data[i]['A13'],
-                A13: data[i]['A13'],
-                A14: A14,
-                A28: data[i]['A28'],
-                A29: data[i]['A29'],
-                A29B: data[i]['A29B'],
-                A31: data[i]['A31'],
-                A18: A18,
-                A33: data[i]['A33'],
-                A20: data[i]['A20'],
-                A21: A21,
-                A35: data[i]['A35'],
-                A36: data[i]['A36'],
-                wave: data[i]['WAVE'],
-              });
-            }
-            total++;
-          }
-        }
-      } else {
-        if (total >= startPage && total < startPage + endPage) {
-          var A14 = [
-            data[i]['A14_1'] > 0 && 1,
-            data[i]['A14_2'] > 0 && 2,
-            data[i]['A14_3'] > 0 && 3,
-            data[i]['A14_4'] > 0 && 4,
-            data[i]['A14_5'] > 0 && 5,
-            data[i]['A14_6'] > 0 && 6,
-            data[i]['A14_7'] > 0 && 7,
-          ];
-          var A18 = [
-            data[i]['A18_1'] > 0 && 1,
-            data[i]['A18_2'] > 0 && 2,
-            data[i]['A18_3'] > 0 && 3,
-            data[i]['A18_4'] > 0 && 4,
-            data[i]['A18_5'] > 0 && 5,
-            data[i]['A18_6'] > 0 && 6,
-            data[i]['A18_7'] > 0 && 7,
-            data[i]['A18_8'] > 0 && 8,
-            data[i]['A18_9'] > 0 && 9,
-            data[i]['A18_10'] > 0 && 10,
-            data[i]['A18_11'] > 0 && 11,
-            data[i]['A18_12'] > 0 && 12,
-            data[i]['A18_13'] > 0 && 13,
-          ];
-          var A21 = [
-            data[i]['A21_1'] > 0 && 1,
-            data[i]['A21_2'] > 0 && 2,
-            data[i]['A21_3'] > 0 && 3,
-            data[i]['A21_4'] > 0 && 4,
-            data[i]['A21_5'] > 0 && 5,
-            data[i]['A21_6'] > 0 && 6,
-            data[i]['A21_7'] > 0 && 7,
-            data[i]['A21_8'] > 0 && 8,
-            data[i]['A21_9'] > 0 && 9,
-            data[i]['A21_10'] > 0 && 10,
-            data[i]['A21_11'] > 0 && 11,
-          ];
-          result.push({
-            id: data[i]['KID_Pangkalan'],
-            region: data[i]['A1'],
-            province: data[i]['A2'],
-            city: data[i]['A3'],
-            key: data[i]['KID_KEPO'],
-            pangkalan: data[i]['NAMAPANGKALAN'],
-            kecamatan: data[i]['KECAMATAN'],
-            kelurahan: data[i]['KELURAHAN'],
-            P0: data[i]['P0'],
-            A6: data[i]['A6'],
-            A6C: data[i]['A6C'],
-            A6b: data[i]['A6b'],
-            A113: data[i]['A113'],
-            A12: data[i]['A12'],
-            A13: data[i]['A13'],
-            A13: data[i]['A13'],
-            A14: A14,
-            A28: data[i]['A28'],
-            A29: data[i]['A29'],
-            A29B: data[i]['A29B'],
-            A31: data[i]['A31'],
-            A18: A18,
-            A33: data[i]['A33'],
-            A20: data[i]['A20'],
-            A21: A21,
-            A35: data[i]['A35'],
-            A36: data[i]['A36'],
-            wave: data[i]['WAVE'],
-          });
-        }
-        total++;
       }
     }
 
