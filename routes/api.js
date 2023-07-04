@@ -3,6 +3,7 @@ const apiControllers = require('../controllers/api');
 const textMiningControllers = require('../controllers/textMining');
 const topbreakControllers = require('../controllers/topbreak');
 const achievementControllers = require('../controllers/achievement');
+const scoreControllers = require('../controllers/score');
 const customControllers = require('../controllers/custom');
 const splitControllers = require('../controllers/split');
 const Router = express();
@@ -124,6 +125,12 @@ Router.get(
 );
 Router.get('/propana/status-rekrut', customControllers.getStatusRekrutPropana);
 
+//average
+Router.get('/score/average/:pid/:qidx/total', scoreControllers.getScoreAverage);
+Router.get(
+  '/score/average/:pid/:qidx/attribute/:attr',
+  scoreControllers.getScoreAverageByAttribute
+);
 
 //spellbound
 Router.get(

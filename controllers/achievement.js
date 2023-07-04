@@ -29,6 +29,8 @@ exports.getAchievementData = async function (req, res) {
         return data[x][break2] == code2 && data[x][break3] == code3;
       } else if (!code1 && !code2 && code3) {
         return data[x][break3] == code3;
+      } else if (code1 && !code2 && code3) {
+        return data[x][break1] == code1 && data[x][break3] == code3;
       } else {
         return true;
       }
@@ -106,6 +108,8 @@ exports.achievementByQidx = async function (req, res) {
         return data[x][break2] == code2 && data[x][break3] == code3;
       } else if (!code1 && !code2 && code3) {
         return data[x][break3] == code3;
+      } else if (code1 && !code2 && code3) {
+        return data[x][break1] == code1 && data[x][break3] == code3;
       } else {
         return true;
       }
