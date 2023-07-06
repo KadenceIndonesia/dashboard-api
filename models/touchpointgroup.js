@@ -9,6 +9,7 @@ const touchpointgroupSchema = mongoose.Schema({
   group: Number,
   idProject: String,
   weight: Number,
+  quarter: Number,
 });
 
 module.exports = mongoose.model('Touchpointgroup', touchpointgroupSchema);

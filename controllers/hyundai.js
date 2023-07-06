@@ -547,6 +547,7 @@ exports.getTouchPointScoreParent = async function (req, res) {
   try {
     const pid = req.params.pid;
     const region = req.query.region;
+    const company = req.query.company;
     const area = req.query.area;
     const city = req.query.city;
     const qDealer = req.query.dealer;
@@ -559,10 +560,10 @@ exports.getTouchPointScoreParent = async function (req, res) {
     var accessDealer = detailUser.access; // array access dealer
     var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
-
     var dealer = await getDealerByFilter(
       pid,
       region,
+      company,
       area,
       city,
       qDealer,
@@ -820,7 +821,7 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
               touchPointCount / _scoreTouchPointByDealer.length;
           }
         }
-      }else{
+      } else {
         for (let i = 0; i < dealer.length; i++) {
           response.push({
             code: dealer[i].idDealer,
@@ -950,11 +951,17 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
 
     var response = [];
     for (let i = 0; i < _getDealerByPid.length; i++) {
+      var _getTaskByIdDealerQuarter = await getTaskByIdDealerQuarter(
+        pid,
+        _getDealerByPid[i].idDealer,
+        quarter > 0 ? quarter : 1
+      );
       response.push({
         idDealer: _getDealerByPid[i].idDealer,
-        task: _getDealerByPid[i].task,
+        task: _getTaskByIdDealerQuarter.key,
         idCity: _getDealerByPid[i].idCity,
         dealerName: _getDealerByPid[i].dealerName,
+        quarter: quarter > 0 ? quarter : 1,
         data: [],
       });
     }
@@ -965,8 +972,10 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
       var _scoreTouchPointByParentDealer = await scoreTouchPointByParentDealer(
         pid,
         response[i].idDealer,
-        quarter
+        quarter,
+        1
       );
+
       bubbleSortAsc(_scoreTouchPointByParentDealer, 'group');
       var arrResult = [];
       if (_scoreTouchPointByParentDealer.length > 0) {
@@ -1170,6 +1179,7 @@ exports.getTouchPointScoreDealerDetail = async function (req, res) {
   try {
     const pid = req.params.pid;
     const dealer = req.params.dealerId;
+    const quarter = req.query.quarter;
     //auth
     // const authHeaders = req.headers.userid; // headers userid
     // const detailUser = await getUserById(authHeaders); // get detail user by headers
@@ -1179,7 +1189,11 @@ exports.getTouchPointScoreDealerDetail = async function (req, res) {
 
     var _response = [];
     var response = [];
-    var _scoreTouchPointByDealer = await scoreTouchPointByDealer(pid, dealer);
+    var _scoreTouchPointByDealer = await scoreTouchPointByDealer(
+      pid,
+      dealer,
+      quarter
+    );
     for (let i = 0; i < _scoreTouchPointByDealer.length; i++) {
       _response.push({
         code: _scoreTouchPointByDealer[i].code,
@@ -1234,6 +1248,7 @@ exports.getTouchPointScoreDealerDetailParent = async function (req, res) {
   try {
     const pid = req.params.pid;
     const dealer = req.params.dealerId;
+    const quarter = req.query.quarter;
     //auth
     const authHeaders = req.headers.userid; // headers userid
     const detailUser = await getUserById(authHeaders); // get detail user by headers
@@ -1241,21 +1256,37 @@ exports.getTouchPointScoreDealerDetailParent = async function (req, res) {
     var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
     // var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
 
+    var response = [];
+    var response2 = [];
     // get parent
     var _getParentTouchPoint = await getParentTouchPoint(pid);
-    var arrayParent = _getParentTouchPoint.map((data) => data.code);
-
-    var response = [];
-    var _scoreTouchPointParentDealerByCode =
-      await scoreTouchPointParentDealerByCode(pid, dealer, arrayParent);
-    for (let i = 0; i < _scoreTouchPointParentDealerByCode.length; i++) {
+    for (let i = 0; i < _getParentTouchPoint.length; i++) {
+      var _scoreTouchPointParentDealerByCode =
+        await scoreTouchPointParentDealerByCode(
+          pid,
+          dealer,
+          _getParentTouchPoint[i].code,
+          quarter
+        );
       response.push({
-        code: _scoreTouchPointParentDealerByCode[i].code,
-        label: _scoreTouchPointParentDealerByCode[i].label,
-        group: _scoreTouchPointParentDealerByCode[i].group,
-        value: _scoreTouchPointParentDealerByCode[i].score,
+        code: _getParentTouchPoint[i].code,
+        label: _getParentTouchPoint[i].label,
+        group: _getParentTouchPoint[i].group,
+        value: _scoreTouchPointParentDealerByCode
+          ? _scoreTouchPointParentDealerByCode.score
+          : 0,
       });
     }
+    var arrayParent = _getParentTouchPoint.map((data) => data.code);
+
+    // for (let i = 0; i < _scoreTouchPointParentDealerByCode.length; i++) {
+    //   response.push({
+    //     code: _scoreTouchPointParentDealerByCode[i].code,
+    //     label: _scoreTouchPointParentDealerByCode[i].label,
+    //     group: _scoreTouchPointParentDealerByCode[i].group,
+    //     value: _scoreTouchPointParentDealerByCode[i].score,
+    //   });
+    // }
     bubbleSortAsc(response, 'group');
     res.status(200).json({
       statusCode: 200,
