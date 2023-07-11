@@ -4190,7 +4190,7 @@ exports.getExportPangkalan = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success export data pangkalan',
-            data: `https://dashboard.kadence.co.id/fileexcel/${newfilename}`,
+            data: `https://api.dashboard.kadence.co.id/fileexcel/${newfilename}`,
           });
         }
       }
@@ -5581,7 +5581,7 @@ exports.getStatusPangkalanExport = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success export data pangkalan',
-            data: `https://dashboard.kadence.co.id/fileexcel/${newfilename}`,
+            data: `https://api.dashboard.kadence.co.id/fileexcel/${newfilename}`,
           });
         }
       }
