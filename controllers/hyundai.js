@@ -9,6 +9,7 @@ const moment = require('moment');
 const attributes = require('../models/attributes');
 const jwt = require('jsonwebtoken');
 require('../lib/hyundai');
+require('../lib/logger');
 
 exports.getHyundaiRegion = async function (req, res) {
   try {
@@ -248,6 +249,7 @@ exports.getAchievementTotal = async function (req, res) {
     //users
     const authHeaders = req.headers.userid; // headers userid
     const detailUser = await getUserById(authHeaders); // get detail user by headers
+    console.log(detailUser);
     var accessDealer = detailUser.access; // array access dealer
     var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
@@ -265,6 +267,12 @@ exports.getAchievementTotal = async function (req, res) {
         }
       }
     }
+    await createLogger(
+      authHeaders,
+      detailUser.email,
+      pid,
+      'GET ACHIEVEMENT TOTAL'
+    );
     res.status(200).json({
       statusCode: 200,
       message: 'Success get total achievement',
@@ -908,6 +916,7 @@ exports.getTouchPointScoreTotal = async function (req, res) {
       }
       response = total / _scoreTouchPointByParent.length;
     }
+    await createLogger(authHeaders, detailUser.email, pid, 'GET SCORE TOTAL');
     res.status(200).json({
       statusCode: 200,
       message: 'Success get touchpoint score parent',
@@ -1149,6 +1158,13 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
     // var newfilename = type + '_' + formatdate + '.xlsx';
     var createfile = createHeader.concat(isifile);
     const progress = xlsx.build([{ name: 'Data', data: createfile }]);
+    console.log(isifile)
+    await createLogger(
+      authHeaders,
+      detailUser.email,
+      pid,
+      'EXPORT DEALER SCORE'
+    );
     fs.writeFile(
       `public/fileexcel/${newfilename}`,
       progress,
@@ -1160,7 +1176,7 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success get touchpoint score parent',
-            data: `https://api.dashboard.kadence.co.id/fileexcel/${newfilename}`,
+            data: `http://localhost:3333/fileexcel/${newfilename}`,
           });
         }
       }
@@ -1233,6 +1249,8 @@ exports.getTouchPointScoreDealerDetail = async function (req, res) {
         response.push(arrResponse);
       }
     }
+
+    await createLogger(authHeaders, detailUser.email, pid, 'GET DETAIL DEALER');
 
     res.status(200).json({
       statusCode: 200,

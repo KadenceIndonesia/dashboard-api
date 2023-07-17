@@ -6,6 +6,7 @@ const achievementControllers = require('../controllers/achievement');
 const scoreControllers = require('../controllers/score');
 const customControllers = require('../controllers/custom');
 const splitControllers = require('../controllers/split');
+const loggerControllers = require('../controllers/logger');
 const Router = express();
 const Project = require('../models/project');
 
@@ -142,5 +143,8 @@ Router.get(
 Router.post('/split/:pid', splitControllers.getSplitData);
 
 Router.get('/propana/test', customControllers.getTestPropana);
+
+//logger
+Router.get('/logger', loggerControllers.getLoggers);
 
 module.exports = Router;
