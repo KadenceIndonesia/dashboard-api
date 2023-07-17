@@ -1197,8 +1197,8 @@ exports.getTouchPointScoreDealerDetail = async function (req, res) {
     const dealer = req.params.dealerId;
     const quarter = req.query.quarter;
     //auth
-    // const authHeaders = req.headers.userid; // headers userid
-    // const detailUser = await getUserById(authHeaders); // get detail user by headers
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
     // var accessDealer = detailUser.access; // array access dealer
     // var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
     // var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
