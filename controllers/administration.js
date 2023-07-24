@@ -255,3 +255,49 @@ exports.getHelperTotal = async function (req, res) {
     res.status(400).send(error);
   }
 };
+
+exports.getSensusAll = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    var result = await getAdministrationSensusAll(pid);
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Helper',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getSensusLatLong = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    var result = await getAdministrationSensusLatLong(pid);
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Helper',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getSensusDetailByID = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const id = req.params.id;
+    var result = await getAdministrationSensusById(pid, id);
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Helper',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};

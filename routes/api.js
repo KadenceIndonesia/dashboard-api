@@ -145,6 +145,7 @@ Router.post('/split/:pid', splitControllers.getSplitData);
 Router.get('/propana/test', customControllers.getTestPropana);
 
 //logger
-Router.get('/logger', loggerControllers.getLoggers);
+Router.post('/logger/create', loggerControllers.postLoggers);
+Router.post('/logger/create/many', loggerControllers.postLoggersMany);
 
 module.exports = Router;
