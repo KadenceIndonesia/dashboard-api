@@ -249,7 +249,6 @@ exports.getAchievementTotal = async function (req, res) {
     //users
     const authHeaders = req.headers.userid; // headers userid
     const detailUser = await getUserById(authHeaders); // get detail user by headers
-    console.log(detailUser);
     var accessDealer = detailUser.access; // array access dealer
     var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
@@ -1084,6 +1083,7 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
   try {
     const pid = req.params.pid;
     const region = req.query.region;
+    const company = req.query.company;
     const area = req.query.area;
     const city = req.query.city;
     const qDealer = req.query.dealer;
@@ -1093,16 +1093,17 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
     var accessDealer = detailUser.access; // array access dealer
     var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
-
     var dealer = await getDealerByFilter(
       pid,
       region,
+      company,
       area,
       city,
       qDealer,
       accessDealerByProject,
       ['hyundai']
     );
+
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var _getDealerByPid = await getDealerByPid(pid, city, arrDealer);
@@ -1158,7 +1159,6 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
     // var newfilename = type + '_' + formatdate + '.xlsx';
     var createfile = createHeader.concat(isifile);
     const progress = xlsx.build([{ name: 'Data', data: createfile }]);
-    console.log(isifile)
     await createLogger(
       authHeaders,
       detailUser.email,
@@ -1176,7 +1176,7 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success get touchpoint score parent',
-            data: `http://localhost:3333/fileexcel/${newfilename}`,
+            data: `https://api.dashboard.kadence.co.id/fileexcel/${newfilename}`,
           });
         }
       }
