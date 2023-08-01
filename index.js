@@ -13,6 +13,7 @@ const attributeRoutes = require('./routes/attribute');
 const hyundaiRoutes = require('./routes/hyundai');
 const administrationRoutes = require('./routes/administration');
 const propanaRoutes = require('./routes/propana');
+const propana2Routes = require('./routes/propana2');
 
 require('dotenv').config();
 // require('./helpers/init_mongodb')
@@ -35,6 +36,7 @@ app.use('/form', formRoutes);
 app.use('/attribute', attributeRoutes);
 app.use('/hyundai', hyundaiRoutes);
 app.use('/propana', propanaRoutes);
+app.use('/propana2', propana2Routes);
 
 app.listen(process.env.PORT, (req, res) => {
   console.log('connect');
