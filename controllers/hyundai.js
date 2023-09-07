@@ -8,8 +8,11 @@ const xlsx = require('node-xlsx');
 const moment = require('moment');
 const attributes = require('../models/attributes');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const Touchpointscores = require('../models/touchpointscore');
 require('../lib/hyundai');
 require('../lib/logger');
+require('../lib/dataExcel');
 
 exports.getHyundaiRegion = async function (req, res) {
   try {
@@ -956,6 +959,7 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var _getDealerByPid = await getDealerByPid(pid, city, arrDealer);
+    console.log(_getDealerByPid)
 
     var response = [];
     for (let i = 0; i < _getDealerByPid.length; i++) {
@@ -1311,6 +1315,77 @@ exports.getTouchPointScoreDealerDetailParent = async function (req, res) {
       message: 'Success get dealer detail score',
       data: response,
     });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.postTouchPointScoreImport = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    var filename = req.files.file;
+    var extension = path.extname(filename.name);
+    var arrext = ['.xls', '.xlsx'];
+    var checkextension = arrext.indexOf(extension);
+    var newfilename = `${pid}_${moment().format(
+      'YYYY_MM_DD_HH_mm_ss'
+    )}${extension}`;
+    var uploadPath = `${process.env.UPLOADPATH}public/fileUpload/${newfilename}`;
+
+    filename.mv(uploadPath, async function (errupload) {
+      if (errupload) {
+        res.status(400).json({
+          statusCode: 401,
+          message: 'Error Uplaod',
+        });
+      } else {
+        var data = await excelFilePath(uploadPath);
+        var total = 0;
+        for (let i = 0; i < data.length; i++) {
+          var _getAllTouchPoint = await getAllTouchPoint(pid);
+          for (let x = 0; x < _getAllTouchPoint.length; x++) {
+            const insertNewScore = new Touchpointscores({
+              _id: new mongoose.Types.ObjectId(),
+              dealerName: data[i].dealerName,
+              idDealer: data[i].idDealer,
+              idRegion: data[i].idRegion,
+              idArea: data[i].idArea,
+              idCity: data[i].idCity,
+              quarter: data[i].quarter,
+              brand: data[i].brand,
+              idProject: pid,
+              group: _getAllTouchPoint[x].group,
+              label: _getAllTouchPoint[x].label,
+              code: _getAllTouchPoint[x].code,
+              score:
+                data[i][_getAllTouchPoint[x].id] === ''
+                  ? -1
+                  : data[i][_getAllTouchPoint[x].id],
+            });
+            insertNewScore
+              .save()
+              .then((result) => {
+                total++;
+              })
+              .catch((err) => console.log(err));
+          }
+        }
+
+        res.status(200).json({
+          statusCode: 200,
+          message: 'Success import score',
+          data: {
+            total: total,
+          },
+        });
+      }
+    });
+
+    // res.status(200).json({
+    //   statusCode: 200,
+    //   message: 'Success import score',
+    //   data: 'a',
+    // });
   } catch (error) {
     res.status(400).send(error);
   }

@@ -16,4 +16,4 @@ const touchpointscoreSchema = mongoose.Schema({
   group: Number,
 });
 
-module.exports = mongoose.model('Touchpointscore', touchpointscoreSchema);
+module.exports = mongoose.model('Touchpointscores', touchpointscoreSchema);

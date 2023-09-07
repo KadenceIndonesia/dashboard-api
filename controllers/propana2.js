@@ -2423,95 +2423,118 @@ exports.getVisitByRegion = async function (req, res) {
     const region = req.query.region;
 
     var result = [];
-    var total = 0;
-    if (wave !== '0') {
-      if (region !== '0') {
-        var _getAdminstrationRegion = await getAdminstrationRegionByCode(
-          pid,
-          region
+    var _countVisitRegion = await countVisitRegion2(pid, region, wave);
+    for (let i = 0; i < _countVisitRegion.length; i++) {
+      var target = 0;
+      var _getOneAdminstrationRegionByCode =
+        await getOneAdminstrationRegionByCode(pid, _countVisitRegion[i]._id);
+      //set target
+      if (wave !== '0') {
+        var _targetByWaveRegion = await targetByWaveRegion(
+          wave,
+          _getOneAdminstrationRegionByCode.regionCode
         );
-        for (let i = 0; i < _getAdminstrationRegion.length; i++) {
-          var _targetByWaveRegion = await targetByWaveRegion(
-            wave,
-            _getAdminstrationRegion[i].regionCode
-          );
-          var target = 0;
-          for (let x = 0; x < _targetByWaveRegion.length; x++) {
-            target = target + _targetByWaveRegion[x].target;
-          }
-          var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
-          result.push({
-            code: splitCode[1],
-            label: _getAdminstrationRegion[i].regionName,
-            target: target,
-            count: 0,
-            value: 0,
-            sortCode: _getAdminstrationRegion[i].sortCode,
-          });
+        for (let x = 0; x < _targetByWaveRegion.length; x++) {
+          target = target + _targetByWaveRegion[x].target
         }
       } else {
-        var _getAdminstrationRegion = await getAdminstrationRegion(pid);
-
-        for (let i = 0; i < _getAdminstrationRegion.length; i++) {
-          var _targetByWaveRegion = await targetByWaveRegion(
-            wave,
-            _getAdminstrationRegion[i].regionCode
-          );
-          var target = 0;
-          for (let x = 0; x < _targetByWaveRegion.length; x++) {
-            target = target + _targetByWaveRegion[x].target;
-          }
-          var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
-          result.push({
-            code: splitCode[1],
-            label: _getAdminstrationRegion[i].regionName,
-            target: target,
-            count: 0,
-            value: 0,
-            sortCode: _getAdminstrationRegion[i].sortCode,
-          });
-        }
+        target = _getOneAdminstrationRegionByCode.target;
       }
-    } else {
-      if (region !== '0') {
-        var _getAdminstrationRegion = await getAdminstrationRegionByCode(
-          pid,
-          region
-        );
-        for (let i = 0; i < _getAdminstrationRegion.length; i++) {
-          var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
-          result.push({
-            code: splitCode[1],
-            label: _getAdminstrationRegion[i].regionName,
-            target: _getAdminstrationRegion[i].target,
-            count: 0,
-            value: 0,
-            sortCode: _getAdminstrationRegion[i].sortCode,
-          });
-        }
-      } else {
-        var _getAdminstrationRegion = await getAdminstrationRegion(pid);
-        for (let i = 0; i < _getAdminstrationRegion.length; i++) {
-          var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
-          result.push({
-            code: splitCode[1],
-            label: _getAdminstrationRegion[i].regionName,
-            target: _getAdminstrationRegion[i].target,
-            count: 0,
-            value: 0,
-            sortCode: _getAdminstrationRegion[i].sortCode,
-          });
-        }
-      }
-    }
 
-    for (let i = 0; i < result.length; i++) {
-      var _countVisitRegion = await countVisitRegion(pid, result[i].code, wave);
-      result[i].count = _countVisitRegion;
+      result.push({
+        code: _countVisitRegion[i]._id,
+        label: _getOneAdminstrationRegionByCode.regionName,
+        value: countPercent(_countVisitRegion[i].count, target),
+        sortCode: _getOneAdminstrationRegionByCode.sortCode,
+      });
     }
-    for (let i = 0; i < result.length; i++) {
-      result[i].value = countPercent(result[i].count, result[i].target);
-    }
+    // if (wave !== '0') {
+    //   if (region !== '0') {
+    //     var _getAdminstrationRegion = await getAdminstrationRegionByCode(
+    //       pid,
+    //       region
+    //     );
+    //     for (let i = 0; i < _getAdminstrationRegion.length; i++) {
+    //       var _targetByWaveRegion = await targetByWaveRegion(
+    //         wave,
+    //         _getAdminstrationRegion[i].regionCode
+    //       );
+    //       var target = 0;
+    //       for (let x = 0; x < _targetByWaveRegion.length; x++) {
+    //         target = target + _targetByWaveRegion[x].target;
+    //       }
+    //       var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
+    //       result.push({
+    //         code: splitCode[1],
+    //         label: _getAdminstrationRegion[i].regionName,
+    //         target: target,
+    //         count: 0,
+    //         value: 0,
+    //         sortCode: _getAdminstrationRegion[i].sortCode,
+    //       });
+    //     }
+    //   } else {
+    //     var _getAdminstrationRegion = await getAdminstrationRegion(pid);
+
+    //     for (let i = 0; i < _getAdminstrationRegion.length; i++) {
+    //       var _targetByWaveRegion = await targetByWaveRegion(
+    //         wave,
+    //         _getAdminstrationRegion[i].regionCode
+    //       );
+    //       var target = 0;
+    //       for (let x = 0; x < _targetByWaveRegion.length; x++) {
+    //         target = target + _targetByWaveRegion[x].target;
+    //       }
+    //       var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
+    //       result.push({
+    //         code: splitCode[1],
+    //         label: _getAdminstrationRegion[i].regionName,
+    //         target: target,
+    //         count: 0,
+    //         value: 0,
+    //         sortCode: _getAdminstrationRegion[i].sortCode,
+    //       });
+    //     }
+    //   }
+    // } else {
+    //   if (region !== '0') {
+    //     var _getAdminstrationRegion = await getAdminstrationRegionByCode(
+    //       pid,
+    //       region
+    //     );
+    //     for (let i = 0; i < _getAdminstrationRegion.length; i++) {
+    //       var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
+    //       result.push({
+    //         code: splitCode[1],
+    //         label: _getAdminstrationRegion[i].regionName,
+    //         target: _getAdminstrationRegion[i].target,
+    //         count: 0,
+    //         value: 0,
+    //         sortCode: _getAdminstrationRegion[i].sortCode,
+    //       });
+    //     }
+    //   } else {
+    //     var _getAdminstrationRegion = await getAdminstrationRegion(pid);
+    //     for (let i = 0; i < _getAdminstrationRegion.length; i++) {
+    //       var splitCode = _getAdminstrationRegion[i].regionName.split(' - ');
+    //       result.push({
+    //         code: splitCode[1],
+    //         label: _getAdminstrationRegion[i].regionName,
+    //         target: _getAdminstrationRegion[i].target,
+    //         count: 0,
+    //         value: 0,
+    //         sortCode: _getAdminstrationRegion[i].sortCode,
+    //       });
+    //     }
+    //   }
+    // }
+    // for (let i = 0; i < result.length; i++) {
+    //   var _countVisitRegion = await countVisitRegion(pid, result[i].code, wave);
+    //   result[i].count = _countVisitRegion;
+    // }
+    // for (let i = 0; i < result.length; i++) {
+    //   result[i].value = countPercent(result[i].count, result[i].target);
+    // }
     bubbleSortAsc(result, 'sortCode');
 
     res.status(200).json({

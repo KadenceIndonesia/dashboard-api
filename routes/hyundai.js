@@ -36,4 +36,6 @@ Router.get('/:pid/touchpoint/score/dealer/:dealerId/parent', hyundaiControllers.
 
 Router.get('/:pid/touchpoint/score/dealer-export', hyundaiControllers.getTouchPointScoreDealerExport);
 
+Router.post('/:pid/touchpoint/score/import', hyundaiControllers.postTouchPointScoreImport);
+
 module.exports = Router;
