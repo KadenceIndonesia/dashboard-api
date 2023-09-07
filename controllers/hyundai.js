@@ -959,7 +959,6 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var _getDealerByPid = await getDealerByPid(pid, city, arrDealer);
-    console.log(_getDealerByPid);
 
     var response = [];
     for (let i = 0; i < _getDealerByPid.length; i++) {
@@ -1226,12 +1225,13 @@ exports.getTouchPointScoreDealerDetail = async function (req, res) {
       for (let i = 0; i <= 10; i++) {
         var arrResponse = [];
         for (let x = 0; x < _response.length; x++) {
+          console.log(_response[x].code, _response[x].group, _response[x].value)
           if (parseInt(_response[x].group) === i) {
             arrResponse.push({
               code: _response[x].code,
               label: _response[x].label,
               group: _response[x].group,
-              value: decimalPlaces(_response[x].value, 2),
+              value: _response[x].value ? decimalPlaces(_response[x].value, 2) : -1,
             });
           }
         }
@@ -1253,6 +1253,7 @@ exports.getTouchPointScoreDealerDetail = async function (req, res) {
         response.push(arrResponse);
       }
     }
+
 
     await createLogger(authHeaders, detailUser.email, pid, 'GET DETAIL DEALER');
 
