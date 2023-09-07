@@ -1225,7 +1225,6 @@ exports.getTouchPointScoreDealerDetail = async function (req, res) {
       for (let i = 0; i <= 10; i++) {
         var arrResponse = [];
         for (let x = 0; x < _response.length; x++) {
-          console.log(_response[x].code, _response[x].group, _response[x].value)
           if (parseInt(_response[x].group) === i) {
             arrResponse.push({
               code: _response[x].code,
