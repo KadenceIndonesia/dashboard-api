@@ -959,7 +959,7 @@ exports.getTouchPointScoreDealerTotal = async function (req, res) {
     var arrDealer = dealer.map((data) => data.idDealer);
 
     var _getDealerByPid = await getDealerByPid(pid, city, arrDealer);
-    console.log(_getDealerByPid)
+    console.log(_getDealerByPid);
 
     var response = [];
     for (let i = 0; i < _getDealerByPid.length; i++) {
@@ -1231,7 +1231,7 @@ exports.getTouchPointScoreDealerDetail = async function (req, res) {
               code: _response[x].code,
               label: _response[x].label,
               group: _response[x].group,
-              value: _response[x].value,
+              value: decimalPlaces(_response[x].value, 2),
             });
           }
         }
@@ -1295,20 +1295,11 @@ exports.getTouchPointScoreDealerDetailParent = async function (req, res) {
         label: _getParentTouchPoint[i].label,
         group: _getParentTouchPoint[i].group,
         value: _scoreTouchPointParentDealerByCode
-          ? _scoreTouchPointParentDealerByCode.score
+          ? decimalPlaces(_scoreTouchPointParentDealerByCode.score, 2)
           : 0,
       });
     }
     var arrayParent = _getParentTouchPoint.map((data) => data.code);
-
-    // for (let i = 0; i < _scoreTouchPointParentDealerByCode.length; i++) {
-    //   response.push({
-    //     code: _scoreTouchPointParentDealerByCode[i].code,
-    //     label: _scoreTouchPointParentDealerByCode[i].label,
-    //     group: _scoreTouchPointParentDealerByCode[i].group,
-    //     value: _scoreTouchPointParentDealerByCode[i].score,
-    //   });
-    // }
     bubbleSortAsc(response, 'group');
     res.status(200).json({
       statusCode: 200,
