@@ -1140,7 +1140,8 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
       // response[i].data = data;
       var _scoreTouchPointByParentDealer = await scoreTouchPointByParentDealer(
         pid,
-        response[i].idDealer
+        response[i].idDealer,
+        parseInt(quarter)
       );
       var arrResult = [];
       if (_scoreTouchPointByParentDealer.length > 0) {
