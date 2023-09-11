@@ -1089,6 +1089,7 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
     const company = req.query.company;
     const area = req.query.area;
     const city = req.query.city;
+    const quarter = req.query.quarter;
     const qDealer = req.query.dealer;
     //users
     const authHeaders = req.headers.userid; // headers userid
@@ -1125,6 +1126,18 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
     bubbleSortAsc(parentTouchPoint, 'group');
 
     for (let i = 0; i < response.length; i++) {
+      // var data = [];
+      // for (let x = 0; x < parentTouchPoint.length; x++) {
+      //   var _scoreTouchPointByParentDealerCodeParent =
+      //     await scoreTouchPointByParentDealerCodeParent(
+      //       pid,
+      //       response[i].idDealer,
+      //       quarter,
+      //       parentTouchPoint[x].code
+      //     );
+      //   data.push(_scoreTouchPointByParentDealerCodeParent);
+      // }
+      // response[i].data = data;
       var _scoreTouchPointByParentDealer = await scoreTouchPointByParentDealer(
         pid,
         response[i].idDealer
@@ -1144,22 +1157,30 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
         response[i].data = arrResult;
       }
     }
+
     var isifile = [];
     for (let i = 0; i < response.length; i++) {
       if (response[i].data.length > 0) {
         var tempFile = [response[i].dealerName];
-        for (let x = 0; x < response[i].data.length; x++) {
-          tempFile.push(response[i].data[x].score);
+        for (let x = 0; x < parentTouchPoint.length; x++) {
+          var findTouchpointScore = await findObj(
+            response[i].data,
+            'code',
+            parentTouchPoint[x].code
+          );
+          tempFile.push(
+            decimalPlaces(response[i].data[findTouchpointScore].score, 2)
+          );
         }
         isifile.push(tempFile);
       }
     }
+
     var header = [['Dealer Name']];
     var isiHeader = parentTouchPoint.map((data) => data.label);
     var createHeader = [header[0].concat(isiHeader)];
     var formatdate = moment().format('YYYY_MM_DD_HH_mm_ss');
     var newfilename = `${pid}_${formatdate}.xlsx`;
-    // var newfilename = type + '_' + formatdate + '.xlsx';
     var createfile = createHeader.concat(isifile);
     const progress = xlsx.build([{ name: 'Data', data: createfile }]);
     await createLogger(
@@ -1230,7 +1251,9 @@ exports.getTouchPointScoreDealerDetail = async function (req, res) {
               code: _response[x].code,
               label: _response[x].label,
               group: _response[x].group,
-              value: _response[x].value ? decimalPlaces(_response[x].value, 2) : -1,
+              value: _response[x].value
+                ? decimalPlaces(_response[x].value, 2)
+                : -1,
             });
           }
         }
@@ -1252,7 +1275,6 @@ exports.getTouchPointScoreDealerDetail = async function (req, res) {
         response.push(arrResponse);
       }
     }
-
 
     await createLogger(authHeaders, detailUser.email, pid, 'GET DETAIL DEALER');
 
