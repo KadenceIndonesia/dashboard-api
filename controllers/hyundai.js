@@ -257,14 +257,15 @@ exports.getAchievementTotal = async function (req, res) {
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
 
     const quarter = req.query.quarter;
-    var data = await excelData(pid);
+    var data = await excelDataSubDir(pid, `Q${quarter}`);
     var count = 0;
     for (let i = 0; i < data.length; i++) {
+      // console.log(
+      //   accessDealerByProject.indexOf(data[i][quest]),
+      //   data[i][quest]
+      // );
       if (accessDealerByProject.indexOf(data[i][quest]) !== -1) {
-        if (quarter && parseInt(data[i]['Quartal']) === parseInt(quarter)) {
-          count++;
-        }
-        if (!quarter) {
+        if (parseInt(data[i]['Quartal']) === parseInt(quarter)) {
           count++;
         }
       }
@@ -293,7 +294,7 @@ exports.getAchievementGroupByQuarter = async function (req, res) {
     var response = [];
 
     const pid = req.params.pid;
-    var data = await excelData(pid);
+    var data = await excelDataSubDir(pid, `Q${quarter}`);
     var kodeAttributeSTG = 'Quartal';
 
     var attribute = await attributeByQidx(pid, kodeAttributeSTG);
@@ -357,7 +358,7 @@ exports.getAchievementGroupByRegion = async function (req, res) {
     }
 
     const quarter = req.query.quarter;
-    var data = await excelData(pid);
+    var data = await excelDataSubDir(pid, `Q${quarter}`);
     for (let i = 0; i < data.length; i++) {
       var _findObj = await findObj(response, 'id', data[i][questRegion]);
       if (_findObj !== -1) {
@@ -413,7 +414,7 @@ exports.getAchievementGroupByArea = async function (req, res) {
       });
     }
     const quarter = req.query.quarter;
-    var data = await excelData(pid);
+    var data = await excelDataSubDir(pid, `Q${quarter}`);
 
     for (let i = 0; i < data.length; i++) {
       var areaByDealer = await getAreaByCity(pid, data[i]['S0']);
@@ -448,7 +449,7 @@ exports.getAchievementGroupByBrand = async function (req, res) {
 
     const pid = req.params.pid;
     const quarter = req.query.quarter;
-    var data = await excelData(pid);
+    var data = await excelDataSubDir(pid, `Q${quarter}`);
     var kodeAttributeSTG =
       pid === 'IDE3358' ? 'Usership_Mobil' : 'USERSHIP_MOBIL';
 
@@ -490,7 +491,7 @@ exports.getAchievementGroupBySkenario = async function (req, res) {
 
     const pid = req.params.pid;
     const quarter = req.query.quarter;
-    var data = await excelData(pid);
+    var data = await excelDataSubDir(pid, `Q${quarter}`);
     var kodeAttributeSTG =
       pid === 'IDE3358' ? 'Jenis_Skenario' : 'JENIS_SCENARIO_SERVICE';
     var attribute = await attributeByQidx(pid, kodeAttributeSTG);
