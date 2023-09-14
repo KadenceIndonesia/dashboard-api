@@ -325,6 +325,7 @@ exports.getAchievementGroupByRegion = async function (req, res) {
   try {
     const pid = req.params.pid;
     const questRegion = pid === 'IDE3358' ? 'region' : 'REGION';
+    const quest = pid === 'IDE3358' ? 'dealer' : 'DEALER';
 
     //users
     const authHeaders = req.headers.userid; // headers userid
@@ -362,8 +363,10 @@ exports.getAchievementGroupByRegion = async function (req, res) {
     for (let i = 0; i < data.length; i++) {
       var _findObj = await findObj(response, 'id', data[i][questRegion]);
       if (_findObj !== -1) {
-        if (quarter && parseInt(quarter) === parseInt(data[i]['Quartal'])) {
-          response[_findObj].value = response[_findObj].value + 1;
+        if (accessDealerByProject.indexOf(data[i][quest]) !== -1) {
+          if (quarter && parseInt(quarter) === parseInt(data[i]['Quartal'])) {
+            response[_findObj].value = response[_findObj].value + 1;
+          }
         }
 
         if (!quarter) {
@@ -386,6 +389,7 @@ exports.getAchievementGroupByArea = async function (req, res) {
   try {
     const pid = req.params.pid;
     const region = req.query.region;
+    const quest = pid === 'IDE3358' ? 'dealer' : 'DEALER';
 
     //users
     const authHeaders = req.headers.userid; // headers userid
@@ -420,8 +424,10 @@ exports.getAchievementGroupByArea = async function (req, res) {
       var areaByDealer = await getAreaByCity(pid, data[i]['S0']);
       var _findObj = await findObj(response, 'id', areaByDealer[0].idArea);
       if (_findObj !== -1) {
-        if (quarter && parseInt(quarter) === parseInt(data[i]['Quartal'])) {
-          response[_findObj].value = response[_findObj].value + 1;
+        if (accessDealerByProject.indexOf(data[i][quest]) !== -1) {
+          if (quarter && parseInt(quarter) === parseInt(data[i]['Quartal'])) {
+            response[_findObj].value = response[_findObj].value + 1;
+          }
         }
 
         if (!quarter) {
@@ -573,8 +579,8 @@ exports.getTouchPointScoreParent = async function (req, res) {
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
     var dealer = await getDealerByFilter(
       pid,
-      region,
       company,
+      region,
       area,
       city,
       qDealer,
@@ -1100,8 +1106,8 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
     var dealer = await getDealerByFilter(
       pid,
-      region,
       company,
+      region,
       area,
       city,
       qDealer,
@@ -1159,7 +1165,6 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
         response[i].data = arrResult;
       }
     }
-
     var isifile = [];
     for (let i = 0; i < response.length; i++) {
       if (response[i].data.length > 0) {
@@ -1170,8 +1175,11 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
             'code',
             parentTouchPoint[x].code
           );
+          // console.log(x+1, parentTouchPoint[x].code, findTouchpointScore);
           tempFile.push(
-            decimalPlaces(response[i].data[findTouchpointScore].score, 2)
+            response[i].data[findTouchpointScore].score
+              ? decimalPlaces(response[i].data[findTouchpointScore].score, 2)
+              : -1
           );
         }
         isifile.push(tempFile);
@@ -1202,7 +1210,7 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success get touchpoint score parent',
-            data: `https://api.dashboard.kadence.co.id/fileexcel/${newfilename}`,
+            data: `http://localhost:3333/fileexcel/${newfilename}`,
           });
         }
       }
