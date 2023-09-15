@@ -1210,7 +1210,7 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success get touchpoint score parent',
-            data: `http://localhost:3333/fileexcel/${newfilename}`,
+            data: `https://api.dashboard.kadence.co.id/fileexcel/${newfilename}`,
           });
         }
       }
