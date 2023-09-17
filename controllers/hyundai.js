@@ -595,7 +595,7 @@ exports.getTouchPointScoreParent = async function (req, res) {
     for (let i = 0; i < touchPointParent.length; i++) {
       response.push({
         code: touchPointParent[i].code,
-        label: touchPointParent[i].label,
+        label: `${touchPointParent[i].label} \n ${touchPointParent[i].weight}%`,
         group: touchPointParent[i].group,
         weight: touchPointParent[i].weight,
         count: 0,
@@ -1179,6 +1179,8 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
           tempFile.push(
             response[i].data[findTouchpointScore].score
               ? decimalPlaces(response[i].data[findTouchpointScore].score, 2)
+              : response[i].data[findTouchpointScore].score === 0
+              ? 0
               : -1
           );
         }
