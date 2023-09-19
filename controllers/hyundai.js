@@ -595,7 +595,9 @@ exports.getTouchPointScoreParent = async function (req, res) {
     for (let i = 0; i < touchPointParent.length; i++) {
       response.push({
         code: touchPointParent[i].code,
-        label: `${touchPointParent[i].label} \n ${touchPointParent[i].weight}%`,
+        label: `${touchPointParent[i].label} \n ${
+          touchPointParent[i].weight > 0 ? touchPointParent[i].weight : 100
+        }%`,
         group: touchPointParent[i].group,
         weight: touchPointParent[i].weight,
         count: 0,
@@ -619,12 +621,8 @@ exports.getTouchPointScoreParent = async function (req, res) {
           touchPointLength++;
         }
       }
-      response[i].count = parseFloat(
-        Math.round(touchPointCount / touchPointLength).toFixed(2)
-      );
-      response[i].value = parseFloat(
-        Math.round(touchPointCount / touchPointLength).toFixed(2)
-      );
+      response[i].count = decimalPlaces(touchPointCount / touchPointLength, 2);
+      response[i].value = decimalPlaces(touchPointCount / touchPointLength, 2);
     }
     if (sort === 'highest') {
       bubbleSort(response, 'value');
