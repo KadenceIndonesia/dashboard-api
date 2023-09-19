@@ -807,8 +807,10 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
               touchPointCountRegion =
                 touchPointCountRegion + _scoreTouchPointByRegion[x].score;
             }
-            response[i].value =
-              touchPointCountRegion / _scoreTouchPointByRegion.length;
+            response[i].value = decimalPlaces(
+              touchPointCountRegion / _scoreTouchPointByRegion.length,
+              2
+            );
           }
         }
 
@@ -834,8 +836,10 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
               touchPointCount =
                 touchPointCount + _scoreTouchPointByDealer[x].score;
             }
-            response[i].value =
-              touchPointCount / _scoreTouchPointByDealer.length;
+            response[i].value = decimalPlaces(
+              touchPointCount / _scoreTouchPointByDealer.length,
+              2
+            );
           }
         }
       } else {
@@ -861,8 +865,10 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
               touchPointCount =
                 touchPointCount + _scoreTouchPointByDealer[x].score;
             }
-            response[i].value =
-              touchPointCount / _scoreTouchPointByDealer.length;
+            response[i].value = decimalPlaces(
+              touchPointCount / _scoreTouchPointByDealer.length,
+              2
+            );
           }
         }
       }
