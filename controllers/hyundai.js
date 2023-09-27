@@ -1180,13 +1180,15 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
             parentTouchPoint[x].code
           );
           // console.log(x+1, parentTouchPoint[x].code, findTouchpointScore);
-          tempFile.push(
-            response[i].data[findTouchpointScore].score
-              ? decimalPlaces(response[i].data[findTouchpointScore].score, 2)
-              : response[i].data[findTouchpointScore].score === 0
-              ? 0
-              : -1
-          );
+          if(findTouchpointScore !== -1){
+            tempFile.push(
+              response[i].data[findTouchpointScore].score
+                ? decimalPlaces(response[i].data[findTouchpointScore].score, 2)
+                : response[i].data[findTouchpointScore].score === 0
+                ? 0
+                : -1
+            );
+          }
         }
         isifile.push(tempFile);
       }
@@ -1284,7 +1286,7 @@ exports.getTouchPointScoreDealerDetail = async function (req, res) {
               code: _response[x].code,
               label: _response[x].label,
               group: _response[x].group,
-              value: _response[x].value,
+              value: decimalPlaces(_response[x].value, 2),
             });
           }
         }
