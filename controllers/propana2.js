@@ -2435,7 +2435,7 @@ exports.getVisitByRegion = async function (req, res) {
           _getOneAdminstrationRegionByCode.regionCode
         );
         for (let x = 0; x < _targetByWaveRegion.length; x++) {
-          target = target + _targetByWaveRegion[x].target
+          target = target + _targetByWaveRegion[x].target;
         }
       } else {
         target = _getOneAdminstrationRegionByCode.target;
@@ -3058,6 +3058,7 @@ exports.getAchievementDeviceTotal = async function (req, res) {
 
 exports.getDataListPangkalan = async function (req, res) {
   try {
+    console.log('propana2');
     const pid = req.params.pid;
     const wave = req.query.wave;
     const region = req.query.region;
@@ -3067,9 +3068,20 @@ exports.getDataListPangkalan = async function (req, res) {
     const perPage = parseInt(req.query.perPage);
     const search = req.query.search || '';
 
-    var data = await excelDataByQuest(pid, 'all');
+    // var data = await excelDataByQuest(pid, 'all');
     var result = [];
-    var total = 0;
+    var total = await countPangkalanList(pid, wave, region, province, city);
+
+    var data = await getListPangkalan(
+      pid,
+      wave,
+      region,
+      province,
+      city,
+      page,
+      perPage
+    );
+    console.log(data);
 
     var startPage = 0;
     var endPage = 0;
@@ -3159,80 +3171,85 @@ exports.getDataListPangkalan = async function (req, res) {
     };
 
     for (let i = 0; i < data.length; i++) {
-      var isSearch = true;
-      if (search !== '') {
-        if (
-          data[i]['NAMAPANGKALAN']
-            .toLowerCase()
-            .indexOf(search.toLowerCase()) !== -1 ||
-          String(data[i]['KID_Pangkalan'])
-            .toLowerCase()
-            .indexOf(search.toLowerCase()) !== -1
-        ) {
-          isSearch = true;
-        } else {
-          isSearch = false;
-        }
-      }
-
-      if (isSearch) {
-        if (wave !== '0' && region == '0') {
-          if (data[i]['WAVE'] === wave) {
-            if (total >= startPage && total < startPage + endPage) {
-              inputResult(i);
-            }
-            total++;
-          }
-        } else if (wave === '0' && region !== '0') {
-          if (data[i]['A1'] === region) {
-            if (province !== '0' && data[i]['A2'] === province) {
-              if (city !== '0' && data[i]['A3'] === city) {
-                if (total >= startPage && total < startPage + endPage) {
-                  inputResult(i);
-                }
-                total++;
-              } else {
-                if (total >= startPage && total < startPage + endPage) {
-                  inputResult(i);
-                }
-                total++;
-              }
-            } else {
-              if (total >= startPage && total < startPage + endPage) {
-                inputResult(i);
-              }
-              total++;
-            }
-          }
-        } else if (wave !== '0' && region !== '0') {
-          if (data[i]['WAVE'] === wave && data[i]['A1'] === region) {
-            if (province !== '0' && data[i]['A2'] === province) {
-              if (city !== '0' && data[i]['A3'] === city) {
-                if (total >= startPage && total < startPage + endPage) {
-                  inputResult(i);
-                }
-                total++;
-              } else {
-                if (total >= startPage && total < startPage + endPage) {
-                  inputResult(i);
-                }
-                total++;
-              }
-            } else {
-              if (total >= startPage && total < startPage + endPage) {
-                inputResult(i);
-              }
-              total++;
-            }
-          }
-        } else {
-          if (total >= startPage && total < startPage + endPage) {
-            inputResult(i);
-          }
-          total++;
-        }
-      }
+      inputResult(i);
+      total++;
     }
+
+    // for (let i = 0; i < data.length; i++) {
+    //   var isSearch = true;
+    //   if (search !== '') {
+    //     if (
+    //       data[i]['NAMAPANGKALAN']
+    //         .toLowerCase()
+    //         .indexOf(search.toLowerCase()) !== -1 ||
+    //       String(data[i]['KID_Pangkalan'])
+    //         .toLowerCase()
+    //         .indexOf(search.toLowerCase()) !== -1
+    //     ) {
+    //       isSearch = true;
+    //     } else {
+    //       isSearch = false;
+    //     }
+    //   }
+
+    //   if (isSearch) {
+    //     if (wave !== '0' && region == '0') {
+    //       if (data[i]['WAVE'] === wave) {
+    //         if (total >= startPage && total < startPage + endPage) {
+    //           inputResult(i);
+    //         }
+    //         total++;
+    //       }
+    //     } else if (wave === '0' && region !== '0') {
+    //       if (data[i]['A1'] === region) {
+    //         if (province !== '0' && data[i]['A2'] === province) {
+    //           if (city !== '0' && data[i]['A3'] === city) {
+    //             if (total >= startPage && total < startPage + endPage) {
+    //               inputResult(i);
+    //             }
+    //             total++;
+    //           } else {
+    //             if (total >= startPage && total < startPage + endPage) {
+    //               inputResult(i);
+    //             }
+    //             total++;
+    //           }
+    //         } else {
+    //           if (total >= startPage && total < startPage + endPage) {
+    //             inputResult(i);
+    //           }
+    //           total++;
+    //         }
+    //       }
+    //     } else if (wave !== '0' && region !== '0') {
+    //       if (data[i]['WAVE'] === wave && data[i]['A1'] === region) {
+    //         if (province !== '0' && data[i]['A2'] === province) {
+    //           if (city !== '0' && data[i]['A3'] === city) {
+    //             if (total >= startPage && total < startPage + endPage) {
+    //               inputResult(i);
+    //             }
+    //             total++;
+    //           } else {
+    //             if (total >= startPage && total < startPage + endPage) {
+    //               inputResult(i);
+    //             }
+    //             total++;
+    //           }
+    //         } else {
+    //           if (total >= startPage && total < startPage + endPage) {
+    //             inputResult(i);
+    //           }
+    //           total++;
+    //         }
+    //       }
+    //     } else {
+    //       if (total >= startPage && total < startPage + endPage) {
+    //         inputResult(i);
+    //       }
+    //       total++;
+    //     }
+    //   }
+    // }
 
     res.status(200).json({
       statusCode: 200,
