@@ -132,6 +132,15 @@ Router.get(
   '/score/average/:pid/:qidx/attribute/:attr',
   scoreControllers.getScoreAverageByAttribute
 );
+//score grid
+Router.get(
+  '/score/average/:pid/:qidx/total-grid',
+  scoreControllers.getScoreAverageGrid
+);
+Router.get(
+  '/score/average/:pid/:qidx/attribute-grid/:attr',
+  scoreControllers.getScoreAverageByAttributeGrid
+);
 
 //spellbound
 Router.get(

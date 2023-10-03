@@ -128,7 +128,7 @@ exports.achievementByQidx = async function (req, res) {
               y: 0,
             });
           }
-          console.log(rawdata)
+          console.log(rawdata);
           for (let x = 0; x < data.length; x++) {
             if (filterLogic(x)) {
               var findOnObject = await findObj(
@@ -409,8 +409,8 @@ exports.achievementByQidxPercentTotal = async function (req, res) {
           }
           for (let x = 0; x < data.length; x++) {
             if (filterLogic(x)) {
+              total++;
               for (let y = 1; y <= attribute.attribute.length; y++) {
-                total++;
                 var findOnObject = await findObj(
                   rawdata,
                   'code',
@@ -454,7 +454,7 @@ exports.achievementByQidxPercentTotal = async function (req, res) {
           }
         }
         for (let i = 0; i < rawdata.length; i++) {
-          rawdata[i].percent = (rawdata[i].y * 100) / total;
+          rawdata[i].percent = decimalPlaces((rawdata[i].y * 100) / total, 2);
           rawdata[i].base = total;
         }
         res.status(200).send(rawdata);
@@ -472,7 +472,6 @@ exports.achievementByQidxPercentTotal = async function (req, res) {
     res.status(400).send(error);
   }
 };
-
 
 // grouping belum bisa dipakai untuk general case
 exports.achievementByQidxGrouping = async function (req, res) {
