@@ -14,22 +14,29 @@ exports.getAchievementData = async function (req, res) {
     var code3 = req.query.code3;
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
+        // 1
         return data[x][break1] == code1;
       } else if (code1 && code2 && !code3) {
+        // 1,2
         return data[x][break1] == code1 && data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
+        //1,2,3
         return (
           data[x][break1] == code1 &&
           data[x][break2] == code2 &&
           data[x][break3] == code3
         );
       } else if (!code1 && code2 && !code3) {
+        //2
         return data[x][break2] == code2;
       } else if (!code1 && code2 && code3) {
+        //2,3
         return data[x][break2] == code2 && data[x][break3] == code3;
       } else if (!code1 && !code2 && code3) {
+        //3
         return data[x][break3] == code3;
       } else if (code1 && !code2 && code3) {
+        //1,3
         return data[x][break1] == code1 && data[x][break3] == code3;
       } else {
         return true;
@@ -93,22 +100,29 @@ exports.achievementByQidx = async function (req, res) {
     var code3 = req.query.code3;
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
+        // 1
         return data[x][break1] == code1;
       } else if (code1 && code2 && !code3) {
+        // 1,2
         return data[x][break1] == code1 && data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
+        //1,2,3
         return (
           data[x][break1] == code1 &&
           data[x][break2] == code2 &&
           data[x][break3] == code3
         );
       } else if (!code1 && code2 && !code3) {
+        //2
         return data[x][break2] == code2;
       } else if (!code1 && code2 && code3) {
+        //2,3
         return data[x][break2] == code2 && data[x][break3] == code3;
       } else if (!code1 && !code2 && code3) {
+        //3
         return data[x][break3] == code3;
       } else if (code1 && !code2 && code3) {
+        //1,3
         return data[x][break1] == code1 && data[x][break3] == code3;
       } else {
         return true;
@@ -220,21 +234,30 @@ exports.achievementByQidxPercentTarget = async function (req, res) {
     var code3 = req.query.code3;
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
+        // 1
         return data[x][break1] == code1;
       } else if (code1 && code2 && !code3) {
+        // 1,2
         return data[x][break1] == code1 && data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
+        //1,2,3
         return (
           data[x][break1] == code1 &&
           data[x][break2] == code2 &&
           data[x][break3] == code3
         );
       } else if (!code1 && code2 && !code3) {
+        //2
         return data[x][break2] == code2;
       } else if (!code1 && code2 && code3) {
+        //2,3
         return data[x][break2] == code2 && data[x][break3] == code3;
       } else if (!code1 && !code2 && code3) {
+        //3
         return data[x][break3] == code3;
+      } else if (code1 && !code2 && code3) {
+        //1,3
+        return data[x][break1] == code1 && data[x][break3] == code3;
       } else {
         return true;
       }
@@ -348,21 +371,30 @@ exports.achievementByQidxPercentTotal = async function (req, res) {
     var code3 = req.query.code3;
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
+        // 1
         return data[x][break1] == code1;
       } else if (code1 && code2 && !code3) {
+        // 1,2
         return data[x][break1] == code1 && data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
+        //1,2,3
         return (
           data[x][break1] == code1 &&
           data[x][break2] == code2 &&
           data[x][break3] == code3
         );
       } else if (!code1 && code2 && !code3) {
+        //2
         return data[x][break2] == code2;
       } else if (!code1 && code2 && code3) {
+        //2,3
         return data[x][break2] == code2 && data[x][break3] == code3;
       } else if (!code1 && !code2 && code3) {
+        //3
         return data[x][break3] == code3;
+      } else if (code1 && !code2 && code3) {
+        //1,3
+        return data[x][break1] == code1 && data[x][break3] == code3;
       } else {
         return true;
       }
@@ -486,21 +518,30 @@ exports.achievementByQidxGrouping = async function (req, res) {
     var code3 = req.query.code3;
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
+        // 1
         return data[x][break1] == code1;
       } else if (code1 && code2 && !code3) {
+        // 1,2
         return data[x][break1] == code1 && data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
+        //1,2,3
         return (
           data[x][break1] == code1 &&
           data[x][break2] == code2 &&
           data[x][break3] == code3
         );
       } else if (!code1 && code2 && !code3) {
+        //2
         return data[x][break2] == code2;
       } else if (!code1 && code2 && code3) {
+        //2,3
         return data[x][break2] == code2 && data[x][break3] == code3;
       } else if (!code1 && !code2 && code3) {
+        //3
         return data[x][break3] == code3;
+      } else if (code1 && !code2 && code3) {
+        //1,3
+        return data[x][break1] == code1 && data[x][break3] == code3;
       } else {
         return true;
       }
@@ -726,21 +767,30 @@ exports.achievementByFilter = async function (req, res) {
     var attribute = await attributeByQidx(pid, qidx);
     const filterLogic = (x) => {
       if (code1 && !code2 && !code3) {
+        // 1
         return data[x][break1] == code1;
       } else if (code1 && code2 && !code3) {
+        // 1,2
         return data[x][break1] == code1 && data[x][break2] == code2;
       } else if (code1 && code2 && code3) {
+        //1,2,3
         return (
           data[x][break1] == code1 &&
           data[x][break2] == code2 &&
           data[x][break3] == code3
         );
       } else if (!code1 && code2 && !code3) {
+        //2
         return data[x][break2] == code2;
       } else if (!code1 && code2 && code3) {
+        //2,3
         return data[x][break2] == code2 && data[x][break3] == code3;
       } else if (!code1 && !code2 && code3) {
+        //3
         return data[x][break3] == code3;
+      } else if (code1 && !code2 && code3) {
+        //1,3
+        return data[x][break1] == code1 && data[x][break3] == code3;
       } else {
         return true;
       }
