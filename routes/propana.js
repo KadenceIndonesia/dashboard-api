@@ -31,6 +31,8 @@ Router.get('/:pid/pangkalan/data-list', propanaController.getTotalListPangkalan)
 Router.get('/:pid/pangkalan/list', propanaController.getDataListPangkalan);
 Router.get('/:pid/pangkalan/detail/:key', propanaController.getDetailPangkalan);
 
+Router.get('/:pid/station/detail/:key', propanaController.getStationByKey);
+
 Router.get('/:pid/pangkalan/export', propanaController.getExportPangkalan);
 Router.get('/:pid/city/export', propanaController.getExportCity);
 Router.get('/:pid/status-pangkalan/export', propanaController.getStatusPangkalanExport);

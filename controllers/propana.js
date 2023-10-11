@@ -5610,3 +5610,24 @@ exports.getStatusPangkalanExport = async function (req, res) {
     res.status(400).send(error);
   }
 };
+
+exports.getStationByKey = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const key = req.params.key;
+
+    var result;
+
+    var _getStationDetail = await getStationDetail(key);
+
+    result = _getStationDetail;
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get detail station',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
