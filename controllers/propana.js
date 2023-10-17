@@ -3100,6 +3100,7 @@ exports.getDataListPangkalan = async function (req, res) {
       region,
       province,
       city,
+      search,
       page,
       perPage
     );
