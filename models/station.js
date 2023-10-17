@@ -5,7 +5,7 @@ const stationSchema = mongoose.Schema({
   key: String,
   stationID: Number,
   stationName: String,
-  regID: Number,
+  regID: String,
   region: String,
   province: String,
   city: String,
@@ -13,6 +13,7 @@ const stationSchema = mongoose.Schema({
   village: String,
   agent: String,
   address: String,
+  upload: Number
 });
 
 module.exports = mongoose.model('Station', stationSchema);

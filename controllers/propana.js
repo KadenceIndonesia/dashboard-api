@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const xlsx = require('node-xlsx');
 const moment = require('moment');
+const Station = require('../models/station');
 
 require('../lib/index');
 require('../lib/administration');
@@ -5632,7 +5633,6 @@ exports.getStationByKey = async function (req, res) {
   }
 };
 
-
 exports.getStationKey = async function (req, res) {
   try {
     const pid = req.params.pid;
@@ -5642,7 +5642,6 @@ exports.getStationKey = async function (req, res) {
 
     var _getStationKey = await getStationKey(id);
 
-
     result = _getStationKey;
 
     res.status(200).json({
@@ -5650,6 +5649,41 @@ exports.getStationKey = async function (req, res) {
       message: 'Success get detail station',
       data: result,
     });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.patchStationUpdateUpload = async function (req, res) {
+  try {
+    const regid = req.body.regid;
+
+    var result;
+
+    var _getStationByRegid = await getStationByRegid(regid);
+    if (_getStationByRegid) {
+      result = _getStationByRegid;
+      Station.updateOne({ regID: regid }, { $set: { upload: 1 } })
+        .exec()
+        .then((result) =>
+          res.status(200).json({
+            statusCode: 200,
+            message: 'Success update status upload',
+            data: result,
+          })
+        )
+        .catch((error) =>
+          res.status(404).json({
+            statusCode: '404',
+            message: 'Error update data',
+          })
+        );
+    } else {
+      res.status(404).json({
+        statusCode: '404',
+        message: 'Station Not Found',
+      });
+    }
   } catch (error) {
     res.status(400).send(error);
   }
