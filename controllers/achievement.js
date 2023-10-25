@@ -4,7 +4,7 @@ require('../lib/index');
 exports.getAchievementData = async function (req, res) {
   try {
     const pid = req.params.pid;
-    const subdir = req.params.subdir;
+    const subdir = req.query.subdir;
     var total = 0;
     const break1 = req.query.break1;
     const break2 = req.query.break2;
@@ -44,35 +44,14 @@ exports.getAchievementData = async function (req, res) {
     };
     const project = await projectByPid(pid);
     if (project.length > 0) {
-      var data = await excelData(pid);
+      var data = subdir
+        ? await excelDataSubDir(pid, subdir)
+        : await excelData(pid);
       for (let x = 0; x < data.length; x++) {
         if (data[x]['SbjNum'] !== -1 && filterLogic(x)) {
           total++;
         }
       }
-      // if (project.multiple) {
-      //   var data = await excelData(project.projectID);
-      //   for (let x = 0; x < data.length; x++) {
-      //     if (data[x]['SbjNum'] !== -1 && filterLogic(x)) {
-      //       total++;
-      //     }
-      //   }
-      // } else {
-      //   for (let i = 0; i < project.subDirectory.length; i++) {
-      //     var data = await excelData(project.projectID);
-      //     for (let x = 0; x < data.length; x++) {
-      //       if (data[x]['SbjNum'] !== -1 && filterLogic(x)) {
-      //         total++;
-      //       }
-      //     }
-      //   }
-      //   var data = await excelData(project.projectID);
-      //   for (let x = 0; x < data.length; x++) {
-      //     if (data[x]['SbjNum'] !== -1 && filterLogic(x)) {
-      //       total++;
-      //     }
-      //   }
-      // }
       res.status(200).send({
         projectID: pid,
         projectName: project[0].projectName,

@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const fileupload = require("express-fileupload");
+const fileupload = require('express-fileupload');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const indexRoutes = require('./routes/index');
@@ -14,6 +14,7 @@ const hyundaiRoutes = require('./routes/hyundai');
 const administrationRoutes = require('./routes/administration');
 const propanaRoutes = require('./routes/propana');
 const propana2Routes = require('./routes/propana2');
+const branchRoutes = require('./routes/branch');
 
 require('dotenv').config();
 // require('./helpers/init_mongodb')
@@ -37,6 +38,7 @@ app.use('/attribute', attributeRoutes);
 app.use('/hyundai', hyundaiRoutes);
 app.use('/propana', propanaRoutes);
 app.use('/propana2', propana2Routes);
+app.use('/branch', branchRoutes);
 
 app.listen(process.env.PORT, (req, res) => {
   console.log('connect');
