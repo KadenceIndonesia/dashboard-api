@@ -30,6 +30,7 @@ exports.getRegion = async function (req, res) {
         );
         if (findArray === -1) {
           result.push({
+            value: _getAdminstrationRegionByCode[0].idRegion,
             code: _getAdminstrationRegionByCode[0].regionCode,
             label: _getAdminstrationRegionByCode[0].regionName,
           });
@@ -39,6 +40,7 @@ exports.getRegion = async function (req, res) {
       var data = await getAdminstrationRegion(pid);
       for (let i = 0; i < data.length; i++) {
         result.push({
+          value: data[i].idRegion,
           code: data[i].regionCode,
           label: data[i].regionName,
         });
