@@ -13,7 +13,8 @@ const stationSchema = mongoose.Schema({
   village: String,
   agent: String,
   address: String,
-  upload: Number
+  upload: Number,
+  uploadPoster: Number
 });
 
 module.exports = mongoose.model('Station', stationSchema);
