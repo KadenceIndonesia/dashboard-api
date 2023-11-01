@@ -31,10 +31,14 @@ Router.get('/:pid/pangkalan/data-list', propanaController.getTotalListPangkalan)
 Router.get('/:pid/pangkalan/list', propanaController.getDataListPangkalan);
 Router.get('/:pid/pangkalan/detail/:key', propanaController.getDetailPangkalan);
 
+//evidence station
 Router.get('/:pid/station/detail/:key', propanaController.getStationByKey);
 Router.get('/:pid/station/:id', propanaController.getStationKey);
 Router.patch('/:pid/station/update-upload', propanaController.patchStationUpdateUpload);
 Router.patch('/:pid/station/update-upload-poster', propanaController.patchStationUpdateUploadPoster);
+Router.get('/:pid/station/evidence/achievement/poster', propanaController.getEveidenceAchievementPoster);
+Router.get('/:pid/station/evidence/achievement/surat-edaran', propanaController.getEveidenceAchievementSuratEdaran);
+Router.get('/:pid/station/evidence/list', propanaController.getStationList);
 
 Router.get('/:pid/pangkalan/export', propanaController.getExportPangkalan);
 Router.get('/:pid/city/export', propanaController.getExportCity);
@@ -43,6 +47,10 @@ Router.get('/:pid/status-pangkalan/export', propanaController.getStatusPangkalan
 //progress
 Router.get('/:pid/progress/not-boarding', propanaController.getProgressNotBoarding);
 Router.get('/:pid/progress/on-boarding-transaction', propanaController.getProgressOnBoardingTransaction);
+
+
+
+
 
 
 module.exports = Router;

@@ -5724,3 +5724,75 @@ exports.patchStationUpdateUploadPoster = async function (req, res) {
     res.status(400).send(error);
   }
 };
+
+exports.getEveidenceAchievementPoster = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var result = await achievementStationPoster(pid, region, province, city);
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get detail station',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getEveidenceAchievementSuratEdaran = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+
+    var result = await achievementStationSuratEdaran(
+      pid,
+      region,
+      province,
+      city
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get detail station',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getStationList = async function (req, res) {
+  try {
+    const region = req.query.region;
+    const province = req.query.province;
+    const city = req.query.city;
+    const search = req.query.search;
+    const page = parseInt(req.query.page);
+    const perPage = parseInt(req.query.perPage);
+    var total = await countStationList(region, province, city, search);
+    var result = await stationList(
+      region,
+      province,
+      city,
+      search,
+      page,
+      perPage
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get list station',
+      totalData: total,
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};

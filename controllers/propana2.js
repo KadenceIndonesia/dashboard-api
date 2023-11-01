@@ -189,6 +189,7 @@ exports.getVisitAchievement = async function (req, res) {
     const wave = req.query.wave;
 
     var result = await countAchievementTotal(pid, wave, region, province, city);
+    console.log(countAchievementTotal)
     // var data = await excelDataByQuest(`${pid}`, 'S0');
     // for (let i = 0; i < data.length; i++) {
     //   if (wave !== '0') {
