@@ -15,6 +15,7 @@ const administrationRoutes = require('./routes/administration');
 const propanaRoutes = require('./routes/propana');
 const propana2Routes = require('./routes/propana2');
 const branchRoutes = require('./routes/branch');
+const celestiaRoutes = require('./routes/celestia');
 
 require('dotenv').config();
 // require('./helpers/init_mongodb')
@@ -39,6 +40,7 @@ app.use('/hyundai', hyundaiRoutes);
 app.use('/propana', propanaRoutes);
 app.use('/propana2', propana2Routes);
 app.use('/branch', branchRoutes);
+app.use('/celestia', celestiaRoutes);
 
 app.listen(process.env.PORT, (req, res) => {
   console.log('connect');

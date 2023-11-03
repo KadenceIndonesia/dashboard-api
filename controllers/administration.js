@@ -339,7 +339,8 @@ exports.getPanelList = async function (req, res) {
   try {
     const pid = req.params.pid;
     const directorate = parseInt(req.query.directorate);
-    var result = await getAdminstrationPanelList(pid, directorate);
+    const panel = parseInt(req.query.panel);
+    var result = await getAdminstrationPanelList(pid, directorate, panel);
 
     res.status(200).json({
       statusCode: 200,
