@@ -303,3 +303,66 @@ exports.getSensusDetailByID = async function (req, res) {
     res.status(400).send(error);
   }
 };
+
+exports.getDirectorateList = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    var result = await getAdminstrationDirectorateList(pid);
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Directorate List',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getDirectorateDetail = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const id = req.params.id;
+    var result = await getAdminstrationDirectorate(pid, id);
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Directorate Detail',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getPanelList = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const directorate = parseInt(req.query.directorate);
+    var result = await getAdminstrationPanelList(pid, directorate);
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Panel List',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getPanelDetail = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const id = req.params.id;
+    var result = await getAdminstrationPanelDetail(pid, id);
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Panel Detail',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};

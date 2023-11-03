@@ -13,4 +13,10 @@ Router.get('/:pid/sensus/all', administrationController.getSensusAll);
 Router.get('/:pid/sensus/latlong', administrationController.getSensusLatLong);
 Router.get('/:pid/sensus/detail/:id', administrationController.getSensusDetailByID);
 
+Router.get('/:pid/directorate/list', administrationController.getDirectorateList);
+Router.get('/:pid/directorate/get/:id', administrationController.getDirectorateDetail);
+
+Router.get('/:pid/panel/list', administrationController.getPanelList);
+Router.get('/:pid/panel/get/:id', administrationController.getPanelDetail);
+
 module.exports = Router;
