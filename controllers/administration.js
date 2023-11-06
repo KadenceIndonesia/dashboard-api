@@ -339,8 +339,9 @@ exports.getPanelList = async function (req, res) {
   try {
     const pid = req.params.pid;
     const directorate = parseInt(req.query.directorate);
+    const division = parseInt(req.query.division);
     const panel = parseInt(req.query.panel);
-    var result = await getAdminstrationPanelList(pid, directorate, panel);
+    var result = await getAdminstrationPanelList(pid, directorate, division, panel);
 
     res.status(200).json({
       statusCode: 200,
@@ -361,6 +362,38 @@ exports.getPanelDetail = async function (req, res) {
     res.status(200).json({
       statusCode: 200,
       message: 'Success get Panel Detail',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getDivisionList = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const directorate = parseInt(req.query.directorate);
+    var result = await getAdminstrationDivisionList(pid, directorate);
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get division List',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getDivisionDetail = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const id = req.params.id;
+    var result = await getAdminstrationDivisionDetail(pid, id);
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Division Detail',
       data: result,
     });
   } catch (error) {

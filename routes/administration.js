@@ -19,4 +19,7 @@ Router.get('/:pid/directorate/get/:id', administrationController.getDirectorateD
 Router.get('/:pid/panel/list', administrationController.getPanelList);
 Router.get('/:pid/panel/get/:id', administrationController.getPanelDetail);
 
+Router.get('/:pid/division/list', administrationController.getDivisionList);
+Router.get('/:pid/division/get/:id', administrationController.getDivisionDetail);
+
 module.exports = Router;

@@ -6,8 +6,11 @@ const panelSchema = mongoose.Schema({
   panel: String,
   target: Number,
   idDirectorate: Number,
+  idDivision: Number,
   idProject: String,
-  code: String
+  code: String,
+  type: String,
+  region: Array,
 });
 
 module.exports = mongoose.model('panel', panelSchema);
