@@ -238,6 +238,36 @@ exports.getRawdataDetail = async function (req, res) {
 
     var result;
 
+    var data = await getDataDetail(pid, id);
+
+    var detailPanel = await getAdminstrationPanelDetail(
+      pid,
+      parseInt(data['PANEL'])
+    );
+    var detailDirectorate = await getAdminstrationDirectorate(
+      pid,
+      detailPanel.idDirectorate
+    );
+    var detailDivision = await getAdminstrationDivisionDetail(
+      pid,
+      detailPanel.idDivision
+    );
+    var detailRegion = await getRegionDetailByCode(
+      pid,
+      data['PANEL'],
+      data['REGION']
+    );
+
+    result = {
+      sbjNum: data.SbjNum,
+      id: data.ID_Responden,
+      nama: data.Nama_Responden,
+      directorate: detailDirectorate.directorate,
+      division: detailDivision.division,
+      panel: detailPanel.panel,
+      region: detailRegion ? detailRegion.regionName : '-',
+    };
+
     res.status(200).json({
       statusCode: 200,
       message: 'Success get achievement panel',
