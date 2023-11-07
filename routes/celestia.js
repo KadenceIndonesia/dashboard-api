@@ -6,6 +6,8 @@ Router.get('/:pid/target', celestiaController.getTargetTotal);
 Router.get('/:pid/achievement/panel', celestiaController.getAchievementPanel);
 Router.get('/:pid/achievement/total', celestiaController.getAchievementPanelTotal);
 
+Router.get('/:pid/rawdata/list', celestiaController.getRawdataList);
+
 //administrations
 Router.get('/:pid/administration/region/list', celestiaController.getAdministrationRegion);
 Router.get('/:pid/administration/region/get/:panel/:region', celestiaController.getAdministrationRegionDetail);

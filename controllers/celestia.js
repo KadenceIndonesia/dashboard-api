@@ -34,7 +34,6 @@ exports.getAdministrationRegionDetail = async function (req, res) {
     const panel = req.params.panel ? parseInt(req.params.panel) : 0;
     const region = parseInt(req.params.region);
 
-
     var result = await getRegionDetailByID(pid, panel, region);
 
     res.status(200).json({
@@ -149,6 +148,87 @@ exports.getAchievementPanelTotal = async function (req, res) {
     res.status(200).json({
       statusCode: 200,
       message: 'Success get achievement panel',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getRawdataList = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const directorate = parseInt(req.query.directorate);
+    const division = req.query.division;
+    const panel = parseInt(req.query.panel);
+    const region = parseInt(req.query.region);
+    const page = parseInt(req.query.page);
+    const perPage = parseInt(req.query.perPage);
+
+    var _getAdminstrationDivisionList = await getAdminstrationDivisionList(
+      pid,
+      directorate
+    );
+
+    var _division = 0;
+
+    if (directorate && (!division || division === '0')) {
+      _division = _getAdminstrationDivisionList.map((data) =>
+        String(data.idDivision)
+      );
+    } else if (directorate && division) {
+      _division = [division];
+    }
+
+    var result = [];
+    var _getDataList = await getDataList(
+      pid,
+      _division,
+      panel,
+      region,
+      page,
+      perPage
+    );
+    var totalData = await countDataList(
+      pid,
+      _division,
+      panel,
+      region,
+    );
+
+    for (let i = 0; i < _getDataList.length; i++) {
+      var detailPanel = await getAdminstrationPanelDetail(
+        pid,
+        parseInt(_getDataList[i]['PANEL'])
+      );
+      var detailDirectorate = await getAdminstrationDirectorate(
+        pid,
+        detailPanel.idDirectorate
+      );
+      var detailDivision = await getAdminstrationDivisionDetail(
+        pid,
+        detailPanel.idDivision
+      );
+      var detailRegion = await getRegionDetailByCode(
+        pid,
+        _getDataList[i]['PANEL'],
+        _getDataList[i]['REGION']
+      );
+      result.push({
+        sbjNum: _getDataList[i].SbjNum,
+        id: _getDataList[i].ID_Responden,
+        nama: _getDataList[i].Nama_Responden,
+        directorate: detailDirectorate.directorate,
+        division: detailDivision.division,
+        panel: detailPanel.panel,
+        region: detailRegion ? detailRegion.regionName : '-',
+      });
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get rawdata list',
+      totalData: totalData,
       data: result,
     });
   } catch (error) {

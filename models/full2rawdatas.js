@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const full2rawdataSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   sbjNum: Number,
+  SbjNum: Number,
   idProject: String,
   KID_Pangkalan: String,
   KID_KEPO: String,
@@ -107,6 +108,8 @@ const full2rawdataSchema = mongoose.Schema({
   PANEL: String,
   KOTA: String,
   REGION: String,
+  Nama_Responden: String,
+  ID_Responden: String
 });
 
 module.exports = mongoose.model('Full2rawdata', full2rawdataSchema);

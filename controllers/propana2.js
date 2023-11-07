@@ -2423,8 +2423,10 @@ exports.getVisitByRegion = async function (req, res) {
     const wave = req.query.wave;
     const region = req.query.region;
 
+
     var result = [];
     var _countVisitRegion = await countVisitRegion2(pid, region, wave);
+    console.log(_countVisitRegion)
     for (let i = 0; i < _countVisitRegion.length; i++) {
       var target = 0;
       var _getOneAdminstrationRegionByCode =
@@ -3082,7 +3084,6 @@ exports.getDataListPangkalan = async function (req, res) {
       page,
       perPage
     );
-    console.log(data);
 
     var startPage = 0;
     var endPage = 0;
