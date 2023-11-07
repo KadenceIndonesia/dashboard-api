@@ -189,12 +189,7 @@ exports.getRawdataList = async function (req, res) {
       page,
       perPage
     );
-    var totalData = await countDataList(
-      pid,
-      _division,
-      panel,
-      region,
-    );
+    var totalData = await countDataList(pid, _division, panel, region);
 
     for (let i = 0; i < _getDataList.length; i++) {
       var detailPanel = await getAdminstrationPanelDetail(
@@ -229,6 +224,40 @@ exports.getRawdataList = async function (req, res) {
       statusCode: 200,
       message: 'Success get rawdata list',
       totalData: totalData,
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getRawdataDetail = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const id = req.params.id;
+
+    var result;
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get achievement panel',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getEvidenceDetail = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const id = parseInt(req.params.id);
+
+    var result = await getEvidenceByID(pid, id);
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Evidence Detail',
       data: result,
     });
   } catch (error) {
