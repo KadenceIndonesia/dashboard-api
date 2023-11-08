@@ -54,21 +54,39 @@ exports.getTargetTotal = async function (req, res) {
     const panel = parseInt(req.query.panel);
     const region = parseInt(req.query.region);
 
-    var result;
+    var result = {
+      panelUtama: 0,
+      panelIrisan: 0,
+    };
 
     if (!region || region === 0) {
       //tidak ada spesifik region
-      result = await countTargetPanel(pid, directorate, division, panel);
+      var panelUtama = await countTargetPanel(
+        pid,
+        directorate,
+        division,
+        panel,
+        'Panel Utama'
+      );
+      var panelIrisan = await countTargetPanel(
+        pid,
+        directorate,
+        division,
+        panel,
+        'Panel Irisan'
+      );
+      result.panelUtama = panelUtama.target;
+      result.panelIrisan = panelIrisan.target;
     } else {
       //ada region
       var _getRegionDetailByID = await getRegionDetailByID(pid, panel, region);
-      result = [{ target: _getRegionDetailByID.target }];
+      result.panelUtama = _getRegionDetailByID.target;
     }
 
     res.status(200).json({
       statusCode: 200,
       message: 'Success get Target',
-      data: result[0],
+      data: result,
     });
   } catch (error) {
     res.status(400).send(error);
