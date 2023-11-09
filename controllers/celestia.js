@@ -68,6 +68,7 @@ exports.getTargetTotal = async function (req, res) {
         panel,
         'Panel Utama'
       );
+
       var panelIrisan = await countTargetPanel(
         pid,
         directorate,
@@ -75,8 +76,8 @@ exports.getTargetTotal = async function (req, res) {
         panel,
         'Panel Irisan'
       );
-      result.panelUtama = panelUtama.target;
-      result.panelIrisan = panelIrisan.target;
+      result.panelUtama = panelUtama ? panelUtama.target : 0;
+      result.panelIrisan = panelIrisan ? panelIrisan.target : 0;
     } else {
       //ada region
       var _getRegionDetailByID = await getRegionDetailByID(pid, panel, region);
@@ -166,6 +167,48 @@ exports.getAchievementPanelTotal = async function (req, res) {
     res.status(200).json({
       statusCode: 200,
       message: 'Success get achievement panel',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getAchievementRegion = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const directorate = parseInt(req.query.directorate);
+    const division = parseInt(req.query.division);
+    const panel = parseInt(req.query.panel);
+    // const region = parseInt(req.query.region);
+
+    var result = [];
+    var _groupingRegionByPanel;
+
+    //cari panel berdasarkan directorate dan division
+    if (!panel || panel === 0) {
+      var _getPanelList = await getPanelList(pid, directorate, division, panel);
+      _groupingRegionByPanel = await groupingRegionByPanel(
+        pid,
+        _getPanelList.map((data) => data.idPanel)
+      );
+    } else {
+      _groupingRegionByPanel = await groupingRegionByPanel(pid, [panel]);
+    }
+
+    for (let i = 0; i < _groupingRegionByPanel.length; i++) {
+      result.push({
+        code: _groupingRegionByPanel[i]._id.idRegion,
+        region: _groupingRegionByPanel[i]._id.regionName,
+        target: _groupingRegionByPanel[i].target,
+        total: _groupingRegionByPanel[i].total,
+        percent: _groupingRegionByPanel[i].percent,
+      });
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get achievement region',
       data: result,
     });
   } catch (error) {
