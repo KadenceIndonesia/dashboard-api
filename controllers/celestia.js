@@ -188,12 +188,18 @@ exports.getAchievementRegion = async function (req, res) {
     //cari panel berdasarkan directorate dan division
     if (!panel || panel === 0) {
       var _getPanelList = await getPanelList(pid, directorate, division, panel);
+      var arrayPanel = _getPanelList.map((data) => data.idPanel);
       _groupingRegionByPanel = await groupingRegionByPanel(
         pid,
-        _getPanelList.map((data) => data.idPanel)
+        arrayPanel,
+        arrayPanel.map(String)
       );
     } else {
-      _groupingRegionByPanel = await groupingRegionByPanel(pid, [panel]);
+      _groupingRegionByPanel = await groupingRegionByPanel(
+        pid,
+        [panel],
+        [`${panel}`]
+      );
     }
 
     for (let i = 0; i < _groupingRegionByPanel.length; i++) {
