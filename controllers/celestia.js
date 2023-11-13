@@ -122,16 +122,81 @@ exports.getAchievementPanel = async function (req, res) {
     }
 
     for (let i = 0; i < result.length; i++) {
-      var _countFullRawdataPanel = await countFullRawdataPanel(
+      if (result[i].type === 'Panel Utama') {
+        var _countFullRawdataPanel = await countFullRawdataPanel(
+          pid,
+          result[i].id,
+          region
+        );
+        result[i].total = _countFullRawdataPanel;
+        result[i].percent = countPercent(
+          _countFullRawdataPanel,
+          result[i].target
+        );
+      } else {
+        var _getDataPanelSlices = await getDataPanelSlices(pid, result[i].id);
+        var totalSlices = 0;
+        _getDataPanelSlices.map(
+          (data) => (totalSlices = totalSlices + data.total)
+        );
+        result[i].total = totalSlices;
+        result[i].percent = countPercent(totalSlices, result[i].target);
+      }
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get achievement panel',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getAchievementPanelSlices = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const directorate = parseInt(req.query.directorate);
+    const division = parseInt(req.query.division);
+    const panel = parseInt(req.query.panel);
+    const region = parseInt(req.query.region);
+
+    var result = [];
+    if (region) {
+      var _getRegionDetailByID = await getRegionDetailByID(pid, panel, region);
+    }
+    var _getPanelSlicesList = await getPanelSlicesList(
+      pid,
+      directorate,
+      division
+    );
+
+    for (let i = 0; i < _getPanelSlicesList.length; i++) {
+      var _getDataPanelSlices = await getDataPanelSlices(
         pid,
-        result[i].id,
-        region
+        _getPanelSlicesList[i].idPanel
       );
-      result[i].total = _countFullRawdataPanel;
-      result[i].percent = countPercent(
-        _countFullRawdataPanel,
-        result[i].target
+      var totalSlices = 0;
+      _getDataPanelSlices.map(
+        (data) => (totalSlices = totalSlices + data.total)
       );
+      result.push({
+        id: _getPanelSlicesList[i].idPanel,
+        panel: _getPanelSlicesList[i].panel,
+        target:
+          !region || region === 0
+            ? _getPanelSlicesList[i].target
+            : _getRegionDetailByID.target,
+        total: totalSlices,
+        percent: countPercent(
+          totalSlices,
+          !region || region === 0
+            ? _getPanelSlicesList[i].target
+            : _getRegionDetailByID.target
+        ),
+        type: _getPanelSlicesList[i].type,
+      });
     }
 
     res.status(200).json({
@@ -152,16 +217,31 @@ exports.getAchievementPanelTotal = async function (req, res) {
     const panel = parseInt(req.query.panel);
     const region = parseInt(req.query.region);
 
-    var result = 0;
-    var _getPanelList = await getPanelList(pid, directorate, division, panel);
+    var result = {
+      panelUtama: 0,
+      panelIrisan: 0,
+    };
 
+    var _getPanelList = await getPanelList(pid, directorate, division, panel);
     for (let i = 0; i < _getPanelList.length; i++) {
-      var _countFullRawdataPanel = await countFullRawdataPanel(
-        pid,
-        _getPanelList[i].idPanel,
-        region
-      );
-      result = result + _countFullRawdataPanel;
+      if (_getPanelList[i].type === 'Panel Utama') {
+        var _countFullRawdataPanel = await countFullRawdataPanel(
+          pid,
+          _getPanelList[i].idPanel,
+          region
+        );
+        result.panelUtama = result.panelUtama + _countFullRawdataPanel;
+      } else {
+        var _getDataPanelSlices = await getDataPanelSlices(
+          pid,
+          _getPanelList[i].idPanel
+        );
+        var totalSlices = 0;
+        _getDataPanelSlices.map(
+          (data) => (totalSlices = totalSlices + data.total)
+        );
+        result.panelIrisan = result.panelIrisan + totalSlices;
+      }
     }
 
     res.status(200).json({
@@ -180,7 +260,7 @@ exports.getAchievementRegion = async function (req, res) {
     const directorate = parseInt(req.query.directorate);
     const division = parseInt(req.query.division);
     const panel = parseInt(req.query.panel);
-    // const region = parseInt(req.query.region);
+    const region = parseInt(req.query.region);
 
     var result = [];
     var _groupingRegionByPanel;
@@ -192,13 +272,15 @@ exports.getAchievementRegion = async function (req, res) {
       _groupingRegionByPanel = await groupingRegionByPanel(
         pid,
         arrayPanel,
-        arrayPanel.map(String)
+        arrayPanel.map(String),
+        region
       );
     } else {
       _groupingRegionByPanel = await groupingRegionByPanel(
         pid,
         [panel],
-        [`${panel}`]
+        [`${panel}`],
+        region
       );
     }
 

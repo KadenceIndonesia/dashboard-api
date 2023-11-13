@@ -4,6 +4,7 @@ const Router = express.Router();
 
 Router.get('/:pid/target', celestiaController.getTargetTotal);
 Router.get('/:pid/achievement/panel', celestiaController.getAchievementPanel);
+Router.get('/:pid/achievement/panel-slices', celestiaController.getAchievementPanelSlices);
 Router.get('/:pid/achievement/total', celestiaController.getAchievementPanelTotal);
 
 Router.get('/:pid/achievement/region', celestiaController.getAchievementRegion);
