@@ -263,35 +263,118 @@ exports.getAchievementRegion = async function (req, res) {
     const region = parseInt(req.query.region);
 
     var result = [];
-    var _groupingRegionByPanel;
+    var _groupingRegionByPanel = [];
+    var _groupingRegionByPanelIrisan = [];
+
+    var arrayPanelUtama = [];
+    var arrayPanelIrisan = [];
+
+    var _getPanelList = await getPanelList(pid, directorate, division, panel);
+    for (let i = 0; i < _getPanelList.length; i++) {
+      if (_getPanelList[i].type === 'Panel Utama') {
+        arrayPanelUtama.push(_getPanelList[i].idPanel);
+      } else {
+        arrayPanelIrisan.push(_getPanelList[i].idPanel);
+      }
+    }
 
     //cari panel berdasarkan directorate dan division
+
+    // _groupingRegionByPanel = await groupingRegionByPanel(
+    //   pid,
+    //   arrayPanelUtama,
+    //   arrayPanelUtama.map(String),
+    //   region
+    // );
+    // _groupingRegionByPanelIrisan = await groupingRegionByPanelIrisan(
+    //   pid,
+    //   arrayPanelIrisan,
+    //   arrayPanelIrisan.map(String),
+    //   region
+    // );
+
     if (!panel || panel === 0) {
-      var _getPanelList = await getPanelList(pid, directorate, division, panel);
-      var arrayPanel = _getPanelList.map((data) => data.idPanel);
       _groupingRegionByPanel = await groupingRegionByPanel(
         pid,
-        arrayPanel,
-        arrayPanel.map(String),
+        arrayPanelUtama,
+        arrayPanelUtama.map(String),
+        region
+      );
+      _groupingRegionByPanelIrisan = await groupingRegionByPanelIrisan(
+        pid,
+        arrayPanelIrisan,
+        arrayPanelIrisan.map(String),
         region
       );
     } else {
       _groupingRegionByPanel = await groupingRegionByPanel(
         pid,
-        [panel],
-        [`${panel}`],
+        arrayPanelUtama,
+        arrayPanelUtama.map(String),
+        region
+      );
+      _groupingRegionByPanelIrisan = await groupingRegionByPanelIrisan(
+        pid,
+        arrayPanelIrisan,
+        arrayPanelIrisan.map(String),
         region
       );
     }
 
-    for (let i = 0; i < _groupingRegionByPanel.length; i++) {
-      result.push({
-        code: _groupingRegionByPanel[i]._id.idRegion,
-        region: _groupingRegionByPanel[i]._id.regionName,
-        target: _groupingRegionByPanel[i].target,
-        total: _groupingRegionByPanel[i].total,
-        percent: _groupingRegionByPanel[i].percent,
-      });
+    if (_groupingRegionByPanel.length > 0) {
+      for (let i = 0; i < _groupingRegionByPanel.length; i++) {
+        var _findObj = await findObj(
+          _groupingRegionByPanelIrisan,
+          'idRegion',
+          _groupingRegionByPanel[i].idRegion
+        );
+        var totalTarget =
+          _findObj !== -1
+            ? _groupingRegionByPanel[i].target +
+              _groupingRegionByPanelIrisan[_findObj].target
+            : _groupingRegionByPanel[i].target;
+
+        var totalAcv =
+          _findObj !== -1
+            ? _groupingRegionByPanel[i].total +
+              _groupingRegionByPanelIrisan[_findObj].total
+            : _groupingRegionByPanel[i].total;
+
+        result.push({
+          code: _groupingRegionByPanel[i]._id.idRegion,
+          region: _groupingRegionByPanel[i]._id.regionName,
+          target: totalTarget,
+          total: totalAcv,
+          percent: countPercent(totalAcv, totalTarget),
+        });
+      }
+    } else {
+      for (let i = 0; i < _groupingRegionByPanelIrisan.length; i++) {
+        var _findObj = await findObj(
+          _groupingRegionByPanel,
+          'idRegion',
+          _groupingRegionByPanelIrisan[i].idRegion
+        );
+        var totalTarget =
+          _findObj !== -1
+            ? _groupingRegionByPanelIrisan[i].target +
+              _groupingRegionByPanel[_findObj].target
+            : _groupingRegionByPanelIrisan[i].target;
+
+        var totalAcv =
+          _findObj !== -1
+            ? _groupingRegionByPanelIrisan[i].total +
+              _groupingRegionByPanel[_findObj].total
+            : _groupingRegionByPanelIrisan[i].total;
+
+        result.push({
+          code: _groupingRegionByPanelIrisan[i]._id.idRegion,
+          region: _groupingRegionByPanelIrisan[i]._id.regionName,
+          target: totalTarget,
+          total: totalAcv,
+          percent: countPercent(totalAcv, totalTarget),
+        });
+      }
     }
 
     res.status(200).json({
