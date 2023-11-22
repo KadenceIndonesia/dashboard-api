@@ -17,4 +17,9 @@ Router.get('/:pid/evidence/get/:id', celestiaController.getEvidenceDetail);
 //administrations
 Router.get('/:pid/administration/region/list', celestiaController.getAdministrationRegion);
 Router.get('/:pid/administration/region/get/:panel/:region', celestiaController.getAdministrationRegionDetail);
+
+//import
+Router.post('/:pid/import/:panel/rawdata', celestiaController.postImportRawdata);
+Router.post('/:pid/import/:panel/rawdata-update', celestiaController.postImportRawdataUpdate);
+
 module.exports = Router;

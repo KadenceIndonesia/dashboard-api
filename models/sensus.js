@@ -11,6 +11,7 @@ const sensusSchema = mongoose.Schema({
   mapCode: String,
   area: String,
   kanwil: String,
+  product: Array,
   emas: Number,
   kendaraan: Number,
   elektronik: Number,

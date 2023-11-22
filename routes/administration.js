@@ -10,6 +10,7 @@ Router.get('/:pid/city/list/:province', administrationController.getCityListProv
 Router.get('/:pid/helper/total', administrationController.getHelperTotal);
 
 Router.get('/:pid/sensus/all', administrationController.getSensusAll);
+Router.post('/:pid/sensus/update/product', administrationController.postImportUpdateProduct);
 Router.get('/:pid/sensus/latlong', administrationController.getSensusLatLong);
 Router.get('/:pid/sensus/detail/:id', administrationController.getSensusDetailByID);
 

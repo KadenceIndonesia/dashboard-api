@@ -1,3 +1,9 @@
+const fs = require('fs');
+const path = require('path');
+const xlsx = require('node-xlsx');
+const moment = require('moment');
+const mongoose = require('mongoose');
+
 require('../lib/index');
 require('../lib/administration');
 require('../lib/helper');
@@ -273,10 +279,63 @@ exports.getSensusAll = async function (req, res) {
   }
 };
 
+exports.postImportUpdateProduct = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    var filename = req.files.file;
+    var extension = path.extname(filename.name);
+    var arrext = ['.xls', '.xlsx'];
+    var checkextension = arrext.indexOf(extension);
+    var newfilename = `${pid}_${moment().format(
+      'YYYY_MM_DD_HH_mm_ss'
+    )}${extension}`;
+    var uploadPath = `${process.env.UPLOADPATH}public/fileUpload/${newfilename}`;
+    var total = 0;
+
+    filename.mv(uploadPath, async function (errupload) {
+      if (errupload) {
+        res.status(400).json({
+          statusCode: 401,
+          message: 'Error Uplaod',
+        });
+      } else {
+        var data = await excelFilePath(uploadPath);
+        for (let i = 0; i < data.length; i++) {
+          var filter = {
+            id: data[i].id,
+          };
+          var arrPrd = [];
+          data[i].emas > 0 && arrPrd.push('emas');
+          data[i].kendaraan > 0 && arrPrd.push('kendaraan');
+          data[i].elektronik > 0 && arrPrd.push('elektronik');
+          data[i].cicilEmas > 0 && arrPrd.push('cicilEmas');
+          data[i].tabunganEmas > 0 && arrPrd.push('tabunganEmas');
+          data[i].barangMewah > 0 && arrPrd.push('barangMewah');
+          await updateSensusProduct(filter, { product: arrPrd });
+        }
+
+        res.status(200).json({
+          statusCode: 200,
+          message: 'Success update data sensus',
+          data: {
+            total: total,
+          },
+        });
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getSensusLatLong = async function (req, res) {
   try {
     const pid = req.params.pid;
-    var result = await getAdministrationSensusLatLong(pid);
+    const region = req.query.region;
+    const province = req.query.province;
+    const product = req.query.product;
+
+    var result = await getAdministrationSensusLatLong(pid, region, province, product);
 
     res.status(200).json({
       statusCode: 200,
@@ -341,7 +400,12 @@ exports.getPanelList = async function (req, res) {
     const directorate = parseInt(req.query.directorate);
     const division = parseInt(req.query.division);
     const panel = parseInt(req.query.panel);
-    var result = await getAdminstrationPanelList(pid, directorate, division, panel);
+    var result = await getAdminstrationPanelList(
+      pid,
+      directorate,
+      division,
+      panel
+    );
 
     res.status(200).json({
       statusCode: 200,

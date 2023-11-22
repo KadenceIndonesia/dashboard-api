@@ -1,7 +1,7 @@
 // sekarang baru khusus untuk propana
 const mongoose = require('mongoose');
 
-const full2rawdataSchema = mongoose.Schema({
+const full3rawdataSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   sbjNum: Number,
   SbjNum: Number,
@@ -110,10 +110,6 @@ const full2rawdataSchema = mongoose.Schema({
   REGION: String,
   Nama_Responden: String,
   ID_Responden: String,
-  FUNGSI_LINI_BISNIS: String,
-  Upload: String,
-  Duration: String,
-  Complete: String,
 });
 
-module.exports = mongoose.model('Full2rawdata', full2rawdataSchema);
+module.exports = mongoose.model('Full3rawdata', full3rawdataSchema);

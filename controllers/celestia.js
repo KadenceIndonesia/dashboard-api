@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const xlsx = require('node-xlsx');
 const moment = require('moment');
+const mongoose = require('mongoose');
+const Full2rawdata = require('../models/full2rawdatas');
 
 require('../lib/index');
 require('../lib/administration');
@@ -521,6 +523,128 @@ exports.getEvidenceDetail = async function (req, res) {
       statusCode: 200,
       message: 'Success get Evidence Detail',
       data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.postImportRawdata = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const panel = req.params.panel;
+    var filename = req.files.file;
+    var extension = path.extname(filename.name);
+    var arrext = ['.xls', '.xlsx'];
+    var checkextension = arrext.indexOf(extension);
+    var newfilename = `${pid}_${moment().format(
+      'YYYY_MM_DD_HH_mm_ss'
+    )}${extension}`;
+    var uploadPath = `${process.env.UPLOADPATH}public/fileUpload/${newfilename}`;
+    var total = 0;
+
+    filename.mv(uploadPath, async function (errupload) {
+      if (errupload) {
+        res.status(400).json({
+          statusCode: 401,
+          message: 'Error Uplaod',
+        });
+      } else {
+        var data = await excelFilePath(uploadPath);
+        for (let i = 0; i < data.length; i++) {
+          var _getDataBySbjNum = await getDataBySbjNum(
+            pid,
+            String(panel),
+            data[i].SbjNum
+          );
+          if (!_getDataBySbjNum) {
+            const insertNewScore = new Full2rawdata({
+              _id: new mongoose.Types.ObjectId(),
+              idProject: pid,
+              SbjNum: data[i].SbjNum,
+              createDate: excelDatetoJS(data[i].Date),
+              Duration: data[i].Duration,
+              Upload: String(excelDatetoJS(data[i].Upload)),
+              Complete: data[i].Complete,
+              ID_Responden: data[i].ID_Responden,
+              Nama_Responden: data[i].Nama_Responden,
+              FUNGSI_LINI_BISNIS: `${data[i]['FUNGSI_LINI_BISNIS']}`,
+              PANEL: panel,
+              KOTA: data[i].KOTA,
+              REGION: data[i].REGION,
+            });
+            insertNewScore
+              .save()
+              .then((result) => {
+                total++;
+              })
+              .catch((err) => console.log(err));
+          }
+        }
+
+        res.status(200).json({
+          statusCode: 200,
+          message: 'Success import rawdata',
+          data: {
+            total: total,
+          },
+        });
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.postImportRawdataUpdate = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const panel = req.params.panel;
+    var filename = req.files.file;
+    var extension = path.extname(filename.name);
+    var arrext = ['.xls', '.xlsx'];
+    var checkextension = arrext.indexOf(extension);
+    var newfilename = `${pid}_${moment().format(
+      'YYYY_MM_DD_HH_mm_ss'
+    )}${extension}`;
+    var uploadPath = `${process.env.UPLOADPATH}public/fileUpload/${newfilename}`;
+    var total = 0;
+
+    filename.mv(uploadPath, async function (errupload) {
+      if (errupload) {
+        res.status(400).json({
+          statusCode: 401,
+          message: 'Error Uplaod',
+        });
+      } else {
+        var data = await excelFilePath(uploadPath);
+        for (let i = 0; i < data.length; i++) {
+          var filter = {
+            SbjNum: data[i].SbjNum,
+          };
+          var value = {
+            createDate: excelDatetoJS(data[i].Date),
+            Duration: data[i].Duration,
+            Upload: String(excelDatetoJS(data[i].Upload)),
+            Complete: data[i].Complete,
+            ID_Responden: data[i].ID_Responden,
+            Nama_Responden: data[i].Nama_Responden,
+            FUNGSI_LINI_BISNIS: `${data[i]['FUNGSI_LINI_BISNIS']}`,
+            PANEL: panel,
+            KOTA: data[i].KOTA,
+            REGION: data[i].REGION,
+          };
+          await updateRawdata(filter, value);
+        }
+
+        res.status(200).json({
+          statusCode: 200,
+          message: 'Success update rawdata',
+          data: {
+            total: total,
+          },
+        });
+      }
     });
   } catch (error) {
     res.status(400).send(error);
