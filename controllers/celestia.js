@@ -4,6 +4,7 @@ const xlsx = require('node-xlsx');
 const moment = require('moment');
 const mongoose = require('mongoose');
 const Full2rawdata = require('../models/full2rawdatas');
+const Evidence = require('../models/evidence');
 
 require('../lib/index');
 require('../lib/administration');
@@ -451,6 +452,13 @@ exports.getRawdataList = async function (req, res) {
         division: detailDivision.division,
         panel: detailPanel.panel,
         region: detailRegion ? detailRegion.regionName : '-',
+        phone: _getDataList[i].phone ? _getDataList[i].phone : '-',
+        onlinePanel:
+          _getDataList[i].onlinePanel === '1'
+            ? 'Ya'
+            : _getDataList[i].onlinePanel === '2'
+            ? 'Tidak'
+            : '-',
       });
     }
 
@@ -572,6 +580,9 @@ exports.postImportRawdata = async function (req, res) {
               PANEL: panel,
               KOTA: data[i].KOTA,
               REGION: data[i].REGION,
+              phone: data[i].Handphone,
+              onlinePanel: data[i].onlinePanel,
+              csi: data[i].csi,
             });
             insertNewScore
               .save()
@@ -633,6 +644,9 @@ exports.postImportRawdataUpdate = async function (req, res) {
             PANEL: panel,
             KOTA: data[i].KOTA,
             REGION: data[i].REGION,
+            phone: data[i].Handphone,
+            onlinePanel: data[i].onlinePanel,
+            csi: data[i].csi,
           };
           await updateRawdata(filter, value);
         }
@@ -640,6 +654,56 @@ exports.postImportRawdataUpdate = async function (req, res) {
         res.status(200).json({
           statusCode: 200,
           message: 'Success update rawdata',
+          data: {
+            total: total,
+          },
+        });
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.postImportEvidence = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const panel = req.params.panel;
+    var filename = req.files.file;
+    var extension = path.extname(filename.name);
+    var newfilename = `${pid}_${moment().format(
+      'YYYY_MM_DD_HH_mm_ss'
+    )}${extension}`;
+    var uploadPath = `${process.env.UPLOADPATH}public/fileUpload/${newfilename}`;
+    var total = 0;
+
+    filename.mv(uploadPath, async function (errupload) {
+      if (errupload) {
+        res.status(400).json({
+          statusCode: 401,
+          message: 'Error Uplaod',
+        });
+      } else {
+        var data = await excelFilePath(uploadPath);
+        for (let i = 0; i < data.length; i++) {
+          const insertNewScore = new Evidence({
+            _id: new mongoose.Types.ObjectId(),
+            SbjNum: data[i].SubjectID,
+            idProject: pid,
+            idPanel: panel,
+            link: data[i].ImageURL,
+          });
+          insertNewScore
+            .save()
+            .then((result) => {
+              total++;
+            })
+            .catch((err) => console.log(err));
+        }
+
+        res.status(200).json({
+          statusCode: 200,
+          message: 'Success import rawdata',
           data: {
             total: total,
           },

@@ -21,5 +21,6 @@ Router.get('/:pid/administration/region/get/:panel/:region', celestiaController.
 //import
 Router.post('/:pid/import/:panel/rawdata', celestiaController.postImportRawdata);
 Router.post('/:pid/import/:panel/rawdata-update', celestiaController.postImportRawdataUpdate);
+Router.post('/:pid/import/:panel/evidence', celestiaController.postImportEvidence);
 
 module.exports = Router;

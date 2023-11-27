@@ -16,6 +16,7 @@ const propanaRoutes = require('./routes/propana');
 const propana2Routes = require('./routes/propana2');
 const branchRoutes = require('./routes/branch');
 const celestiaRoutes = require('./routes/celestia');
+const speechToTextRoutes = require('./routes/speechToText');
 
 require('dotenv').config();
 // require('./helpers/init_mongodb')
@@ -41,6 +42,7 @@ app.use('/propana', propanaRoutes);
 app.use('/propana2', propana2Routes);
 app.use('/branch', branchRoutes);
 app.use('/celestia', celestiaRoutes);
+app.use('/speech-to-text', speechToTextRoutes);
 
 app.listen(process.env.PORT, (req, res) => {
   console.log('connect');

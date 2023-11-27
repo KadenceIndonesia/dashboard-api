@@ -112,6 +112,9 @@ const full2rawdataSchema = mongoose.Schema({
   ID_Responden: String,
   FUNGSI_LINI_BISNIS: String,
   Upload: String,
+  phone: String,
+  csi: Number,
+  onlinePanel: String,
   Duration: String,
   Complete: String,
 });
