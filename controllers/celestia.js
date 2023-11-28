@@ -111,6 +111,7 @@ exports.getAchievementPanel = async function (req, res) {
     }
     var _getPanelList = await getPanelList(pid, directorate, division, panel);
     for (let i = 0; i < _getPanelList.length; i++) {
+      var _averageCsiPanel = await averageCsiPanel(_getPanelList[i].idPanel);
       result.push({
         id: _getPanelList[i].idPanel,
         panel: _getPanelList[i].panel,
@@ -121,6 +122,10 @@ exports.getAchievementPanel = async function (req, res) {
         total: 0,
         percent: 0,
         type: _getPanelList[i].type,
+        csi:
+          _getPanelList[i].type === 'Panel Utama'
+            ? _averageCsiPanel[0].score
+            : '-',
       });
     }
 
