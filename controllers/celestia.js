@@ -404,6 +404,7 @@ exports.getRawdataList = async function (req, res) {
     const region = parseInt(req.query.region);
     const page = parseInt(req.query.page);
     const perPage = parseInt(req.query.perPage);
+    const search = req.query.search;
 
     var _getAdminstrationDivisionList = await getAdminstrationDivisionList(
       pid,
@@ -426,8 +427,9 @@ exports.getRawdataList = async function (req, res) {
       _division,
       panel,
       region,
+      search,
       page,
-      perPage
+      perPage,
     );
     var totalData = await countDataList(pid, _division, panel, region);
 
