@@ -23,4 +23,8 @@ Router.post('/:pid/import/:panel/rawdata', celestiaController.postImportRawdata)
 Router.post('/:pid/import/:panel/rawdata-update', celestiaController.postImportRawdataUpdate);
 Router.post('/:pid/import/:panel/evidence', celestiaController.postImportEvidence);
 
+//export
+Router.post('/:pid/export/panel', celestiaController.postExportPanel);
+Router.post('/:pid/export/rawdata', celestiaController.postExportRawdata);
+
 module.exports = Router;

@@ -420,7 +420,6 @@ exports.getRawdataList = async function (req, res) {
     } else if (directorate && division) {
       _division = [division];
     }
-
     var result = [];
     var _getDataList = await getDataList(
       pid,
@@ -429,9 +428,9 @@ exports.getRawdataList = async function (req, res) {
       region,
       search,
       page,
-      perPage,
+      perPage
     );
-    var totalData = await countDataList(pid, _division, panel, region);
+    var totalData = await countDataList(pid, _division, panel, region, search);
 
     for (let i = 0; i < _getDataList.length; i++) {
       var detailPanel = await getAdminstrationPanelDetail(
@@ -717,6 +716,189 @@ exports.postImportEvidence = async function (req, res) {
         });
       }
     });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.postExportPanel = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const directorate = parseInt(req.body.directorate);
+    const division = parseInt(req.body.division);
+    const panel = parseInt(req.body.panel);
+    const region = parseInt(req.body.region);
+    var result = [];
+    var isifile = [];
+    if (region) {
+      var _getRegionDetailByID = await getRegionDetailByID(pid, panel, region);
+    }
+    var _getPanelList = await getPanelList(pid, directorate, division, panel);
+    for (let i = 0; i < _getPanelList.length; i++) {
+      var _averageCsiPanel = await averageCsiPanel(_getPanelList[i].idPanel);
+      result.push({
+        id: _getPanelList[i].idPanel,
+        panel: _getPanelList[i].panel,
+        target:
+          !region || region === 0
+            ? _getPanelList[i].target
+            : _getRegionDetailByID.target,
+        total: 0,
+        percent: 0,
+        type: _getPanelList[i].type,
+        csi:
+          _getPanelList[i].type === 'Panel Utama'
+            ? _averageCsiPanel[0].score
+            : '-',
+      });
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      if (result[i].type === 'Panel Utama') {
+        var _countFullRawdataPanel = await countFullRawdataPanel(
+          pid,
+          result[i].id,
+          region
+        );
+        result[i].total = _countFullRawdataPanel;
+        result[i].percent = countPercent(
+          _countFullRawdataPanel,
+          result[i].target
+        );
+      } else {
+        var _getDataPanelSlices = await getDataPanelSlices(pid, result[i].id);
+        var totalSlices = 0;
+        _getDataPanelSlices.map(
+          (data) => (totalSlices = totalSlices + data.total)
+        );
+        result[i].total = totalSlices;
+        result[i].percent = countPercent(totalSlices, result[i].target);
+      }
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      isifile.push([
+        result[i].panel,
+        result[i].type,
+        result[i].target,
+        result[i].total,
+        result[i].percent,
+        result[i].csi,
+      ]);
+    }
+
+    var header = [
+      ['Panel', 'Type', 'Target', 'Achievement', 'Percentage', 'CSI Score'],
+    ];
+
+    var formatdate = moment().format('YYYY_MM_DD_HH_mm_ss');
+    var newfilename = `${pid}_${formatdate}_panel.xlsx`;
+    var createfile = header.concat(isifile);
+    const progress = xlsx.build([{ name: 'Data', data: createfile }]);
+    fs.writeFile(
+      `public/fileexcel/${newfilename}`,
+      progress,
+      function (errwritefile) {
+        if (errwritefile) {
+          console.log('error');
+        } else {
+          console.log('tidak error');
+          res.status(200).json({
+            statusCode: 200,
+            message: 'Success export achievement panel',
+            data: `http://localhost:3333/fileexcel/${newfilename}`,
+          });
+        }
+      }
+    );
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.postExportRawdata = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const directorate = req.body.directorate;
+    const division = req.body.division;
+    const panel = req.body.panel;
+    const region = req.body.region;
+    const search = req.body.search;
+    var result = [];
+    var isifile = [];
+    var _getAdminstrationDivisionList = await getAdminstrationDivisionList(
+      pid,
+      directorate
+    );
+    var _division = '0';
+    if (directorate !== '0' && (!division || division === '0')) {
+      // ada direktorat & ga ada division
+      _division = _getAdminstrationDivisionList.map((data) =>
+        String(data.idDivision)
+      );
+    } else if (directorate !== '0' && division !== '0') {
+      // ada direktorat & ada division
+      _division = [`${division}`];
+    }
+    var _getDataList = await getDataListFull(
+      pid,
+      _division,
+      panel,
+      region,
+      search
+    );
+    var isifile = _getDataList.map((data) => [
+      data.ID_Responden,
+      data.Nama_Responden,
+      data.directorateName,
+      data.divisionName,
+      data.panelName,
+      data.regionName,
+      data.phone ? data.phone : '-',
+      data.onlinePanel === '1'
+        ? 'Ya'
+        : data.onlinePanel === '2'
+        ? 'Tidak'
+        : '-',
+    ]);
+    var header = [
+      [
+        'ID',
+        'Nama',
+        'Direktorat',
+        'Fungsi',
+        'Panel',
+        'MOR',
+        'No HP',
+        'Online Panel',
+      ],
+    ];
+
+    var formatdate = moment().format('YYYY_MM_DD_HH_mm_ss');
+    var newfilename = `${pid}_${formatdate}_rawdata.xlsx`;
+    var createfile = header.concat(isifile);
+    const progress = xlsx.build([{ name: 'Data', data: createfile }]);
+    fs.writeFile(
+      `public/fileexcel/${newfilename}`,
+      progress,
+      function (errwritefile) {
+        if (errwritefile) {
+          console.log('error');
+        } else {
+          console.log('tidak error');
+          res.status(200).json({
+            statusCode: 200,
+            message: 'Success export rawdata',
+            data: `http://localhost:3333/fileexcel/${newfilename}`,
+          });
+        }
+      }
+    );
+    // res.status(200).json({
+    //   statusCode: 200,
+    //   message: 'Success export achievement panel',
+    //   data: 'result',
+    // });
   } catch (error) {
     res.status(400).send(error);
   }
