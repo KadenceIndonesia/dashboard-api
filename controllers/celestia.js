@@ -806,7 +806,7 @@ exports.postExportPanel = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success export achievement panel',
-            data: `http://localhost:3333/fileexcel/${newfilename}`,
+            data: `https://api.dashboard.kadence.co.id/fileexcel/${newfilename}`,
           });
         }
       }
@@ -889,7 +889,7 @@ exports.postExportRawdata = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success export rawdata',
-            data: `http://localhost:3333/fileexcel/${newfilename}`,
+            data: `https://api.dashboard.kadence.co.id/fileexcel/${newfilename}`,
           });
         }
       }
