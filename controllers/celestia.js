@@ -459,6 +459,10 @@ exports.getRawdataList = async function (req, res) {
         panel: detailPanel.panel,
         region: detailRegion ? detailRegion.regionName : '-',
         phone: _getDataList[i].phone ? _getDataList[i].phone : '-',
+        email:
+          !_getDataList[i].email || _getDataList[i].email === '-1'
+            ? '-'
+            : _getDataList[i].email,
         onlinePanel:
           _getDataList[i].onlinePanel === '1'
             ? 'Ya'
@@ -589,6 +593,7 @@ exports.postImportRawdata = async function (req, res) {
               phone: data[i].Handphone,
               onlinePanel: data[i].onlinePanel,
               csi: data[i].csi,
+              email: data[i].email,
             });
             insertNewScore
               .save()
@@ -653,6 +658,7 @@ exports.postImportRawdataUpdate = async function (req, res) {
             phone: data[i].Handphone,
             onlinePanel: data[i].onlinePanel,
             csi: data[i].csi,
+            email: data[i].email,
           };
           await updateRawdata(filter, value);
         }
@@ -889,7 +895,7 @@ exports.postExportRawdata = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success export rawdata',
-            data: `https://api.dashboard.kadence.co.id/fileexcel/${newfilename}`,
+            data: `http://localhost:3333/fileexcel/${newfilename}`,
           });
         }
       }

@@ -113,6 +113,7 @@ const full2rawdataSchema = mongoose.Schema({
   FUNGSI_LINI_BISNIS: String,
   Upload: String,
   phone: String,
+  email: String,
   csi: Number,
   onlinePanel: String,
   Duration: String,
