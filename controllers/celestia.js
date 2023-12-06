@@ -792,7 +792,12 @@ exports.postExportPanel = async function (req, res) {
     }
     var _getPanelList = await getPanelList(pid, directorate, division, panel);
     for (let i = 0; i < _getPanelList.length; i++) {
-      var _averageCsiPanel = await averageCsiPanel(_getPanelList[i].idPanel);
+      var average;
+      if (_getPanelList[i].type === 'Panel Utama') {
+        average = await averageCsiPanel(_getPanelList[i].idPanel, region);
+      } else if (_getPanelList[i].type === 'Panel Irisan') {
+        average = await averageCsiPanelIrisan(_getPanelList[i].idPanel, region);
+      }
       result.push({
         id: _getPanelList[i].idPanel,
         panel: _getPanelList[i].panel,
@@ -803,10 +808,7 @@ exports.postExportPanel = async function (req, res) {
         total: 0,
         percent: 0,
         type: _getPanelList[i].type,
-        csi:
-          _getPanelList[i].type === 'Panel Utama'
-            ? _averageCsiPanel[0].score
-            : '-',
+        csi: average[0].score ? average[0].score : '-',
       });
     }
 
