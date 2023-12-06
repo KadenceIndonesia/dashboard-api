@@ -111,7 +111,7 @@ exports.getAchievementPanel = async function (req, res) {
     }
     var _getPanelList = await getPanelList(pid, directorate, division, panel);
     for (let i = 0; i < _getPanelList.length; i++) {
-      var _averageCsiPanel = await averageCsiPanel(_getPanelList[i].idPanel);
+      var _averageCsiPanel = await averageCsiPanel(_getPanelList[i].idPanel, region);
       result.push({
         id: _getPanelList[i].idPanel,
         panel: _getPanelList[i].panel,
