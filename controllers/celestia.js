@@ -111,7 +111,12 @@ exports.getAchievementPanel = async function (req, res) {
     }
     var _getPanelList = await getPanelList(pid, directorate, division, panel);
     for (let i = 0; i < _getPanelList.length; i++) {
-      var _averageCsiPanel = await averageCsiPanel(_getPanelList[i].idPanel, region);
+      var average;
+      if (_getPanelList[i].type === 'Panel Utama') {
+        average = await averageCsiPanel(_getPanelList[i].idPanel, region);
+      } else if (_getPanelList[i].type === 'Panel Irisan') {
+        average = await averageCsiPanelIrisan(_getPanelList[i].idPanel, region);
+      }
       result.push({
         id: _getPanelList[i].idPanel,
         panel: _getPanelList[i].panel,
@@ -122,10 +127,7 @@ exports.getAchievementPanel = async function (req, res) {
         total: 0,
         percent: 0,
         type: _getPanelList[i].type,
-        csi:
-          _getPanelList[i].type === 'Panel Utama'
-            ? _averageCsiPanel[0].score
-            : '-',
+        csi: average[0].score ? average[0].score : '-',
       });
     }
 
@@ -711,6 +713,55 @@ exports.postImportEvidence = async function (req, res) {
               total++;
             })
             .catch((err) => console.log(err));
+        }
+
+        res.status(200).json({
+          statusCode: 200,
+          message: 'Success import rawdata',
+          data: {
+            total: total,
+          },
+        });
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.postImportUpdateSlice = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const panel = req.params.panel;
+    var filename = req.files.file;
+    var extension = path.extname(filename.name);
+    var newfilename = `${pid}_${moment().format(
+      'YYYY_MM_DD_HH_mm_ss'
+    )}${extension}`;
+    var uploadPath = `${process.env.UPLOADPATH}public/fileUpload/${newfilename}`;
+    var total = 0;
+
+    filename.mv(uploadPath, async function (errupload) {
+      if (errupload) {
+        res.status(400).json({
+          statusCode: 401,
+          message: 'Error Uplaod',
+        });
+      } else {
+        var data = await excelFilePath(uploadPath);
+        for (let i = 0; i < data.length; i++) {
+          var filter = {
+            SbjNum: data[i].SbjNum,
+            idPanel: data[i].idPanel,
+          };
+          var value = {
+            mainPanel: data[i].mainPanel,
+            code: data[i].code,
+            idProject: pid,
+            idRegion: data[i].idRegion,
+            csi: data[i].csi,
+          };
+          await updateSlice(filter, value);
         }
 
         res.status(200).json({

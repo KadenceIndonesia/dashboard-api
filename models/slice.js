@@ -7,6 +7,7 @@ const sliceSchema = mongoose.Schema({
   mainPanel: Number,
   code: String,
   idProject: String,
+  csi: Number
 });
 
 module.exports = mongoose.model('Slice', sliceSchema);
