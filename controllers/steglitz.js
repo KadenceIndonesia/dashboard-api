@@ -84,6 +84,44 @@ exports.getScoreCountryRegion = async function (req, res) {
   }
 };
 
+exports.getScoreCountryChannel = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    var result = [
+      {
+        name: 'Indonesia',
+        channel: '',
+      },
+      {
+        name: 'Thailand',
+        channel: [],
+      },
+      {
+        name: 'Philippines',
+        channel: [],
+      },
+      {
+        name: 'Vietnam',
+        channel: '',
+      },
+    ];
+
+    for (let i = 0; i < result.length; i++) {
+      var _scoreCountryChannel = await scoreCountryChannel(pid, result[i].name);
+      if (_scoreCountryChannel.length > 0) {
+        result[i].channel = _scoreCountryChannel;
+      }
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success GET Score By Country',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getScoreChannel = async function (req, res) {
   try {
     const pid = req.params.pid;
