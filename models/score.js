@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const scoreSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   idProject: String,
+  idChannel: Number,
   country: String,
   region: String,
   dealer: String,
