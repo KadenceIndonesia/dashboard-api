@@ -32,10 +32,6 @@ exports.getScoreCountry = async function (req, res) {
         ],
       });
     }
-    result.push({
-      name: 'Vietnam',
-      data: [0, 0, 0, 0, 0],
-    });
     res.status(200).json({
       statusCode: 200,
       message: 'Success GET Score By Country',
@@ -64,7 +60,7 @@ exports.getScoreCountryRegion = async function (req, res) {
       },
       {
         name: 'Vietnam',
-        region: '',
+        region: [],
       },
     ];
 
@@ -102,7 +98,7 @@ exports.getScoreCountryChannel = async function (req, res) {
       },
       {
         name: 'Vietnam',
-        channel: '',
+        channel: [],
       },
     ];
 
