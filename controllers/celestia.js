@@ -4,6 +4,7 @@ const xlsx = require('node-xlsx');
 const moment = require('moment');
 const mongoose = require('mongoose');
 const Full2rawdata = require('../models/full2rawdatas');
+const Slice = require('../models/slice');
 const Evidence = require('../models/evidence');
 
 require('../lib/index');
@@ -778,6 +779,67 @@ exports.postImportUpdateSlice = async function (req, res) {
   }
 };
 
+exports.postImportSlice = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const panel = parseInt(req.params.panel);
+    var filename = req.files.file;
+    var extension = path.extname(filename.name);
+    var newfilename = `${pid}_${moment().format(
+      'YYYY_MM_DD_HH_mm_ss'
+    )}${extension}`;
+    var uploadPath = `${process.env.UPLOADPATH}public/fileUpload/${newfilename}`;
+    var total = 0;
+
+    filename.mv(uploadPath, async function (errupload) {
+      if (errupload) {
+        res.status(400).json({
+          statusCode: 401,
+          message: 'Error Uplaod',
+        });
+      } else {
+        var data = await excelFilePath(uploadPath);
+        for (let i = 0; i < data.length; i++) {
+          var _getDataSlice = await getDataSlice(
+            pid,
+            panel,
+            parseInt(data[i].SbjNum)
+          );
+          if (!_getDataSlice) {
+            const insertNewScore = new Slice({
+              _id: new mongoose.Types.ObjectId(),
+              SbjNum: data[i].SbjNum,
+              idPanel: panel,
+              code: data[i].code,
+              mainPanel: data[i].mainPanel,
+              idProject: pid,
+              idRegion: data[i].idRegion,
+              csi: data[i].csi,
+            });
+
+            insertNewScore
+              .save()
+              .then((result) => {
+                total++;
+              })
+              .catch((err) => console.log(err));
+          }
+        }
+
+        res.status(200).json({
+          statusCode: 200,
+          message: 'Success import rawdata',
+          data: {
+            total: total,
+          },
+        });
+      }
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.postExportPanel = async function (req, res) {
   try {
     const pid = req.params.pid;
@@ -948,7 +1010,7 @@ exports.postExportRawdata = async function (req, res) {
           res.status(200).json({
             statusCode: 200,
             message: 'Success export rawdata',
-            data: `http://localhost:3333/fileexcel/${newfilename}`,
+            data: `https://api.dashboard.kadence.co.id/fileexcel/${newfilename}`,
           });
         }
       }

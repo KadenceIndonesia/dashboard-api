@@ -22,6 +22,7 @@ Router.get('/:pid/administration/region/get/:panel/:region', celestiaController.
 Router.post('/:pid/import/:panel/rawdata', celestiaController.postImportRawdata);
 Router.post('/:pid/import/:panel/rawdata-update', celestiaController.postImportRawdataUpdate);
 Router.post('/:pid/import/:panel/evidence', celestiaController.postImportEvidence);
+Router.post('/:pid/import/:panel/slice', celestiaController.postImportSlice);
 Router.post('/:pid/import/:panel/slice-update', celestiaController.postImportUpdateSlice);
 
 //export
