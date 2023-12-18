@@ -112,6 +112,7 @@ exports.getAchievementPanel = async function (req, res) {
     }
     var _getPanelList = await getPanelList(pid, directorate, division, panel);
     for (let i = 0; i < _getPanelList.length; i++) {
+      console.log(_getPanelList[i].panel)
       var average;
       if (_getPanelList[i].type === 'Panel Utama') {
         average = await averageCsiPanel(_getPanelList[i].idPanel, region);
@@ -1020,6 +1021,35 @@ exports.postExportRawdata = async function (req, res) {
     //   message: 'Success export achievement panel',
     //   data: 'result',
     // });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getDeleteRawdataPanel = async function (req, res) {
+  try {
+    await deleteRawdata();
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success export rawdata',
+      data: `success delete`,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+
+exports.getDeleteSlices = async function (req, res) {
+  try {
+    const pid = req.params.pid
+    const panel = parseInt(req.params.panel)
+    await deleteSlices(pid, panel);
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success delete rawdata by idpanel',
+      data: `success delete`,
+    });
   } catch (error) {
     res.status(400).send(error);
   }

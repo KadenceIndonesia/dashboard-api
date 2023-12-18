@@ -28,5 +28,7 @@ Router.post('/:pid/import/:panel/slice-update', celestiaController.postImportUpd
 //export
 Router.post('/:pid/export/panel', celestiaController.postExportPanel);
 Router.post('/:pid/export/rawdata', celestiaController.postExportRawdata);
+Router.get('/:pid/delete/rawdata', celestiaController.getDeleteRawdataPanel);
+Router.get('/:pid/delete/slice/:panel', celestiaController.getDeleteSlices);
 
 module.exports = Router;

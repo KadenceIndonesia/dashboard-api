@@ -25,8 +25,8 @@ exports.getBranchList = async function (req, res) {
 exports.getBranchListCompareWithData = async function (req, res) {
   try {
     var pid = req.params.pid;
-    var page = req.query.page;
-    var perPage = req.query.perPage;
+    var page = parseInt(req.query.page);
+    var perPage = parseInt(req.query.perPage);
     var tags = req.query.tags;
     var rawdata = req.query.rawdata;
     var result = [];
@@ -37,12 +37,14 @@ exports.getBranchListCompareWithData = async function (req, res) {
       var _findObj = await findObj(data, rawdata, _getBranchList[i].rawdata);
       if (_findObj !== -1) {
         result.push({
+          SbjNum: data[_findObj]['SbjNum'],
           branch: _getBranchList[i].branch,
           city: _getBranchList[i].city,
           key: _getBranchList[i].key,
           agent: data[_findObj]['NamaAgent'],
           leader: data[_findObj]['NamaLeader'],
           date: excelDatetoJS(data[_findObj].TglKunjungan),
+          storage: _getBranchList[i].storage || 'kepo'
         });
       }
     }

@@ -5,6 +5,7 @@ const sliceSchema = mongoose.Schema({
   SbjNum: Number,
   idPanel: Number,
   mainPanel: Number,
+  idRegion: Number,
   code: String,
   idProject: String,
   csi: Number

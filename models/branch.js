@@ -10,6 +10,7 @@ const branchSchema = mongoose.Schema({
   key: String,
   rawdata: Number,
   tags: String,
+  storage: String
 });
 
 module.exports = mongoose.model('Branch', branchSchema);
