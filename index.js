@@ -18,6 +18,7 @@ const branchRoutes = require('./routes/branch');
 const celestiaRoutes = require('./routes/celestia');
 const steglitzRoutes = require('./routes/steglitz');
 const evidenceRoutes = require('./routes/evidence');
+const vehicleRoutes = require('./routes/vehicle');
 const speechToTextRoutes = require('./routes/speechToText');
 
 require('dotenv').config();
@@ -47,6 +48,7 @@ app.use('/celestia', celestiaRoutes);
 app.use('/steglitz', steglitzRoutes);
 app.use('/speech-to-text', speechToTextRoutes);
 app.use('/evidence', evidenceRoutes);
+app.use('/vehicle', vehicleRoutes);
 
 app.listen(process.env.PORT, (req, res) => {
   console.log('connect');

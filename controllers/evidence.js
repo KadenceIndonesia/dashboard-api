@@ -39,6 +39,32 @@ exports.getEvidenceList = async function (req, res) {
   }
 };
 
+exports.getEvidenceListByNumber = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const id = req.params.id;
+    var result = [];
+    var data = await getEvidenceByNumber(pid, id);
+    for (let i = 0; i < data.length; i++) {
+      result.push({
+        _id: data[i]._id,
+        SbjNum: data[i].SbjNum,
+        file: {
+          completedUrl: data[i].link,
+        },
+        idProject: data[i].idProject,
+      });
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Evidence List',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getEvidenceDetail = async function (req, res) {
   try {
     const pid = req.params.pid;

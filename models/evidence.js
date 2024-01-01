@@ -6,6 +6,7 @@ const evidenceSchema = mongoose.Schema({
   idProject: String,
   link: String,
   idPanel: Number,
+  number: String
 });
 
 module.exports = mongoose.model('Evidence', evidenceSchema);

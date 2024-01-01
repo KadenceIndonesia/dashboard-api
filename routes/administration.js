@@ -4,6 +4,8 @@ const Router = express.Router();
 
 Router.get('/:pid/region/list', administrationController.getRegion);
 Router.get('/:pid/province/list', administrationController.getProvinces);
+Router.get('/:pid/area/list', administrationController.getArea);
+Router.get('/:pid/area/get-name/:areaName', administrationController.getAreaDetailByName);
 Router.get('/:pid/city/list', administrationController.getCityListAll);
 Router.get('/:pid/city/total', administrationController.getCityTotal);
 Router.get('/:pid/city/list/:province', administrationController.getCityListProvince);

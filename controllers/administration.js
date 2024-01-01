@@ -96,6 +96,37 @@ exports.getProvinces = async function (req, res) {
   }
 };
 
+
+exports.getArea = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    var result = await getAdminstrationArea(pid, region)
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Administration Areas',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getAreaDetailByName = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const area = req.params.areaName;
+    var result = await getAdminstrationAreaByName(pid, area)
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get Administration Area Detail',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getCityListAll = async function (req, res) {
   try {
     const pid = req.params.pid;
