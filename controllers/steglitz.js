@@ -1,6 +1,8 @@
 require('../lib/score');
+require("../lib/dataExcel")
 exports.testController = async function (req, res) {
   try {
+    let data = await getFileonFolder('A1521XE')
     res.status(200).json({
       statusCode: 200,
       message: 'Success test',

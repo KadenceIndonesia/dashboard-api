@@ -17,6 +17,7 @@ const propana2Routes = require('./routes/propana2');
 const branchRoutes = require('./routes/branch');
 const celestiaRoutes = require('./routes/celestia');
 const steglitzRoutes = require('./routes/steglitz');
+const albusRoutes = require('./routes/albus');
 const evidenceRoutes = require('./routes/evidence');
 const vehicleRoutes = require('./routes/vehicle');
 const speechToTextRoutes = require('./routes/speechToText');
@@ -49,6 +50,7 @@ app.use('/steglitz', steglitzRoutes);
 app.use('/speech-to-text', speechToTextRoutes);
 app.use('/evidence', evidenceRoutes);
 app.use('/vehicle', vehicleRoutes);
+app.use('/albus', albusRoutes);
 
 app.listen(process.env.PORT, (req, res) => {
   console.log('connect');
