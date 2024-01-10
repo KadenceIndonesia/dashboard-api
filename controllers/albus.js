@@ -20,7 +20,7 @@ exports.rawdataServicePoint = async function (req, res) {
     var data = await excelDataSubDir(pid, 'service_point');
 
     for (let i = 0; i < data.length; i++) {
-      var _getBranchByRawdata = await getBranchByRawdata(pid, data[i]['S0']);
+      var _getBranchByRawdata = await getBranchByRawdataTags(pid, data[i]['S0'], 'service_point');
       result.push({
         SbjNum: data[i].SbjNum,
         branch: _getBranchByRawdata.branch,
