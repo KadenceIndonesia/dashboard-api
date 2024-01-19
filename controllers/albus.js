@@ -86,7 +86,7 @@ exports.rawdataKYC = async function (req, res) {
       result.push({
         SbjNum: data[i].SbjNum,
         date: excelDatetoJS(data[i]['TglVideo']),
-        agent: data[i]['NamaShopper'],
+        agent: data[i]['NamaAgent'],
         storage: data[i]['storage'],
         key: data[i]['key'],
       });
