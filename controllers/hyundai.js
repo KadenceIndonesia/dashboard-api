@@ -255,20 +255,21 @@ exports.getAchievementTotal = async function (req, res) {
     var accessDealer = detailUser.access; // array access dealer
     var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+    console.log(detailUser.access)
 
     const quarter = req.query.quarter;
     var data = await excelDataSubDir(pid, `Q${quarter}`);
     var count = 0;
     for (let i = 0; i < data.length; i++) {
-      // console.log(
-      //   accessDealerByProject.indexOf(data[i][quest]),
-      //   data[i][quest]
-      // );
       if (accessDealerByProject.indexOf(data[i][quest]) !== -1) {
         if (parseInt(data[i]['Quartal']) === parseInt(quarter)) {
           count++;
         }
       }
+    }
+    for (let i = 0; i < accessDealerByProject.length; i++) {
+      // console.log(accessDealerByProject[i])
+
     }
     await createLogger(
       authHeaders,

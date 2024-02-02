@@ -1,12 +1,59 @@
+const fs = require('fs');
+const path = require('path');
+const xlsx = require('node-xlsx');
+const moment = require('moment');
 require('../lib/score');
-require("../lib/dataExcel")
+require('../lib/dataExcel');
+require('../lib/vehicle');
 exports.testController = async function (req, res) {
   try {
-    let data = await getFileonFolder('A1521XE')
-    res.status(200).json({
-      statusCode: 200,
-      message: 'Success test',
-    });
+    const pid = 'IDE3576';
+    var header = [['number', 'SbjNum', 'link', 'idProject', 'idPanel']];
+
+    var data = await vehicleListAllDrive(pid);
+    var result = [];
+    for (let i = 0; i < data.length; i++) {
+      var _getFileonFolder = await getFileonFolder(data[i].number);
+      if (_getFileonFolder.length > 0) {
+        for (let x = 0; x < _getFileonFolder.length; x++) {
+          result.push([
+            data[i].number,
+            data[i].SbjNum,
+            _getFileonFolder[x],
+            pid,
+            0,
+          ]);
+        }
+      }
+    }
+
+    var formatdate = moment().format('YYYY_MM_DD_HH_mm_ss');
+    var newfilename = `${pid}_${formatdate}_list.xlsx`;
+    var createfile = header.concat(result);
+    console.log(createfile);
+    const progress = xlsx.build([{ name: 'Data', data: createfile }]);
+    fs.writeFile(
+      `public/fileexcel/${newfilename}`,
+      progress,
+      function (errwritefile) {
+        if (errwritefile) {
+          console.log('error');
+        } else {
+          console.log('tidak error');
+          res.status(200).json({
+            statusCode: 200,
+            message: 'Success export',
+            data: `http://localhost:3333/fileexcel/${newfilename}`,
+          });
+        }
+      }
+    );
+
+    // res.status(200).json({
+    //   statusCode: 200,
+    //   message: 'Success get vehicle list',
+    //   data: result,
+    // });
   } catch (error) {
     res.status(400).send(error);
   }

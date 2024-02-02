@@ -21,6 +21,7 @@ const albusRoutes = require('./routes/albus');
 const evidenceRoutes = require('./routes/evidence');
 const vehicleRoutes = require('./routes/vehicle');
 const speechToTextRoutes = require('./routes/speechToText');
+const hakkinenRoutes = require('./routes/hakkinen');
 
 require('dotenv').config();
 // require('./helpers/init_mongodb')
@@ -51,6 +52,7 @@ app.use('/speech-to-text', speechToTextRoutes);
 app.use('/evidence', evidenceRoutes);
 app.use('/vehicle', vehicleRoutes);
 app.use('/albus', albusRoutes);
+app.use('/hakkinen', hakkinenRoutes);
 
 app.listen(process.env.PORT, (req, res) => {
   console.log('connect');
