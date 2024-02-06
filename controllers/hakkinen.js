@@ -24,7 +24,7 @@ exports.postDurationUpdate = async function (req, res) {
     const create = new Video({
       _id: new mongoose.Types.ObjectId(),
       idProject: pid,
-      idResponent: idRespondent,
+      idRespondent: idRespondent,
       type: type,
       duration: duration,
       date: moment(),
