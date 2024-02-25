@@ -255,7 +255,7 @@ exports.getAchievementTotal = async function (req, res) {
     var accessDealer = detailUser.access; // array access dealer
     var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
     var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
-    console.log(detailUser.access)
+    console.log(detailUser.access);
 
     const quarter = req.query.quarter;
     var data = await excelDataSubDir(pid, `Q${quarter}`);
@@ -269,7 +269,6 @@ exports.getAchievementTotal = async function (req, res) {
     }
     for (let i = 0; i < accessDealerByProject.length; i++) {
       // console.log(accessDealerByProject[i])
-
     }
     await createLogger(
       authHeaders,
@@ -642,6 +641,108 @@ exports.getTouchPointScoreParent = async function (req, res) {
   }
 };
 
+//2024
+exports.getTrendedScoreParentAllWave = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const region = req.query.region;
+    const company = req.query.company;
+    const area = req.query.area;
+    const city = req.query.city;
+    const qDealer = req.query.dealer;
+    const quarter = req.query.quarter;
+    const brand = req.query.brand;
+    const sort = req.query.sort;
+    //users
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+    var dealer = await getDealerByFilter(
+      pid,
+      company,
+      region,
+      area,
+      city,
+      qDealer,
+      accessDealerByProject,
+      ['hyundai']
+    );
+    var arrDealer = dealer.map((data) => data.idDealer);
+
+    var response = [];
+    var categories = [];
+    var touchPointParent = await getParentTouchPoint(pid);
+    touchPointParent.sort((a, b) => {
+      return a.group - b.group;
+    });
+
+    for (let i = 0; i < touchPointParent.length; i++) {
+      categories.push({
+        code: touchPointParent[i].code,
+        name: `${touchPointParent[i].label} \n ${
+          touchPointParent[i].weight > 0 ? touchPointParent[i].weight : 100
+        }%`,
+        group: touchPointParent[i].group,
+        weight: touchPointParent[i].weight,
+      });
+      // response.push({
+      //   code: touchPointParent[i].code,
+      //   label: `${touchPointParent[i].label} \n ${
+      //     touchPointParent[i].weight > 0 ? touchPointParent[i].weight : 100
+      //   }%`,
+      //   group: touchPointParent[i].group,
+      //   weight: touchPointParent[i].weight,
+      //   count: 0,
+      //   value: 0,
+      // });
+    }
+    for (let i = 1; i <= 4; i++) {
+      response.push({
+        code: i,
+        name: `Q${i}`,
+        data: [],
+      });
+    }
+
+    for (let i = 0; i < response.length; i++) {
+      var _touchPointScore = await scoreTouchPointByParent(
+        pid,
+        response[i].code,
+        arrDealer,
+        quarter,
+        brand
+      );
+      var touchPointCount = 0;
+      var touchPointLength = 0;
+      for (let x = 0; x < _touchPointScore.length; x++) {
+        if (_touchPointScore[x].score !== -1) {
+          touchPointCount = touchPointCount + _touchPointScore[x].score;
+          touchPointLength++;
+        }
+      }
+      response[i].count = decimalPlaces(touchPointCount / touchPointLength, 2);
+      response[i].value = decimalPlaces(touchPointCount / touchPointLength, 2);
+    }
+    if (sort === 'highest') {
+      bubbleSort(response, 'value');
+    } else if (sort === 'lowest') {
+      bubbleSortAsc(response, 'value');
+    } else {
+      bubbleSortAsc(response, 'group');
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get touchpoint score parent',
+      data: response,
+      categories: categories,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 exports.getTouchPointScoreQuarterTotal = async function (req, res) {
   try {
     const pid = req.params.pid;
@@ -877,6 +978,178 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
       message: 'Success get touchpoint score parent',
       data: response,
       base: base,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+//2024
+exports.getTrendedScoreRegionTotalAllWave = async function (req, res) {
+  try {
+    const pid = req.params.pid;
+    const company = req.query.company;
+    const region = req.query.region;
+    const area = req.query.area;
+    const city = req.query.city;
+    const qDealer = req.query.dealer;
+    const brand = req.query.brand;
+    //users
+    const authHeaders = req.headers.userid; // headers userid
+    const detailUser = await getUserById(authHeaders); // get detail user by headers
+    var accessDealer = detailUser.access; // array access dealer
+    var getObjectAccessDealer = await findObj(accessDealer, 'idProject', pid); // find project in access dealer
+    var accessDealerByProject = accessDealer[getObjectAccessDealer].data;
+    var dealer = await getDealerByFilter(
+      pid,
+      company,
+      region,
+      area,
+      city,
+      qDealer,
+      accessDealerByProject,
+      ['hyundai']
+    );
+    dealer.sort((a, b) => {
+      return a.idDealer - b.idDealer;
+    });
+    var arrDealer = dealer.map((data) => data.idDealer);
+
+    var _groupingCityByDealer = await groupingCityByDealer(pid, arrDealer);
+    var _groupingAreaByCity = await groupingAreaByCity(
+      pid,
+      _groupingCityByDealer
+    );
+    var _groupingRegionByArea = await groupingRegionByArea(
+      pid,
+      _groupingAreaByCity
+    );
+
+    var _getRegionByPid = await getRegionByPid(pid, _groupingRegionByArea);
+
+    var regionArr = [];
+    for (let i = 0; i < _getRegionByPid.length; i++) {
+      regionArr.push(_getRegionByPid[i]);
+    }
+    regionArr.sort((a, b) => {
+      return a.idRegion - b.idRegion;
+    });
+    var regionArrID = regionArr.map((r) => r.idRegion);
+
+    var response = [];
+    for (let i = 1; i <= 4; i++) {
+      response.push({
+        code: i,
+        name: `Q${i}`,
+        data: [],
+      });
+    }
+    var categories = [];
+    if (parseInt(region) === 0 && parseInt(company) === 0) {
+      for (let i = 0; i < regionArr.length; i++) {
+        categories.push({
+          code: regionArr[i].idRegion,
+          name: regionArr[i].regionName,
+        });
+      }
+      for (let i = 0; i < response.length; i++) {
+        var _scoreTouchPointByRegion = await scoreTouchPointByRegionAllWave(
+          pid,
+          'score',
+          regionArrID,
+          response[i].code,
+          parseInt(brand)
+        );
+        for (let x = 0; x < _scoreTouchPointByRegion.length; x++) {
+          response[i].data.push(
+            _scoreTouchPointByRegion[x].score
+              ? parseFloat(_scoreTouchPointByRegion[x].score.toFixed(2))
+              : 0
+          );
+        }
+      }
+    } else {
+      // cari angka region
+      if (region !== '0') {
+        for (let i = 0; i < regionArr.length; i++) {
+          if (regionArr[i].idRegion === parseInt(region)) {
+            categories.push({
+              code: regionArr[i].idRegion,
+              name: regionArr[i].regionName,
+            });
+          }
+        }
+        for (let i = 0; i < response.length; i++) {
+          var _scoreTouchPointByRegion = await scoreTouchPointByRegionAllWave(
+            pid,
+            'score',
+            regionArrID,
+            response[i].code,
+            parseInt(brand)
+          );
+          for (let x = 0; x < _scoreTouchPointByRegion.length; x++) {
+            response[i].data.push(
+              _scoreTouchPointByRegion[x].score
+                ? parseFloat(_scoreTouchPointByRegion[x].score.toFixed(2))
+                : 0
+            );
+          }
+        }
+        // data region
+        //-------====-------//
+        // data dealer
+        for (let i = 0; i < dealer.length; i++) {
+          categories.push({
+            code: dealer[i].idDealer,
+            name: dealer[i].dealerName,
+          });
+        }
+        for (let i = 0; i < response.length; i++) {
+          var _scoreTouchPointByDealer = await scoreTouchPointByDelaerAllWave(
+            pid,
+            'score',
+            arrDealer,
+            response[i].code,
+            parseInt(brand)
+          );
+          for (let x = 0; x < _scoreTouchPointByDealer.length; x++) {
+            response[i].data.push(
+              _scoreTouchPointByDealer[x].score
+                ? parseFloat(_scoreTouchPointByDealer[x].score.toFixed(2))
+                : 0
+            );
+          }
+        }
+      } else {
+        for (let i = 0; i < dealer.length; i++) {
+          categories.push({
+            code: dealer[i].idDealer,
+            name: dealer[i].dealerName,
+          });
+        }
+        for (let i = 0; i < response.length; i++) {
+          var _scoreTouchPointByDealer = await scoreTouchPointByDelaerAllWave(
+            pid,
+            'score',
+            arrDealer,
+            response[i].code,
+            parseInt(brand)
+          );
+          for (let x = 0; x < _scoreTouchPointByDealer.length; x++) {
+            response[i].data.push(
+              _scoreTouchPointByDealer[x].score
+                ? parseFloat(_scoreTouchPointByDealer[x].score.toFixed(2))
+                : 0
+            );
+          }
+        }
+      }
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get touchpoint region total all wave',
+      categories: categories,
+      data: response,
     });
   } catch (error) {
     res.status(400).send(error);
@@ -1181,7 +1454,7 @@ exports.getTouchPointScoreDealerExport = async function (req, res) {
             parentTouchPoint[x].code
           );
           // console.log(x+1, parentTouchPoint[x].code, findTouchpointScore);
-          if(findTouchpointScore !== -1){
+          if (findTouchpointScore !== -1) {
             tempFile.push(
               response[i].data[findTouchpointScore].score
                 ? decimalPlaces(response[i].data[findTouchpointScore].score, 2)
