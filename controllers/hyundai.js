@@ -1337,7 +1337,7 @@ exports.getTrendedScoreDealerAllWave = async function (req, res) {
           datas.push(
             _scoreTouchPointByParentDealer[z].score > -1
               ? decimalPlaces(_scoreTouchPointByParentDealer[z].score, 2)
-              : _scoreTouchPointByParentDealer[z].score
+              : "-"
           );
         }
       }
