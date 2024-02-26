@@ -650,9 +650,6 @@ exports.getTrendedScoreParentAllWave = async function (req, res) {
     const area = req.query.area;
     const city = req.query.city;
     const qDealer = req.query.dealer;
-    const quarter = req.query.quarter;
-    const brand = req.query.brand;
-    const sort = req.query.sort;
     //users
     const authHeaders = req.headers.userid; // headers userid
     const detailUser = await getUserById(authHeaders); // get detail user by headers
@@ -687,16 +684,6 @@ exports.getTrendedScoreParentAllWave = async function (req, res) {
         group: touchPointParent[i].group,
         weight: touchPointParent[i].weight,
       });
-      // response.push({
-      //   code: touchPointParent[i].code,
-      //   label: `${touchPointParent[i].label} \n ${
-      //     touchPointParent[i].weight > 0 ? touchPointParent[i].weight : 100
-      //   }%`,
-      //   group: touchPointParent[i].group,
-      //   weight: touchPointParent[i].weight,
-      //   count: 0,
-      //   value: 0,
-      // });
     }
     for (let i = 1; i <= 4; i++) {
       response.push({
@@ -705,36 +692,22 @@ exports.getTrendedScoreParentAllWave = async function (req, res) {
         data: [],
       });
     }
-
+    var touchPointID = touchPointParent.map((item) => item.code);
     for (let i = 0; i < response.length; i++) {
-      var _touchPointScore = await scoreTouchPointByParent(
+      var _touchPointScores = await scoreTouchPointByParentAllWave(
         pid,
-        response[i].code,
+        touchPointID,
         arrDealer,
-        quarter,
-        brand
+        response[i].code,
+        1
       );
-      var touchPointCount = 0;
-      var touchPointLength = 0;
-      for (let x = 0; x < _touchPointScore.length; x++) {
-        if (_touchPointScore[x].score !== -1) {
-          touchPointCount = touchPointCount + _touchPointScore[x].score;
-          touchPointLength++;
-        }
+      for (let x = 0; x < _touchPointScores.length; x++) {
+        response[i].data.push(_touchPointScores[x].score);
       }
-      response[i].count = decimalPlaces(touchPointCount / touchPointLength, 2);
-      response[i].value = decimalPlaces(touchPointCount / touchPointLength, 2);
-    }
-    if (sort === 'highest') {
-      bubbleSort(response, 'value');
-    } else if (sort === 'lowest') {
-      bubbleSortAsc(response, 'value');
-    } else {
-      bubbleSortAsc(response, 'group');
     }
     res.status(200).json({
       statusCode: 200,
-      message: 'Success get touchpoint score parent',
+      message: 'Success get touchpoint score parent all wave',
       data: response,
       categories: categories,
     });
