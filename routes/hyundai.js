@@ -35,6 +35,7 @@ Router.get('/:pid/touchpoint/score/dealer/:dealerId/parent', hyundaiControllers.
 
 Router.get('/:pid/trended/score/region-total/all-wave', hyundaiControllers.getTrendedScoreRegionTotalAllWave);
 Router.get('/:pid/trended/score/parent/all-wave', hyundaiControllers.getTrendedScoreParentAllWave);
+Router.get('/:pid/trended/score/dealer/all-wave', hyundaiControllers.getTrendedScoreDealerAllWave);
 
 Router.get('/:pid/touchpoint/score/dealer-export', hyundaiControllers.getTouchPointScoreDealerExport);
 
