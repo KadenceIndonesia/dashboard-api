@@ -1324,42 +1324,35 @@ exports.getTrendedScoreDealerAllWave = async function (req, res) {
     var parentTouchPoint = await getParentTouchPoint(pid);
     var parentID = parentTouchPoint.map((data) => data.code);
     for (let i = 0; i < response.length; i++) {
-      var datas = [];
-      for (let x = 0; x < parentID.length; x++) {
-        var _scoreTouchPointByParentDealer =
-          await scoreTouchPointByParentDealerTrended(
-            pid,
-            parentID[x],
-            response[i].idDealer,
-            x
-          );
-        for (let z = 0; z < _scoreTouchPointByParentDealer.length; z++) {
-          datas.push(
-            _scoreTouchPointByParentDealer[z].score > -1
-              ? decimalPlaces(_scoreTouchPointByParentDealer[z].score, 2)
-              : "-"
-          );
-        }
-      }
-      response[i].data = datas;
+      var _scoreTouchPointByParentDealer =
+        await scoreTouchPointByParentDealerTrended(
+          pid,
+          parentID,
+          response[i].idDealer
+        );
+      var values = _scoreTouchPointByParentDealer.map((data) =>
+        data.score > -1 ? decimalPlaces(data.score, 2) : '-'
+      );
+      response[i].data = values;
+      //   var datas = [];
+      //   for (let x = 0; x < parentID.length; x++) {
+      //     var _scoreTouchPointByParentDealer =
+      //       await scoreTouchPointByParentDealerTrended(
+      //         pid,
+      //         parentID[x],
+      //         response[i].idDealer,
+      //         x
+      //       );
+      //     for (let z = 0; z < _scoreTouchPointByParentDealer.length; z++) {
+      //       datas.push(
+      //         _scoreTouchPointByParentDealer[z].score > -1
+      //           ? decimalPlaces(_scoreTouchPointByParentDealer[z].score, 2)
+      //           : "-"
+      //       );
+      //     }
+      //   }
+      //   response[i].data = datas;
     }
-
-    //   bubbleSortAsc(_scoreTouchPointByParentDealer, 'group');
-    //   var arrResult = [];
-    //   if (_scoreTouchPointByParentDealer.length > 0) {
-    //     for (let x = 0; x < _scoreTouchPointByParentDealer.length; x++) {
-    //       var _findObj = await findObj(
-    //         parentTouchPoint,
-    //         'code',
-    //         _scoreTouchPointByParentDealer[x].code
-    //       );
-    //       if (_findObj !== -1) {
-    //         arrResult.push(_scoreTouchPointByParentDealer[x]);
-    //       }
-    //     }
-    //     response[i].data = arrResult;
-    //   }
-    // }
 
     res.status(200).json({
       statusCode: 200,
