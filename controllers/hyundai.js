@@ -1335,7 +1335,7 @@ exports.getTrendedScoreDealerAllWave = async function (req, res) {
           );
         for (let z = 0; z < _scoreTouchPointByParentDealer.length; z++) {
           datas.push(
-            _scoreTouchPointByParentDealer[z].score > 0
+            _scoreTouchPointByParentDealer[z].score > -1
               ? decimalPlaces(_scoreTouchPointByParentDealer[z].score, 2)
               : _scoreTouchPointByParentDealer[z].score
           );
