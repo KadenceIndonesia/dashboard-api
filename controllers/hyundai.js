@@ -702,7 +702,7 @@ exports.getTrendedScoreParentAllWave = async function (req, res) {
         1
       );
       for (let x = 0; x < _touchPointScores.length; x++) {
-        response[i].data.push(_touchPointScores[x].score);
+        response[i].data.push(decimalPlaces(_touchPointScores[x].score, 2));
       }
     }
     res.status(200).json({
@@ -1159,7 +1159,7 @@ exports.getTouchPointScoreTotal = async function (req, res) {
       ['hyundai']
     );
     var arrDealer = dealer.map((data) => data.idDealer);
-    console.log(arrDealer)
+    console.log(arrDealer);
 
     var _scoreTouchPointByParent = await scoreTouchPointByParent(
       pid,
@@ -1174,7 +1174,7 @@ exports.getTouchPointScoreTotal = async function (req, res) {
 
     if (_scoreTouchPointByParent.length > 0) {
       for (let i = 0; i < _scoreTouchPointByParent.length; i++) {
-        console.log(_scoreTouchPointByParent[i].dealerName);
+        // console.log(_scoreTouchPointByParent[i].dealerName);
         if (_scoreTouchPointByParent[i].score) {
           base++;
           total = total + _scoreTouchPointByParent[i].score;
@@ -1182,7 +1182,7 @@ exports.getTouchPointScoreTotal = async function (req, res) {
       }
       response = total / base;
     }
-    console.log(base, _scoreTouchPointByParent.length);
+    // console.log(base, _scoreTouchPointByParent.length);
     await createLogger(authHeaders, detailUser.email, pid, 'GET SCORE TOTAL');
     res.status(200).json({
       statusCode: 200,
