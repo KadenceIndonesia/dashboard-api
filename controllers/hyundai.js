@@ -616,7 +616,7 @@ exports.getTouchPointScoreParent = async function (req, res) {
       var touchPointCount = 0;
       var touchPointLength = 0;
       for (let x = 0; x < _touchPointScore.length; x++) {
-        if (_touchPointScore[x].score !== -1) {
+        if (_touchPointScore[x].score !== -1 && _touchPointScore[x].score) {
           touchPointCount = touchPointCount + _touchPointScore[x].score;
           touchPointLength++;
         }
@@ -825,7 +825,6 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
     }
 
     var response = [];
-    var base = [];
     if (parseInt(region) === 0 && parseInt(company) === 0) {
       for (let i = 0; i < regionArr.length; i++) {
         response.push({
@@ -833,7 +832,6 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
           label: regionArr[i].regionName,
           value: 0,
         });
-        base.push(80);
       }
       for (let i = 0; i < response.length; i++) {
         var _scoreTouchPointByRegion = await scoreTouchPointByRegion(
@@ -844,12 +842,16 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
           brand
         );
         var touchPointCount = 0;
+        var base = 0;
         if (_scoreTouchPointByRegion.length > 0) {
           for (let x = 0; x < _scoreTouchPointByRegion.length; x++) {
-            touchPointCount =
-              touchPointCount + _scoreTouchPointByRegion[x].score;
+            if (_scoreTouchPointByRegion[x].score) {
+              touchPointCount =
+                touchPointCount + _scoreTouchPointByRegion[x].score;
+              base++;
+            }
           }
-          var responses = touchPointCount / _scoreTouchPointByRegion.length;
+          var responses = touchPointCount / base;
           response[i].value = parseFloat(responses.toFixed(2));
         }
       }
@@ -863,7 +865,6 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
               label: regionArr[i].regionName,
               value: 0,
             });
-            base.push(80);
           }
         }
         for (let i = 0; i < response.length; i++) {
@@ -875,15 +876,16 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
             brand
           );
           var touchPointCountRegion = 0;
+          var base = 0;
           if (_scoreTouchPointByRegion.length > 0) {
             for (let x = 0; x < _scoreTouchPointByRegion.length; x++) {
-              touchPointCountRegion =
-                touchPointCountRegion + _scoreTouchPointByRegion[x].score;
+              if (_scoreTouchPointByRegion[x].score) {
+                touchPointCountRegion =
+                  touchPointCountRegion + _scoreTouchPointByRegion[x].score;
+                base++;
+              }
             }
-            response[i].value = decimalPlaces(
-              touchPointCountRegion / _scoreTouchPointByRegion.length,
-              2
-            );
+            response[i].value = decimalPlaces(touchPointCountRegion / base, 2);
           }
         }
 
@@ -893,7 +895,6 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
             label: dealer[i].dealerName,
             value: 0,
           });
-          base.push(80);
         }
         for (let i = 1; i < response.length; i++) {
           var _scoreTouchPointByDealer = await scoreTouchPointByDelaer(
@@ -904,15 +905,16 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
             brand
           );
           var touchPointCount = 0;
+          var base = 0;
           if (_scoreTouchPointByDealer.length > 0) {
             for (let x = 0; x < _scoreTouchPointByDealer.length; x++) {
-              touchPointCount =
-                touchPointCount + _scoreTouchPointByDealer[x].score;
+              if (_scoreTouchPointByRegion[x].score) {
+                touchPointCount =
+                  touchPointCount + _scoreTouchPointByDealer[x].score;
+                base++;
+              }
             }
-            response[i].value = decimalPlaces(
-              touchPointCount / _scoreTouchPointByDealer.length,
-              2
-            );
+            response[i].value = decimalPlaces(touchPointCount / base, 2);
           }
         }
       } else {
@@ -922,7 +924,6 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
             label: dealer[i].dealerName,
             value: 0,
           });
-          base.push(80);
         }
         for (let i = 0; i < response.length; i++) {
           var _scoreTouchPointByDealer = await scoreTouchPointByDelaer(
@@ -933,15 +934,16 @@ exports.getTouchPointScoreRegionTotal = async function (req, res) {
             brand
           );
           var touchPointCount = 0;
+          var base = 0;
           if (_scoreTouchPointByDealer.length > 0) {
             for (let x = 0; x < _scoreTouchPointByDealer.length; x++) {
-              touchPointCount =
-                touchPointCount + _scoreTouchPointByDealer[x].score;
+              if (_scoreTouchPointByRegion[x].score) {
+                touchPointCount =
+                  touchPointCount + _scoreTouchPointByDealer[x].score;
+                base++;
+              }
             }
-            response[i].value = decimalPlaces(
-              touchPointCount / _scoreTouchPointByDealer.length,
-              2
-            );
+            response[i].value = decimalPlaces(touchPointCount / base, 2);
           }
         }
       }
@@ -1157,6 +1159,7 @@ exports.getTouchPointScoreTotal = async function (req, res) {
       ['hyundai']
     );
     var arrDealer = dealer.map((data) => data.idDealer);
+    console.log(arrDealer)
 
     var _scoreTouchPointByParent = await scoreTouchPointByParent(
       pid,
@@ -1171,11 +1174,15 @@ exports.getTouchPointScoreTotal = async function (req, res) {
 
     if (_scoreTouchPointByParent.length > 0) {
       for (let i = 0; i < _scoreTouchPointByParent.length; i++) {
-        base++;
-        total = total + _scoreTouchPointByParent[i].score;
+        console.log(_scoreTouchPointByParent[i].dealerName);
+        if (_scoreTouchPointByParent[i].score) {
+          base++;
+          total = total + _scoreTouchPointByParent[i].score;
+        }
       }
-      response = total / _scoreTouchPointByParent.length;
+      response = total / base;
     }
+    console.log(base, _scoreTouchPointByParent.length);
     await createLogger(authHeaders, detailUser.email, pid, 'GET SCORE TOTAL');
     res.status(200).json({
       statusCode: 200,
@@ -1417,7 +1424,9 @@ exports.getTouchPointScoreDealerSort = async function (req, res) {
         brand
       );
       if (_scoreTouchPointByParent.length > 0) {
-        var responses = _scoreTouchPointByParent[0].score;
+        var responses = _scoreTouchPointByParent[0].score
+          ? _scoreTouchPointByParent[0].score
+          : 0;
         response[i].data = responses.toFixed(2);
       }
     }
