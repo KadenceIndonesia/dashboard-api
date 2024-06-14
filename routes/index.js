@@ -4,5 +4,4 @@ const Router = express.Router();
 
 Router.get("", indexController.getIndex);
 
-
 module.exports = Router;

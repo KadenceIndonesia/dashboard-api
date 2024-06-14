@@ -39,7 +39,7 @@ Router.post('/register', async function (req, res, next) {
   if (getUser.length == 0) {
     const createUser = new User({
       _id: new mongoose.Types.ObjectId(),
-      projectID: req.body.pid,
+      project: req.body.pid,
       username: req.body.username,
       email: req.body.email,
       password: encryptPass,

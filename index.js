@@ -22,6 +22,7 @@ const evidenceRoutes = require('./routes/evidence');
 const vehicleRoutes = require('./routes/vehicle');
 const speechToTextRoutes = require('./routes/speechToText');
 const hakkinenRoutes = require('./routes/hakkinen');
+const shokoRoutes = require('./routes/shoko');
 
 require('dotenv').config();
 // require('./helpers/init_mongodb')
@@ -30,6 +31,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
 app.use(fileupload());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -53,6 +55,7 @@ app.use('/evidence', evidenceRoutes);
 app.use('/vehicle', vehicleRoutes);
 app.use('/albus', albusRoutes);
 app.use('/hakkinen', hakkinenRoutes);
+app.use('/shoko', shokoRoutes);
 
 app.listen(process.env.PORT, (req, res) => {
   console.log('connect');
