@@ -10,6 +10,21 @@ const clementineSchema = mongoose.Schema({
   S3: String,
   S4: String,
   S5: String,
+  T1: Array,
+  T2: Array,
+  T3: Array,
+  T4: Array,
+  T5: Array,
+  T6: Array,
+  T7: Array,
+  T8: Array,
+  T9: Array,
+  T10: Array,
+  T11: Array,
+  T12: String,
+  T13: String,
+  T14: String,
+  T15: Array,
 });
 
 module.exports = mongoose.model('Clementine', clementineSchema);
