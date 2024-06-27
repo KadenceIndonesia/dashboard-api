@@ -5,6 +5,7 @@ const Router = express.Router();
 Router.get('/', clementineController.getIndex);
 Router.get('/response', clementineController.getResponseFilter);
 Router.get('/response/multiple', clementineController.getResponseFilterMultiple);
+Router.get('/bei', clementineController.getBei);
 Router.get('/import/multi', clementineController.getImportDataMulti);
 Router.get('/import/single', clementineController.getImportDataSingle);
 

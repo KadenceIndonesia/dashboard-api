@@ -157,3 +157,25 @@ exports.getImportDataSingle = async function (req, res) {
     res.status(400).send(error);
   }
 };
+
+exports.getBei = async function (req, res) {
+  try {
+    const age = req.query.age;
+    const ses = req.query.ses;
+    const city = req.query.city;
+    const gender = req.query.gender;
+    var result = await getResponseBei({
+      age,
+      ses,
+      city,
+      gender,
+    });
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get BEI clementine',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
