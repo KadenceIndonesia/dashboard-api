@@ -25,6 +25,8 @@ const clementineSchema = mongoose.Schema({
   T13: String,
   T14: String,
   T15: Array,
+  A4: String,
+  A5: String,
 });
 
 module.exports = mongoose.model('Clementine', clementineSchema);
