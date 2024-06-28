@@ -281,14 +281,14 @@ exports.getNps = async function (req, res) {
       var passives = 0;
       var promoters = 0;
       for (let j = 0; j < _getResponseNps.length; j++) {
-        if (parseInt(_getResponseNps[j].A5) <= 6) {
+        if (parseInt(_getResponseNps[j].A5) <= 7) {
           detractors++;
         } else if (
-          parseInt(_getResponseNps[j].A5) >= 7 &&
-          parseInt(_getResponseNps[j].A5) <= 8
+          parseInt(_getResponseNps[j].A5) >= 8 &&
+          parseInt(_getResponseNps[j].A5) <= 9
         ) {
           passives++;
-        } else if (parseInt(_getResponseNps[j].A5) >= 9) {
+        } else if (parseInt(_getResponseNps[j].A5) >= 10) {
           promoters++;
         }
       }
