@@ -22,7 +22,6 @@ exports.getTotalRespondent = async function (req, res) {
     const gender = req.query.gender;
 
     var result = await getRespondent({ age, city, ses, gender });
-    console.log(result)
 
     res.status(200).json({
       statusCode: 200,
@@ -50,6 +49,7 @@ exports.getResponseFilter = async function (req, res) {
       gender,
       question,
     });
+    var total = await getRespondent({ age, city, ses, gender });
     var attribute = await getAttributeList({
       pid: pid,
       qidx: question,
@@ -64,8 +64,10 @@ exports.getResponseFilter = async function (req, res) {
       result[i] = {
         ...result[i],
         name: attribute.attribute[find].label,
+        percent: countPercent(result[i].y, total),
       };
     }
+    // console.log(result);
 
     res.status(200).json({
       statusCode: 200,
@@ -79,20 +81,12 @@ exports.getResponseFilter = async function (req, res) {
 
 exports.getResponseFilterMultiple = async function (req, res) {
   try {
-    console.log('multiple');
     const pid = req.query.pid;
     const age = req.query.age;
     const ses = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
     const question = req.query.question;
-    // var result = await getResponse({
-    //   age,
-    //   ses,
-    //   city,
-    //   gender,
-    //   question,
-    // });
     var attribute = await getAttributeList({
       pid: pid,
       qidx: question,
@@ -127,21 +121,24 @@ exports.getResponseFilterMultiple = async function (req, res) {
 exports.getImportDataMulti = async function (req, res) {
   try {
     const pid = req.query.pid;
+    const question = req.query.question;
     var data = await excelData(pid);
     for (let i = 0; i < data.length; i++) {
-      var dataSplit = data[i].T15.split(',');
-      console.log(data[i].T15);
-      Clementine.updateOne(
-        {
-          id: data[i].id,
-        },
-        {
-          $set: { T15: dataSplit },
-        }
-      )
-        .exec()
-        .then((result) => console.log('success'))
-        .catch((error) => console.log(error));
+      if (data[i][question]) {
+        var dataSplit = data[i][question].split(',');
+        console.log(dataSplit);
+        Clementine.updateOne(
+          {
+            id: data[i].id,
+          },
+          {
+            $set: { [question]: dataSplit },
+          }
+        )
+          .exec()
+          .then((result) => console.log('success'))
+          .catch((error) => console.log(error));
+      }
     }
     res.status(200).json({
       statusCode: 200,
@@ -155,19 +152,22 @@ exports.getImportDataMulti = async function (req, res) {
 exports.getImportDataSingle = async function (req, res) {
   try {
     const pid = req.query.pid;
+    const question = req.query.question;
     var data = await excelData(pid);
     for (let i = 0; i < data.length; i++) {
-      Clementine.updateOne(
-        {
-          id: data[i].id,
-        },
-        {
-          $set: { A5: data[i].A5 },
-        }
-      )
-        .exec()
-        .then((result) => console.log('success'))
-        .catch((error) => console.log(error));
+      if (data[i][question]) {
+        Clementine.updateOne(
+          {
+            id: data[i].id,
+          },
+          {
+            $set: { [question]: data[i][question] },
+          }
+        )
+          .exec()
+          .then((result) => console.log('success'))
+          .catch((error) => console.log(error));
+      }
     }
     res.status(200).json({
       statusCode: 200,
@@ -299,6 +299,46 @@ exports.getOverall = async function (req, res) {
     res.status(200).json({
       statusCode: 200,
       message: 'Success get overall clementine',
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.getResponseFilterMultipleLoop = async function (req, res) {
+  try {
+    const pid = req.query.pid;
+    const age = req.query.age;
+    const ses = req.query.ses;
+    const city = req.query.city;
+    const gender = req.query.gender;
+    const question = req.query.question;
+    const questionLoop = req.query.questionLoop;
+    var attribute = await getAttributeList({
+      pid: pid,
+      qidx: questionLoop,
+    });
+    var result = [];
+    for (let i = 0; i < attribute.attribute.length; i++) {
+      var _countResponseInArrayMultiple = await countResponseInArrayMultiple({
+        pid: pid,
+        age,
+        ses,
+        city,
+        gender,
+        question: question,
+        value: `${attribute.attribute[i].code}`,
+      });
+      result.push({
+        _id: attribute.attribute[i].code,
+        name: attribute.attribute[i].label,
+        y: _countResponseInArrayMultiple,
+      });
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success get response clementine',
       data: result,
     });
   } catch (error) {

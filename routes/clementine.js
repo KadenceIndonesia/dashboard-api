@@ -5,6 +5,7 @@ const Router = express.Router();
 Router.get('/', clementineController.getIndex);
 Router.get('/response', clementineController.getResponseFilter);
 Router.get('/response/multiple', clementineController.getResponseFilterMultiple);
+Router.get('/response/multiple-loop', clementineController.getResponseFilterMultipleLoop);
 Router.get('/respondent', clementineController.getTotalRespondent);
 Router.get('/bei', clementineController.getBei);
 Router.get('/nps', clementineController.getNps);

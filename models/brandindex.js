@@ -13,6 +13,7 @@ const brandindexSchema = mongoose.Schema({
   S0d: String,
   S1: String,
   S6: String,
+  brandIndex: Number,
 });
 
 module.exports = mongoose.model('Brandindex', brandindexSchema);
