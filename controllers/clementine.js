@@ -17,9 +17,19 @@ exports.getIndex = async function (req, res) {
 exports.getTotalRespondent = async function (req, res) {
   try {
     const age = req.query.age;
-    const ses = req.query.ses;
+    const querySes = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
+    var ses = '0'
+    if(querySes === '1'){
+      ses = ['1'];
+    }
+    if(querySes === '2'){
+      ses = ['2','3','4','5','6'];
+    }
+    if(querySes === '3'){
+      ses = ['7','8'];
+    }
 
     var result = await getRespondent({ age, city, ses, gender });
 
@@ -37,10 +47,20 @@ exports.getResponseFilter = async function (req, res) {
   try {
     const pid = req.query.pid;
     const age = req.query.age;
-    const ses = req.query.ses;
+    const querySes = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
     const question = req.query.question;
+    var ses = '0'
+    if(querySes === '1'){
+      ses = ['1'];
+    }
+    if(querySes === '2'){
+      ses = ['2','3','4','5','6'];
+    }
+    if(querySes === '3'){
+      ses = ['7','8'];
+    }
 
     var result = await getResponse({
       age,
@@ -83,10 +103,21 @@ exports.getResponseFilterMultiple = async function (req, res) {
   try {
     const pid = req.query.pid;
     const age = req.query.age;
-    const ses = req.query.ses;
+    const querySes = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
     const question = req.query.question;
+    var ses = '0'
+    if(querySes === '1'){
+      ses = ['1'];
+    }
+    if(querySes === '2'){
+      ses = ['2','3','4','5','6'];
+    }
+    if(querySes === '3'){
+      ses = ['7','8'];
+    }
+
     var attribute = await getAttributeList({
       pid: pid,
       qidx: question,
@@ -183,9 +214,19 @@ exports.getImportDataSingle = async function (req, res) {
 exports.getBei = async function (req, res) {
   try {
     const age = req.query.age;
-    const ses = req.query.ses;
+    const querySes = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
+    var ses = '0'
+    if(querySes === '1'){
+      ses = ['1'];
+    }
+    if(querySes === '2'){
+      ses = ['2','3','4','5','6'];
+    }
+    if(querySes === '3'){
+      ses = ['7','8'];
+    }
     var result = await getResponseBei({
       age,
       ses,
@@ -206,9 +247,19 @@ exports.getNps = async function (req, res) {
   try {
     const pid = req.query.pid;
     const age = req.query.age;
-    const ses = req.query.ses;
+    const querySes = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
+    var ses = '0'
+    if(querySes === '1'){
+      ses = ['1'];
+    }
+    if(querySes === '2'){
+      ses = ['2','3','4','5','6'];
+    }
+    if(querySes === '3'){
+      ses = ['7','8'];
+    }
     const question = req.query.question;
     var result = [];
     var attribute = await getAttributeList({
@@ -267,9 +318,19 @@ exports.getOverall = async function (req, res) {
   try {
     const pid = req.query.pid;
     const age = req.query.age;
-    const ses = req.query.ses;
+    const querySes = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
+    var ses = '0'
+    if(querySes === '1'){
+      ses = ['1'];
+    }
+    if(querySes === '2'){
+      ses = ['2','3','4','5','6'];
+    }
+    if(querySes === '3'){
+      ses = ['7','8'];
+    }
     const question = req.query.question;
     const questionOverall = req.query.questionOverall;
     var result = await getResponseOverall({
@@ -312,30 +373,54 @@ exports.getResponseFilterMultipleLoop = async function (req, res) {
   try {
     const pid = req.query.pid;
     const age = req.query.age;
-    const ses = req.query.ses;
+    const querySes = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
+    var ses = '0'
+    if(querySes === '1'){
+      ses = ['1'];
+    }
+    if(querySes === '2'){
+      ses = ['2','3','4','5','6'];
+    }
+    if(querySes === '3'){
+      ses = ['7','8'];
+    }
     const question = req.query.question;
     const questionLoop = req.query.questionLoop;
-    var attribute = await getAttributeList({
+    var attributeLoop = await getAttributeList({
       pid: pid,
       qidx: questionLoop,
     });
+    var attribute = await getAttributeList({
+      pid: pid,
+      qidx: question,
+    });
     var result = [];
     for (let i = 0; i < attribute.attribute.length; i++) {
-      var _countResponseInArrayMultiple = await countResponseInArrayMultiple({
-        pid: pid,
-        age,
-        ses,
-        city,
-        gender,
-        question: question,
-        value: `${attribute.attribute[i].code}`,
-      });
+      var dataLoop = [];
+      for (let x = 0; x < attributeLoop.attribute.length; x++) {
+        if (attributeLoop.attribute[x].code !== 97) {
+          var _countResponseInArrayMultiple =
+            await countResponseInArrayMultiple({
+              age,
+              ses,
+              city,
+              gender,
+              question: `${question}_T_${attributeLoop.attribute[x].code}`,
+              value: `${attribute.attribute[i].code}`,
+            });
+          dataLoop.push({
+            _id: attributeLoop.attribute[x].code,
+            name: attributeLoop.attribute[x].label,
+            y: _countResponseInArrayMultiple,
+          });
+        }
+      }
       result.push({
         _id: attribute.attribute[i].code,
         name: attribute.attribute[i].label,
-        y: _countResponseInArrayMultiple,
+        data: dataLoop,
       });
     }
     res.status(200).json({
