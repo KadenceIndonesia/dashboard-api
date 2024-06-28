@@ -92,6 +92,7 @@ exports.getResponseFilterMultiple = async function (req, res) {
       qidx: question,
     });
     var result = [];
+    var total = await getRespondent({ age, city, ses, gender });
     for (let i = 0; i < attribute.attribute.length; i++) {
       var _countResponseInArrayMultiple = await countResponseInArrayMultiple({
         pid: pid,
@@ -106,6 +107,7 @@ exports.getResponseFilterMultiple = async function (req, res) {
         _id: attribute.attribute[i].code,
         name: attribute.attribute[i].label,
         y: _countResponseInArrayMultiple,
+        percent: countPercent(_countResponseInArrayMultiple, total),
       });
     }
     res.status(200).json({
