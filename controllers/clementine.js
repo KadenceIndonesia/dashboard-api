@@ -61,6 +61,7 @@ exports.getResponseFilter = async function (req, res) {
     if(querySes === '3'){
       ses = ['7','8'];
     }
+    console.log(ses)
 
     var result = await getResponse({
       age,
