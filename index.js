@@ -4,6 +4,7 @@ const app = express();
 const fileupload = require('express-fileupload');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const { koins, shoko } = require('./config/db');
 const indexRoutes = require('./routes/index');
 const apiRoutes = require('./routes/api');
 const authRoutes = require('./routes/auth');
@@ -28,10 +29,10 @@ const clementineRoutes = require('./routes/clementine');
 require('dotenv').config();
 // require('./helpers/init_mongodb')
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// mongoose.connect(process.env.MONGODB_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
 
 app.use(fileupload());
 app.use(bodyParser.urlencoded({ extended: true }));

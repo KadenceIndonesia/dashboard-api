@@ -41,10 +41,6 @@ exports.getUserList = async function (req, res) {
       arrUser.push(_getUserList[i]._id.user);
       var countDate = [];
       for (let x = 0; x < rangeDate.length; x++) {
-        //   var _countJourneyUserByDate = await countJourneyUserByDate({
-        //     user: _getUserList[i]._id.user,
-        //     date: moment(rangeDate[x]).format('YYYY-MM-DD'),
-        //   });
         countDate.push({
           date: moment(rangeDate[x]).format('YYYY-MM-DD'),
           count: 0,
@@ -61,7 +57,6 @@ exports.getUserList = async function (req, res) {
       startDate: startDate,
       endDate: endDate,
     });
-    // console.log(_countJourneyUserByDate);
     for (let i = 0; i < result.length; i++) {
       for (let x = 0; x < _countJourneyUserByDate.length; x++) {
         if (result[i].user === _countJourneyUserByDate[x]._id.user) {
@@ -120,5 +115,73 @@ exports.getJourneyDetail = async function (req, res) {
     });
   } catch (error) {
     res.send(result);
+  }
+};
+
+exports.getJourneyCountUser = async function (req, res) {
+  try {
+    const user = req.query.user;
+    const city = req.query.city;
+    var userId = await getListUserAll({ user, city });
+    var arrUserId = userId.map((data) => data._id);
+    var result = await getJourneyTodayUser({ user: arrUserId });
+    res.send({
+      message: 'success get journey count user',
+      data: result.length,
+    });
+  } catch (error) {
+    res.send(result);
+  }
+};
+
+exports.getCountUserRegister = async function (req, res) {
+  try {
+    const user = req.query.user;
+    const city = req.query.city;
+    var result = await countUserRegister({ city, user });
+    res.send({
+      message: 'success get user register',
+      data: result,
+    });
+  } catch (error) {
+    res.send(result);
+  }
+};
+
+exports.getMonitoringUserList = async function (req, res) {
+  try {
+    const user = req.query.user;
+    const city = req.query.city;
+    const page = parseInt(req.query.page);
+    const perPage = parseInt(req.query.perPage);
+    var result = await getListUser({
+      user: user,
+      city: city,
+      page: page,
+      perPage: perPage,
+    });
+    var count = await countUserData({ user: user, city: city });
+    for (let i = 0; i < result.length; i++) {
+      const getJourney = await countJourneyUserToday({
+        user: result[i]._id,
+      });
+      result[i].journey = getJourney.length;
+      if (getJourney.length > 0) {
+        if (getJourney[getJourney.length - 1].endDate) {
+          result[i].progress = 'finish';
+        } else {
+          result[i].progress = 'in progress';
+        }
+      }else{
+        result[i].progress = 'not start';
+      }
+    }
+    res.send({
+      message: 'success get user list',
+      data: result,
+      totalData: count,
+    });
+  } catch (error) {
+    res.send(error);
   }
 };
