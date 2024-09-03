@@ -1,3 +1,4 @@
+const clementine = require('../models/clementine');
 const Clementine = require('../models/clementine');
 
 require('../lib/clementine');
@@ -20,18 +21,19 @@ exports.getTotalRespondent = async function (req, res) {
     const querySes = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
-    var ses = '0'
-    if(querySes === '1'){
+    const wave = req.query.wave;
+    var ses = '0';
+    if (querySes === '1') {
       ses = ['1'];
     }
-    if(querySes === '2'){
-      ses = ['2','3','4','5','6'];
+    if (querySes === '2') {
+      ses = ['2', '3', '4', '5', '6'];
     }
-    if(querySes === '3'){
-      ses = ['7','8'];
+    if (querySes === '3') {
+      ses = ['7', '8'];
     }
 
-    var result = await getRespondent({ age, city, ses, gender });
+    var result = await getRespondent({ age, city, ses, gender, wave });
 
     res.status(200).json({
       statusCode: 200,
@@ -51,31 +53,30 @@ exports.getResponseFilter = async function (req, res) {
     const city = req.query.city;
     const gender = req.query.gender;
     const question = req.query.question;
-    var ses = '0'
-    if(querySes === '1'){
+    const wave = req.query.wave;
+    var ses = '0';
+    if (querySes === '1') {
       ses = ['1'];
     }
-    if(querySes === '2'){
-      ses = ['2','3','4','5','6'];
+    if (querySes === '2') {
+      ses = ['2', '3', '4', '5', '6'];
     }
-    if(querySes === '3'){
-      ses = ['7','8'];
+    if (querySes === '3') {
+      ses = ['7', '8'];
     }
-    console.log(ses)
-
     var result = await getResponse({
       age,
       ses,
       city,
       gender,
       question,
+      wave,
     });
-    var total = await getRespondent({ age, city, ses, gender });
+    var total = await getRespondent({ age, city, ses, gender, wave });
     var attribute = await getAttributeList({
       pid: pid,
       qidx: question,
     });
-
     for (let i = 0; i < result.length; i++) {
       var find = await findObj(
         attribute.attribute,
@@ -108,15 +109,16 @@ exports.getResponseFilterMultiple = async function (req, res) {
     const city = req.query.city;
     const gender = req.query.gender;
     const question = req.query.question;
-    var ses = '0'
-    if(querySes === '1'){
+    const wave = req.query.wave;
+    var ses = '0';
+    if (querySes === '1') {
       ses = ['1'];
     }
-    if(querySes === '2'){
-      ses = ['2','3','4','5','6'];
+    if (querySes === '2') {
+      ses = ['2', '3', '4', '5', '6'];
     }
-    if(querySes === '3'){
-      ses = ['7','8'];
+    if (querySes === '3') {
+      ses = ['7', '8'];
     }
 
     var attribute = await getAttributeList({
@@ -124,7 +126,7 @@ exports.getResponseFilterMultiple = async function (req, res) {
       qidx: question,
     });
     var result = [];
-    var total = await getRespondent({ age, city, ses, gender });
+    var total = await getRespondent({ age, city, ses, gender, wave });
     for (let i = 0; i < attribute.attribute.length; i++) {
       var _countResponseInArrayMultiple = await countResponseInArrayMultiple({
         pid: pid,
@@ -134,6 +136,7 @@ exports.getResponseFilterMultiple = async function (req, res) {
         gender,
         question: question,
         value: `${attribute.attribute[i].code}`,
+        wave,
       });
       result.push({
         _id: attribute.attribute[i].code,
@@ -156,14 +159,15 @@ exports.getImportDataMulti = async function (req, res) {
   try {
     const pid = req.query.pid;
     const question = req.query.question;
+    const wave = req.query.wave;
     var data = await excelData(pid);
     for (let i = 0; i < data.length; i++) {
       if (data[i][question]) {
-        var dataSplit = data[i][question].split(',');
-        console.log(dataSplit);
+        var dataSplit = data[i][question].toString().split(',');
         Clementine.updateOne(
           {
             id: data[i].id,
+            wave: parseInt(wave),
           },
           {
             $set: { [question]: dataSplit },
@@ -187,12 +191,14 @@ exports.getImportDataSingle = async function (req, res) {
   try {
     const pid = req.query.pid;
     const question = req.query.question;
+    const wave = req.query.wave;
     var data = await excelData(pid);
     for (let i = 0; i < data.length; i++) {
       if (data[i][question]) {
         Clementine.updateOne(
           {
             id: data[i].id,
+            wave: parseInt(wave),
           },
           {
             $set: { [question]: data[i][question] },
@@ -218,15 +224,15 @@ exports.getBei = async function (req, res) {
     const querySes = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
-    var ses = '0'
-    if(querySes === '1'){
+    var ses = '0';
+    if (querySes === '1') {
       ses = ['1'];
     }
-    if(querySes === '2'){
-      ses = ['2','3','4','5','6'];
+    if (querySes === '2') {
+      ses = ['2', '3', '4', '5', '6'];
     }
-    if(querySes === '3'){
-      ses = ['7','8'];
+    if (querySes === '3') {
+      ses = ['7', '8'];
     }
     var result = await getResponseBei({
       age,
@@ -251,15 +257,16 @@ exports.getNps = async function (req, res) {
     const querySes = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
-    var ses = '0'
-    if(querySes === '1'){
+    const wave = req.query.wave;
+    var ses = '0';
+    if (querySes === '1') {
       ses = ['1'];
     }
-    if(querySes === '2'){
-      ses = ['2','3','4','5','6'];
+    if (querySes === '2') {
+      ses = ['2', '3', '4', '5', '6'];
     }
-    if(querySes === '3'){
-      ses = ['7','8'];
+    if (querySes === '3') {
+      ses = ['7', '8'];
     }
     const question = req.query.question;
     var result = [];
@@ -274,6 +281,7 @@ exports.getNps = async function (req, res) {
         ses,
         city,
         gender,
+        wave,
         question,
         value: `${attribute.attribute[i].code}`,
       });
@@ -322,15 +330,16 @@ exports.getOverall = async function (req, res) {
     const querySes = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
-    var ses = '0'
-    if(querySes === '1'){
+    const wave = req.query.wave;
+    var ses = '0';
+    if (querySes === '1') {
       ses = ['1'];
     }
-    if(querySes === '2'){
-      ses = ['2','3','4','5','6'];
+    if (querySes === '2') {
+      ses = ['2', '3', '4', '5', '6'];
     }
-    if(querySes === '3'){
-      ses = ['7','8'];
+    if (querySes === '3') {
+      ses = ['7', '8'];
     }
     const question = req.query.question;
     const questionOverall = req.query.questionOverall;
@@ -339,6 +348,7 @@ exports.getOverall = async function (req, res) {
       ses,
       city,
       gender,
+      wave,
       question,
       questionOverall,
     });
@@ -377,15 +387,15 @@ exports.getResponseFilterMultipleLoop = async function (req, res) {
     const querySes = req.query.ses;
     const city = req.query.city;
     const gender = req.query.gender;
-    var ses = '0'
-    if(querySes === '1'){
+    var ses = '0';
+    if (querySes === '1') {
       ses = ['1'];
     }
-    if(querySes === '2'){
-      ses = ['2','3','4','5','6'];
+    if (querySes === '2') {
+      ses = ['2', '3', '4', '5', '6'];
     }
-    if(querySes === '3'){
-      ses = ['7','8'];
+    if (querySes === '3') {
+      ses = ['7', '8'];
     }
     const question = req.query.question;
     const questionLoop = req.query.questionLoop;
@@ -428,6 +438,24 @@ exports.getResponseFilterMultipleLoop = async function (req, res) {
       statusCode: 200,
       message: 'Success get response clementine',
       data: result,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.postUpdateWave = async function (req, res) {
+  try {
+    const pid = req.query.pid;
+    const wave = req.body.wave;
+    const data = await getAllDataClementine();
+    data.map((data, index) => {
+      Clementine.updateOne();
+    });
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success update wave',
+      data: data,
     });
   } catch (error) {
     res.status(400).send(error);

@@ -60,6 +60,7 @@ const clementineSchema = mongoose.Schema({
   T20_T_9: Array,
   T20_T_10: Array,
   T20_T_97: Array,
+  wave: Number,
 });
 
 module.exports = mongoose.model('Clementine', clementineSchema);

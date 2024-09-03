@@ -12,5 +12,6 @@ Router.get('/nps', clementineController.getNps);
 Router.get('/overall', clementineController.getOverall);
 Router.get('/import/multi', clementineController.getImportDataMulti);
 Router.get('/import/single', clementineController.getImportDataSingle);
+Router.post('/update/wave', clementineController.postUpdateWave);
 
 module.exports = Router;
